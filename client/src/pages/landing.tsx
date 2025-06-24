@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Users, Calendar, Building, CreditCard, Bell } from "lucide-react";
+import { Trophy, Users, Calendar, Building, CreditCard, Bell, Shield, BarChart3, Clock } from "lucide-react";
 
 export default function Landing() {
   return (
