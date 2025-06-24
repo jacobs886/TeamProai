@@ -15,7 +15,10 @@ export default function Landing() {
               </div>
               <h1 className="ml-3 text-2xl font-bold text-gray-900">TeamPro.ai</h1>
             </div>
-            <Button onClick={() => window.location.href = "/api/login"}>
+            <Button onClick={() => {
+              console.log("Attempting login...");
+              window.location.href = "/api/login";
+            }}>
               Sign In
             </Button>
           </div>
@@ -36,7 +39,10 @@ export default function Landing() {
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-gray-100"
-              onClick={() => window.location.href = "/api/login"}
+              onClick={() => {
+                console.log("Attempting login from hero...");
+                window.location.href = "/api/login";
+              }}
             >
               Start Free Trial
             </Button>
@@ -242,7 +248,10 @@ export default function Landing() {
           <Button 
             size="lg" 
             className="bg-primary hover:bg-blue-700"
-            onClick={() => window.location.href = "/api/login"}
+            onClick={() => {
+              console.log("Attempting login from CTA...");
+              window.location.href = "/api/login";
+            }}
           >
             Start Your Free Trial
           </Button>

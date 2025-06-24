@@ -68,6 +68,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to check auth status
+  app.get('/api/debug/auth', (req: any, res) => {
+    res.json({
+      isAuthenticated: req.isAuthenticated(),
+      user: req.user ? 'Present' : 'None',
+      session: req.session ? 'Present' : 'None',
+      sessionID: req.sessionID
+    });
+  });
+
   // Setup initial super admin (one-time setup)
   app.post('/api/setup/super-admin', async (req: any, res) => {
     try {

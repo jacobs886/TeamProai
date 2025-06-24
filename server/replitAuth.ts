@@ -14,10 +14,20 @@ if (!process.env.REPLIT_DOMAINS) {
 
 const getOidcConfig = memoize(
   async () => {
-    return await client.discovery(
-      new URL(process.env.ISSUER_URL ?? "https://replit.com/oidc"),
-      process.env.REPL_ID!
-    );
+    const issuerUrl = process.env.ISSUER_URL ?? "https://replit.com/oidc";
+    console.log("OIDC Config - Issuer URL:", issuerUrl, "Client ID:", process.env.REPL_ID);
+    
+    try {
+      const config = await client.discovery(
+        new URL(issuerUrl),
+        process.env.REPL_ID!
+      );
+      console.log("OIDC discovery successful");
+      return config;
+    } catch (error) {
+      console.error("OIDC discovery failed:", error);
+      throw error;
+    }
   },
   { maxAge: 3600 * 1000 }
 );
@@ -93,6 +103,7 @@ export async function setupAuth(app: Express) {
 
   for (const domain of process.env
     .REPLIT_DOMAINS!.split(",")) {
+    console.log("Setting up auth strategy for domain:", domain);
     const strategy = new Strategy(
       {
         name: `replitauth:${domain}`,
@@ -103,22 +114,40 @@ export async function setupAuth(app: Express) {
       verify,
     );
     passport.use(strategy);
+    console.log("Auth strategy registered for:", domain);
   }
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
-  app.get("/api/login", (req, res, next) => {
+  app.get("/api/login", async (req, res, next) => {
     const hostname = req.hostname;
     const domains = process.env.REPLIT_DOMAINS!.split(",");
-    const targetDomain = domains[0]; // Always use the first (and only) domain
+    const targetDomain = domains[0];
     
     console.log("Login attempt - hostname:", hostname, "domains:", domains, "using domain:", targetDomain);
     
-    passport.authenticate(`replitauth:${targetDomain}`, {
-      prompt: "login consent",
-      scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+    try {
+      // Manual auth URL construction for debugging
+      const authUrl = client.buildAuthorizationUrl(config, {
+        scope: "openid email profile offline_access",
+        redirect_uri: `https://${targetDomain}/api/callback`,
+        response_type: "code",
+        client_id: process.env.REPL_ID!,
+        prompt: "login consent"
+      });
+      
+      console.log("Manual auth URL:", authUrl.href);
+      
+      // Try passport authentication
+      passport.authenticate(`replitauth:${targetDomain}`, {
+        prompt: "login consent", 
+        scope: ["openid", "email", "profile", "offline_access"],
+      })(req, res, next);
+    } catch (error) {
+      console.error("Login authentication error:", error);
+      res.status(500).json({ error: "Authentication failed", details: error.message });
+    }
   });
 
   app.get("/api/callback", (req, res, next) => {
@@ -128,10 +157,16 @@ export async function setupAuth(app: Express) {
     
     console.log("Callback received - hostname:", hostname, "domains:", domains, "using domain:", targetDomain);
     
-    passport.authenticate(`replitauth:${targetDomain}`, {
-      successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
-    })(req, res, next);
+    try {
+      passport.authenticate(`replitauth:${targetDomain}`, {
+        successReturnToOrRedirect: "/",
+        failureRedirect: "/api/login",
+        failureFlash: false
+      })(req, res, next);
+    } catch (error) {
+      console.error("Callback authentication error:", error);
+      res.redirect("/api/login");
+    }
   });
 
   app.get("/api/logout", (req, res) => {
