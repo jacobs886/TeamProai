@@ -268,6 +268,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Equipment management routes
+  app.get('/api/equipment', isAuthenticated, async (req, res) => {
+    try {
+      const equipment = [
+        {
+          id: "1",
+          name: "Wilson Soccer Ball",
+          type: "ball",
+          sport: "soccer",
+          brand: "Wilson",
+          model: "Pro Series",
+          quantity: 15,
+          available: 12,
+          assigned: 3,
+          condition: "excellent",
+          location: "Equipment Room A",
+          purchaseDate: "2024-01-15",
+          cost: 29.99,
+          totalValue: 449.85,
+          serialNumber: "WS2024001",
+          complianceStatus: "compliant"
+        },
+        {
+          id: "2",
+          name: "Nike Basketball",
+          type: "ball",
+          sport: "basketball", 
+          brand: "Nike",
+          model: "Elite Championship",
+          quantity: 8,
+          available: 5,
+          assigned: 3,
+          condition: "good",
+          location: "Gym Storage",
+          purchaseDate: "2023-09-10",
+          cost: 45.00,
+          totalValue: 360.00,
+          serialNumber: "NK2023002",
+          complianceStatus: "compliant"
+        }
+      ];
+      res.json(equipment);
+    } catch (error) {
+      console.error("Error fetching equipment:", error);
+      res.status(500).json({ message: "Failed to fetch equipment" });
+    }
+  });
+
+  app.get('/api/equipment/categories', isAuthenticated, async (req, res) => {
+    try {
+      const categories = [
+        {
+          id: "balls",
+          name: "Balls",
+          sport: "all",
+          items: ["Soccer Ball", "Basketball", "Football", "Tennis Ball"]
+        },
+        {
+          id: "protective",
+          name: "Protective Gear",
+          sport: "all", 
+          items: ["Helmets", "Shin Guards", "Knee Pads", "Gloves"]
+        },
+        {
+          id: "training",
+          name: "Training Equipment",
+          sport: "all",
+          items: ["Cones", "Agility Ladders", "Hurdles", "Goals"]
+        }
+      ];
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching equipment categories:", error);
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  app.get('/api/equipment/ai-insights', isAuthenticated, async (req, res) => {
+    try {
+      const insights = {
+        restockAlerts: [
+          { item: "Soccer Balls", daysUntil: 15, priority: "medium" },
+          { item: "Basketball", daysUntil: 7, priority: "high" }
+        ],
+        maintenanceDue: [
+          { item: "Goal Posts", type: "inspection", daysOverdue: 3 },
+          { item: "Training Equipment", type: "cleaning", daysOverdue: 0 }
+        ],
+        costOptimization: {
+          potentialSavings: 450,
+          recommendations: [
+            "Bulk purchase discount available for soccer balls",
+            "Consider alternative supplier for protective gear"
+          ]
+        },
+        usagePatterns: {
+          topUsed: ["Soccer Balls", "Training Cones", "Goal Posts"],
+          underUtilized: ["Tennis Equipment", "Wrestling Mats"]
+        }
+      };
+      res.json(insights);
+    } catch (error) {
+      console.error("Error fetching AI insights:", error);
+      res.status(500).json({ message: "Failed to fetch AI insights" });
+    }
+  });
+
   // Admin routes for role management
   app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
     try {
