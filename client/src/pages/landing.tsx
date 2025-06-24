@@ -42,8 +42,7 @@ export default function Landing() {
             </Button>
             <Button 
               size="lg" 
-              variant="outline"
-              className="text-white border-white hover:bg-white hover:text-primary"
+              className="bg-primary hover:bg-blue-700 text-white"
             >
               Watch Demo
             </Button>
