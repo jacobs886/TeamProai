@@ -1,0 +1,21 @@
+For TeamPro.ai’s player roster interface, prioritize these features based on user feedback from leading youth sports platforms (e.g., TeamSnap, SportsEngine) and alignment with your AWS, Supabase, and AI-driven architecture:
+
+1. **Easy Roster Import/Export**: Support CSV, Excel, and API imports (e.g., from MaxPreps) to streamline setup. Export rosters for reports or sharing. Users complain about manual entry in TeamSnap.
+2. **Dynamic Player Profiles**: Store player details (name, age, position, contact info, medical notes) in Supabase with role-based access (e.g., coaches view medical data, parents don’t). Include photo uploads via AWS S3.
+3. **AI-Driven Team Balancing**: Use LLMs (e.g., Grok 3) on MCP servers to suggest balanced teams based on stats, skill levels, or age, addressing fairness concerns in SportsEngine.
+4. **Real-Time Availability Tracking**: Integrate with scheduling to show player availability, with AI predicting conflicts based on historical data. Sync with Google/Apple calendars.
+5. **Secure Parent/Guardian Management**: Link players to parent accounts in Supabase, with eSignature support (via DocuSign) for waivers or consents. Ensure GDPR/HIPAA compliance.
+6. **Performance Stats Integration**: Display player stats (e.g., batting average, goals scored) from scorekeeping, with AI-generated improvement tips. Pull data from Supabase for real-time updates.
+7. **Mobile-Friendly UI**: Responsive React interface for adding/editing players on the go, with offline sync via Supabase edge functions. Users criticize clunky mobile roster edits in GameChanger.
+8. **Customizable Roles & Permissions**: Granular RBAC in Supabase for coaches, admins, and parents (e.g., restrict roster edits to admins). Emulate TeamSnap’s permissioning strengths.
+9. **Communication Hub**: One-click messaging or email to players/parents from the roster, with AI prioritizing urgent notifications. Address TeamSnap’s 30% notification failure rate.
+10. **Attendance Tracking**: Simple check-in system for practices/games, with automated reminders and reports. Users want this over SportsEngine’s manual workarounds.
+
+**Implementation**:
+- **Supabase**: Store roster data in a `players` table with relations to `teams` and `parents`. Use row-level security for privacy.
+- **AWS**: Host UI on CloudFront, process AI analytics on Lambda, and store profile images in S3.
+- **AI**: Leverage Grok 3 for team balancing and availability predictions, processed on MCP servers.
+- **UI**: Build with React/Tailwind for a drag-and-drop roster view, ensuring offline access via PWA.
+
+**Why Prioritize These?**
+These features address user pain points (manual data entry, poor mobile UX, unreliable notifications) while leveraging TeamPro.ai’s AI and cloud strengths to offer a competitive edge over TeamSnap’s basic rostering and SportsEngine’s complex workflows. Focus on usability, security, and automation to appeal to coaches and parents in youth sports.
