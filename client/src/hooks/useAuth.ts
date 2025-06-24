@@ -31,6 +31,8 @@ export function useAuth() {
     enabled: !devUser, // Only query if no dev user
   });
 
+
+
   return {
     user: devUser || user,
     isLoading: devUser ? false : isLoading,

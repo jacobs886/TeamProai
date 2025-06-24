@@ -14,10 +14,14 @@ import Payments from "@/pages/payments";
 import Notifications from "@/pages/notifications";
 import Settings from "@/pages/settings";
 import AdminDashboard from "@/pages/admin";
+import Volunteers from "@/pages/volunteers";
+import Equipment from "@/pages/equipment";
+import ParentPortal from "@/pages/parent-portal";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
 import FloatingChatbot from "@/components/chat/floating-chatbot";
+import DevStatus from "@/components/auth/dev-status";
 
 function AuthenticatedRouter() {
   return (
@@ -35,12 +39,16 @@ function AuthenticatedRouter() {
             <Route path="/notifications" component={Notifications} />
             <Route path="/settings" component={Settings} />
             <Route path="/admin" component={AdminDashboard} />
+            <Route path="/volunteers" component={Volunteers} />
+            <Route path="/equipment" component={Equipment} />
+            <Route path="/parent-portal" component={ParentPortal} />
             <Route component={NotFound} />
           </Switch>
         </div>
       </div>
       <MobileBottomNav />
       <FloatingChatbot />
+      <DevStatus />
     </div>
   );
 }
@@ -48,7 +56,17 @@ function AuthenticatedRouter() {
 function AppRouter() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  if (isLoading || !isAuthenticated) {
+
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <Switch>
         <Route path="/" component={Landing} />
@@ -64,8 +82,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
         <AppRouter />
+        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );

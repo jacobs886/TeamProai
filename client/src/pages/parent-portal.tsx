@@ -182,7 +182,7 @@ export default function ParentPortal() {
               </div>
             </div>
           </CardContent>
-        </div>
+        </Card>
 
         {/* Recent Activity & Notifications */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

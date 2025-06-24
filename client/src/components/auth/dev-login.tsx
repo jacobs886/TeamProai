@@ -35,7 +35,7 @@ export default function DevLogin({ open, onOpenChange }: DevLoginProps) {
       // Close modal and redirect
       onOpenChange(false);
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        window.location.href = "/";
       }, 500);
     } else {
       toast({
