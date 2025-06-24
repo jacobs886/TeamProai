@@ -156,7 +156,7 @@ export default function SkillAssessmentForm({
     });
   };
 
-  const currentSkills = selectedCategory 
+  const categorySkills = selectedCategory 
     ? skillCategories.find(cat => cat.id === selectedCategory)?.skills || []
     : [];
 
@@ -258,7 +258,7 @@ export default function SkillAssessmentForm({
                     <SelectValue placeholder="Choose skill to assess" />
                   </SelectTrigger>
                   <SelectContent>
-                    {currentSkills.map((skill: any) => (
+                    {categorySkills.map((skill: any) => (
                       <SelectItem key={skill.id} value={skill.id}>
                         <div>
                           <div className="font-medium">{skill.name}</div>
@@ -340,7 +340,7 @@ export default function SkillAssessmentForm({
                       </div>
                       <div>
                         <p className="font-medium text-sm">
-                          {currentSkills.find(s => s.id === assessment.skillId)?.name}
+                          {categorySkills.find(s => s.id === assessment.skillId)?.name}
                         </p>
                         <p className="text-xs text-gray-500">{assessment.notes.substring(0, 50)}...</p>
                       </div>
