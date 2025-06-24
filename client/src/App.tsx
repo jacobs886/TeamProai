@@ -22,6 +22,7 @@ import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
 import FloatingChatbot from "@/components/chat/floating-chatbot";
 import DevStatus from "@/components/auth/dev-status";
+import AuthDebug from "@/components/debug/auth-debug";
 
 function AuthenticatedRouter() {
   return (
@@ -56,8 +57,6 @@ function AuthenticatedRouter() {
 function AppRouter() {
   const { isAuthenticated, isLoading } = useAuth();
 
-
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -83,6 +82,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AppRouter />
+        <AuthDebug />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
