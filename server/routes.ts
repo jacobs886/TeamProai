@@ -199,6 +199,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Team messaging routes
+  app.get('/api/teams/:id/messages', isAuthenticated, async (req: any, res) => {
+    try {
+      const teamId = parseInt(req.params.id);
+      const messages = await storage.getTeamMessages(teamId);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching team messages:", error);
+      res.status(500).json({ message: "Failed to fetch team messages" });
+    }
+  });
+
+  app.post('/api/teams/:id/messages', isAuthenticated, async (req: any, res) => {
+    try {
+      const teamId = parseInt(req.params.id);
+      const userId = req.user.claims.sub;
+      const { message, isUrgent, replyToId } = req.body;
+      
+      const newMessage = await storage.createTeamMessage(teamId, userId, message, isUrgent, replyToId);
+      res.json(newMessage);
+    } catch (error) {
+      console.error("Error creating team message:", error);
+      res.status(400).json({ message: "Failed to send message" });
+    }
+  });
+
+  // Game statistics routes
+  app.get('/api/events/:id/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      const stats = await storage.getGameStats(eventId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching game stats:", error);
+      res.status(500).json({ message: "Failed to fetch game stats" });
+    }
+  });
+
+  app.post('/api/events/:id/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      const statsArray = req.body;
+      
+      const results = [];
+      for (const stat of statsArray) {
+        const result = await storage.createGameStats(eventId, stat.playerId, stat.sport, stat.stats);
+        results.push(result);
+      }
+      
+      res.json(results);
+    } catch (error) {
+      console.error("Error saving game stats:", error);
+      res.status(400).json({ message: "Failed to save game stats" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

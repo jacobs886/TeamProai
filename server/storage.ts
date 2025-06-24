@@ -7,6 +7,8 @@ import {
   eventParticipants,
   notifications,
   payments,
+  teamMessages,
+  gameStats,
   type User,
   type UpsertUser,
   type Facility,
@@ -19,6 +21,8 @@ import {
   type EventParticipant,
   type Notification,
   type Payment,
+  type TeamMessage,
+  type GameStats,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
@@ -66,6 +70,14 @@ export interface IStorage {
   
   // Dashboard stats
   getDashboardStats(userId: string): Promise<any>;
+  
+  // Team messaging operations
+  getTeamMessages(teamId: number): Promise<any[]>;
+  createTeamMessage(teamId: number, senderId: string, message: string, isUrgent?: boolean, replyToId?: number): Promise<any>;
+  
+  // Game statistics operations
+  getGameStats(eventId: number): Promise<any[]>;
+  createGameStats(eventId: number, playerId: string, sport: string, stats: any): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -152,7 +164,7 @@ export class DatabaseStorage implements IStorage {
   async addTeamMember(teamId: number, userId: string, role: string): Promise<TeamMember> {
     const [member] = await db
       .insert(teamMembers)
-      .values({ teamId, userId, role })
+      .values({ teamId: teamId, userId: userId, role: role as any })
       .returning();
     return member;
   }
@@ -346,6 +358,50 @@ export class DatabaseStorage implements IStorage {
       upcomingEvents: upcomingEventsCount?.count || 0,
       monthlyRevenue: totalRevenue?.total || 0,
     };
+  }
+  
+  // Team messaging operations
+  async getTeamMessages(teamId: number): Promise<any[]> {
+    return await db
+      .select({
+        id: teamMessages.id,
+        message: teamMessages.message,
+        isUrgent: teamMessages.isUrgent,
+        senderId: teamMessages.senderId,
+        senderName: users.firstName,
+        senderImage: users.profileImageUrl,
+        replyToId: teamMessages.replyToId,
+        createdAt: teamMessages.createdAt,
+      })
+      .from(teamMessages)
+      .leftJoin(users, eq(teamMessages.senderId, users.id))
+      .where(eq(teamMessages.teamId, teamId))
+      .orderBy(teamMessages.createdAt);
+  }
+
+  async createTeamMessage(teamId: number, senderId: string, message: string, isUrgent = false, replyToId?: number): Promise<any> {
+    const [created] = await db
+      .insert(teamMessages)
+      .values({ teamId, senderId, message, isUrgent, replyToId })
+      .returning();
+    return created;
+  }
+  
+  // Game statistics operations
+  async getGameStats(eventId: number): Promise<any[]> {
+    return await db
+      .select()
+      .from(gameStats)
+      .where(eq(gameStats.eventId, eventId))
+      .orderBy(gameStats.createdAt);
+  }
+
+  async createGameStats(eventId: number, playerId: string, sport: string, stats: any): Promise<any> {
+    const [created] = await db
+      .insert(gameStats)
+      .values({ eventId, playerId, sport, stats })
+      .returning();
+    return created;
   }
 }
 

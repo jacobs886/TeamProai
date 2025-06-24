@@ -105,10 +105,45 @@ export const notifications = pgTable("notifications", {
   userId: varchar("user_id").references(() => users.id).notNull(),
   title: varchar("title").notNull(),
   message: text("message").notNull(),
-  type: varchar("type", { enum: ["info", "warning", "success", "error"] }).default("info"),
+  type: varchar("type", { enum: ["info", "warning", "success", "error", "urgent"] }).default("info"),
   isRead: boolean("is_read").default(false),
+  isUrgent: boolean("is_urgent").default(false),
   relatedEntityType: varchar("related_entity_type"), // team, event, payment, etc.
   relatedEntityId: integer("related_entity_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Add team chat messages table for seamless communication
+export const teamMessages = pgTable("team_messages", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  senderId: varchar("sender_id").references(() => users.id).notNull(),
+  message: text("message").notNull(),
+  isUrgent: boolean("is_urgent").default(false),
+  replyToId: integer("reply_to_id").references(() => teamMessages.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Add game statistics and scorekeeping
+export const gameStats = pgTable("game_stats", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  playerId: varchar("player_id").references(() => users.id).notNull(),
+  sport: varchar("sport", { enum: ["volleyball", "basketball", "baseball"] }).notNull(),
+  stats: jsonb("stats").notNull(), // Flexible stats storage for different sports
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Add calendar sync preferences
+export const calendarSync = pgTable("calendar_sync", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  provider: varchar("provider", { enum: ["google", "apple", "outlook"] }).notNull(),
+  isEnabled: boolean("is_enabled").default(true),
+  syncToken: varchar("sync_token"),
+  lastSyncAt: timestamp("last_sync_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -198,6 +233,39 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
   }),
 }));
 
+export const teamMessagesRelations = relations(teamMessages, ({ one }) => ({
+  team: one(teams, {
+    fields: [teamMessages.teamId],
+    references: [teams.id],
+  }),
+  sender: one(users, {
+    fields: [teamMessages.senderId],
+    references: [users.id],
+  }),
+  replyTo: one(teamMessages, {
+    fields: [teamMessages.replyToId],
+    references: [teamMessages.id],
+  }),
+}));
+
+export const gameStatsRelations = relations(gameStats, ({ one }) => ({
+  event: one(events, {
+    fields: [gameStats.eventId],
+    references: [events.id],
+  }),
+  player: one(users, {
+    fields: [gameStats.playerId],
+    references: [users.id],
+  }),
+}));
+
+export const calendarSyncRelations = relations(calendarSync, ({ one }) => ({
+  user: one(users, {
+    fields: [calendarSync.userId],
+    references: [users.id],
+  }),
+}));
+
 export const paymentsRelations = relations(payments, ({ one }) => ({
   user: one(users, {
     fields: [payments.userId],
@@ -260,3 +328,6 @@ export type Event = typeof events.$inferSelect;
 export type EventParticipant = typeof eventParticipants.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
+export type TeamMessage = typeof teamMessages.$inferSelect;
+export type GameStats = typeof gameStats.$inferSelect;
+export type CalendarSync = typeof calendarSync.$inferSelect;
