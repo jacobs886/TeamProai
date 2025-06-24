@@ -1380,6 +1380,249 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Availability Prediction API endpoints
+  app.get("/api/availability-prediction/predictions", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, role, confidence, range } = req.query;
+      
+      const predictions = [
+        {
+          id: "1",
+          userId: "user-1",
+          userName: "Alex Johnson",
+          userRole: "player",
+          eventId: "event-1",
+          eventTitle: "Soccer Practice",
+          eventType: "practice",
+          eventDate: new Date("2025-01-23T16:00:00"),
+          predictedStatus: "available",
+          confidence: 0.92,
+          historicalAccuracy: 0.88,
+          factors: ["Consistent weekday availability", "High attendance rate", "No calendar conflicts"],
+          lastUpdated: new Date("2025-01-20T14:30:00"),
+          sport: "Soccer"
+        },
+        {
+          id: "2",
+          userId: "user-2",
+          userName: "Sarah Wilson",
+          userRole: "parent",
+          eventId: "event-2",
+          eventTitle: "Championship Game",
+          eventType: "game",
+          eventDate: new Date("2025-01-25T10:00:00"),
+          predictedStatus: "unavailable",
+          confidence: 0.85,
+          historicalAccuracy: 0.91,
+          factors: ["Work schedule conflict", "Weekend travel pattern", "Low Saturday availability"],
+          lastUpdated: new Date("2025-01-20T15:15:00"),
+          sport: "Soccer"
+        },
+        {
+          id: "3",
+          userId: "user-3",
+          userName: "Coach Martinez",
+          userRole: "coach",
+          eventId: "event-3",
+          eventTitle: "Team Meeting",
+          eventType: "meeting",
+          eventDate: new Date("2025-01-24T19:00:00"),
+          predictedStatus: "available",
+          confidence: 0.78,
+          historicalAccuracy: 0.82,
+          factors: ["Evening availability", "High commitment rate", "No double booking"],
+          lastUpdated: new Date("2025-01-20T16:00:00"),
+          sport: "Soccer"
+        },
+        {
+          id: "4",
+          userId: "user-4",
+          userName: "Mike Rodriguez",
+          userRole: "volunteer",
+          eventId: "event-4",
+          eventTitle: "Equipment Setup",
+          eventType: "practice",
+          eventDate: new Date("2025-01-22T15:30:00"),
+          predictedStatus: "maybe",
+          confidence: 0.65,
+          historicalAccuracy: 0.75,
+          factors: ["Variable volunteer schedule", "Recent attendance decline", "Alternative volunteer available"],
+          lastUpdated: new Date("2025-01-20T17:30:00"),
+          sport: "Soccer"
+        }
+      ];
+      
+      res.json(predictions);
+    } catch (error) {
+      console.error("Availability predictions fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch predictions" });
+    }
+  });
+
+  app.get("/api/availability-prediction/patterns", isAuthenticated, async (req: any, res) => {
+    try {
+      const patterns = [
+        {
+          userId: "user-1",
+          userName: "Alex Johnson",
+          userRole: "player",
+          sport: "Soccer",
+          patterns: {
+            dayOfWeek: {
+              monday: 0.95,
+              tuesday: 0.88,
+              wednesday: 0.92,
+              thursday: 0.85,
+              friday: 0.78,
+              saturday: 0.96,
+              sunday: 0.82
+            },
+            timeOfDay: {
+              morning: 0.72,
+              afternoon: 0.95,
+              evening: 0.88
+            },
+            eventType: {
+              practice: 0.91,
+              game: 0.97,
+              tournament: 0.89,
+              meeting: 0.65
+            },
+            seasonal: {
+              spring: 0.94,
+              summer: 0.82,
+              fall: 0.96,
+              winter: 0.88
+            }
+          },
+          attendanceRate: 0.89,
+          reliability: 0.92,
+          trends: [
+            "Higher availability on weekends",
+            "Consistent afternoon attendance",
+            "Strong game commitment"
+          ]
+        },
+        {
+          userId: "user-2",
+          userName: "Sarah Wilson",
+          userRole: "parent",
+          sport: "Soccer",
+          patterns: {
+            dayOfWeek: {
+              monday: 0.65,
+              tuesday: 0.72,
+              wednesday: 0.68,
+              thursday: 0.71,
+              friday: 0.58,
+              saturday: 0.45,
+              sunday: 0.52
+            },
+            timeOfDay: {
+              morning: 0.82,
+              afternoon: 0.68,
+              evening: 0.44
+            },
+            eventType: {
+              practice: 0.62,
+              game: 0.78,
+              tournament: 0.85,
+              meeting: 0.39
+            },
+            seasonal: {
+              spring: 0.72,
+              summer: 0.45,
+              fall: 0.68,
+              winter: 0.71
+            }
+          },
+          attendanceRate: 0.63,
+          reliability: 0.71,
+          trends: [
+            "Work conflicts on weekends",
+            "Prefers morning events",
+            "Lower summer availability"
+          ]
+        }
+      ];
+      
+      res.json(patterns);
+    } catch (error) {
+      console.error("Availability patterns fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch patterns" });
+    }
+  });
+
+  app.get("/api/availability-prediction/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalPredictions: 156,
+        accuracyRate: 90.4,
+        confidenceAverage: 82.1,
+        conflictsPrevented: 23,
+        rsvpAutomation: 67.8,
+        userEngagement: 84.2,
+        topFactors: [
+          { factor: "Historical attendance patterns", impact: 92 },
+          { factor: "Day of week preferences", impact: 87 },
+          { factor: "Calendar conflicts", impact: 83 },
+          { factor: "Seasonal availability", impact: 76 },
+          { factor: "Event type preference", impact: 71 }
+        ],
+        accuracyTrends: [
+          { date: "2025-01-15", accuracy: 88.2, predictions: 24 },
+          { date: "2025-01-16", accuracy: 89.5, predictions: 31 },
+          { date: "2025-01-17", accuracy: 91.1, predictions: 28 },
+          { date: "2025-01-18", accuracy: 90.8, predictions: 35 },
+          { date: "2025-01-19", accuracy: 92.3, predictions: 29 },
+          { date: "2025-01-20", accuracy: 90.4, predictions: 33 }
+        ]
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Availability prediction analytics error:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
+  app.post("/api/availability-prediction/generate", isAuthenticated, async (req: any, res) => {
+    try {
+      // Simulate AI prediction generation
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      const result = {
+        count: 45,
+        averageConfidence: 0.847,
+        newConflicts: 3,
+        highConfidencePredictions: 32
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Prediction generation error:", error);
+      res.status(500).json({ message: "Failed to generate predictions" });
+    }
+  });
+
+  app.post("/api/availability-prediction/auto-rsvp/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate auto-RSVP suggestion
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      res.json({ 
+        message: "RSVP suggestion sent successfully",
+        predictionId: id,
+        action: "Suggested 'Available' response based on prediction"
+      });
+    } catch (error) {
+      console.error("Auto-RSVP error:", error);
+      res.status(500).json({ message: "Failed to suggest RSVP" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

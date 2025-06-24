@@ -26,6 +26,7 @@ import TranslationHub from "@/pages/translation-hub";
 import CommunicationLogs from "@/pages/communication-logs";
 import SmartScheduler from "@/pages/smart-scheduler";
 import CalendarSync from "@/pages/calendar-sync";
+import AvailabilityPrediction from "@/pages/availability-prediction";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -61,6 +62,7 @@ function AuthenticatedRouter() {
             <Route path="/communication-logs" component={CommunicationLogs} />
             <Route path="/smart-scheduler" component={SmartScheduler} />
             <Route path="/calendar-sync" component={CalendarSync} />
+            <Route path="/availability-prediction" component={AvailabilityPrediction} />
             <Route component={NotFound} />
           </Switch>
         </div>
