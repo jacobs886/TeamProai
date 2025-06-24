@@ -237,8 +237,8 @@ export default function Landing() {
             Ready to Transform Your Sports Management?
           </h3>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of sports organizations already using TeamPro.ai
-            to streamline their operations.
+            Join the revolution of simplified and free access to sports management.
+            Transform how your organization operates.
           </p>
           <Button 
             size="lg" 
