@@ -17,6 +17,7 @@ import AdminDashboard from "@/pages/admin";
 import Volunteers from "@/pages/volunteers";
 import Equipment from "@/pages/equipment";
 import ParentPortal from "@/pages/parent-portal";
+import Players from "@/pages/players";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -43,6 +44,7 @@ function AuthenticatedRouter() {
             <Route path="/volunteers" component={Volunteers} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/parent-portal" component={ParentPortal} />
+            <Route path="/players" component={Players} />
             <Route component={NotFound} />
           </Switch>
         </div>

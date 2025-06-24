@@ -46,32 +46,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const players = [
         {
           id: "1",
-          firstName: "John",
-          lastName: "Smith",
+          firstName: "Alex",
+          lastName: "Johnson",
           dateOfBirth: "2010-05-15",
-          position: "Forward",
-          jerseyNumber: 10,
-          email: "john.smith@email.com",
+          position: "Midfielder",
+          jerseyNumber: 12,
+          email: "alex.johnson@email.com",
           phone: "(555) 123-4567",
           teamId: "team1",
           guardians: [
             {
               id: "g1",
-              firstName: "Michael",
-              lastName: "Smith",
-              email: "michael.smith@email.com",
+              firstName: "Sarah",
+              lastName: "Johnson",
+              email: "sarah.johnson@email.com",
               phone: "(555) 123-4567",
               relationship: "parent",
               isEmergencyContact: true
             }
           ],
-          emergencyContact: {
-            name: "Michael Smith",
-            phone: "(555) 123-4567",
-            relationship: "parent"
-          },
+          medicalNotes: "Mild asthma - has inhaler",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: "2",
+          firstName: "Emma",
+          lastName: "Davis",
+          dateOfBirth: "2011-08-22",
+          position: "Forward",
+          jerseyNumber: 7,
+          email: "emma.davis@email.com",
+          phone: "(555) 234-5678",
+          teamId: "team1",
+          guardians: [
+            {
+              id: "g2",
+              firstName: "Michael",
+              lastName: "Davis",
+              email: "michael.davis@email.com",
+              phone: "(555) 234-5678",
+              relationship: "parent",
+              isEmergencyContact: true
+            },
+            {
+              id: "g3",
+              firstName: "Lisa",
+              lastName: "Davis",
+              email: "lisa.davis@email.com",
+              phone: "(555) 234-5679",
+              relationship: "parent",
+              isEmergencyContact: false
+            }
+          ],
           medicalNotes: "No known allergies",
-          photoUrl: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: "3",
+          firstName: "Mason",
+          lastName: "Rodriguez",
+          dateOfBirth: "2010-12-03",
+          position: "Defender",
+          jerseyNumber: 4,
+          email: "mason.rodriguez@email.com",
+          phone: "(555) 345-6789",
+          teamId: "team1",
+          guardians: [
+            {
+              id: "g4",
+              firstName: "Carlos",
+              lastName: "Rodriguez",
+              email: "carlos.rodriguez@email.com",
+              phone: "(555) 345-6789",
+              relationship: "parent",
+              isEmergencyContact: true
+            }
+          ],
+          medicalNotes: "Lactose intolerant",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         }
@@ -80,6 +133,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching players:", error);
       res.status(500).json({ message: "Failed to fetch players" });
+    }
+  });
+
+  app.post('/api/players', isAuthenticated, async (req, res) => {
+    try {
+      const playerData = req.body;
+      // In a real implementation, save to database
+      const newPlayer = {
+        id: Date.now().toString(),
+        ...playerData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      res.json(newPlayer);
+    } catch (error) {
+      console.error("Error creating player:", error);
+      res.status(500).json({ message: "Failed to create player" });
+    }
+  });
+
+  app.get('/api/players/ai-insights', isAuthenticated, async (req, res) => {
+    try {
+      const insights = {
+        teamBalance: 85,
+        avgSkillLevel: 7.2,
+        completionRate: 94,
+        improvementRate: 12,
+        topPerformers: 5,
+        needsSupport: 3
+      };
+      res.json(insights);
+    } catch (error) {
+      console.error("Error fetching player AI insights:", error);
+      res.status(500).json({ message: "Failed to fetch player AI insights" });
     }
   });
 
