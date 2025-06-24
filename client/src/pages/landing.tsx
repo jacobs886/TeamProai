@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import DevLogin from "@/components/auth/dev-login";
 import { Trophy, Users, Calendar, Building, CreditCard, Bell, Shield, BarChart3, Clock } from "lucide-react";
 
 export default function Landing() {
+  const [showDevLogin, setShowDevLogin] = useState(false);
   return (
     <div className="min-h-screen bg-neutral-light">
       {/* Header */}
@@ -15,12 +18,21 @@ export default function Landing() {
               </div>
               <h1 className="ml-3 text-2xl font-bold text-gray-900">TeamPro.ai</h1>
             </div>
-            <Button onClick={() => {
-              console.log("Attempting login...");
-              window.location.href = "/api/login";
-            }}>
-              Sign In
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowDevLogin(true)}
+              >
+                Dev Login
+              </Button>
+              <Button onClick={() => {
+                console.log("Attempting login...");
+                window.location.href = "/api/login";
+              }}>
+                Sign In
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -272,6 +284,9 @@ export default function Landing() {
           </p>
         </div>
       </footer>
+
+      {/* Development Login Modal */}
+      <DevLogin open={showDevLogin} onOpenChange={setShowDevLogin} />
     </div>
   );
 }
