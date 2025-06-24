@@ -94,6 +94,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get admin stats
+  app.get('/api/admin/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!['super_admin', 'admin_operations'].includes(currentUser?.role || '')) {
+        return res.status(403).json({ message: "Access denied. Admin privileges required." });
+      }
+
+      const stats = await storage.getDashboardStats(userId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ message: "Failed to fetch admin stats" });
+    }
+  });
+
   // Dashboard routes
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
