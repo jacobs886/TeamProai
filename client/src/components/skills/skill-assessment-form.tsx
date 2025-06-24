@@ -156,6 +156,10 @@ export default function SkillAssessmentForm({
     });
   };
 
+  const currentSkills = selectedCategory 
+    ? skillCategories.find(cat => cat.id === selectedCategory)?.skills || []
+    : [];
+
   const getScoreDescription = (score: number) => {
     const descriptions = {
       1: "Needs Significant Development",
