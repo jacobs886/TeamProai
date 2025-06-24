@@ -93,7 +93,7 @@ export default function HamburgerNav() {
     {
       title: "Smart Scheduling",
       items: [
-        { title: "AI Optimizer", icon: Zap, href: "/ai/scheduling", description: "Conflict detection", isNew: true, isPremium: true },
+        { title: "AI Optimizer", icon: Zap, href: "/smart-scheduler", description: "Smart scheduling with conflict detection", isNew: true, isPremium: true },
         { title: "Calendar Sync", icon: Calendar, href: "/calendar-sync", description: "Google/Apple integration" },
         { title: "Availability Prediction", icon: TrendingUp, href: "/ai/availability", description: "Historical patterns", isPremium: true },
       ]
