@@ -24,17 +24,19 @@ function AuthenticatedRouter() {
       <Sidebar />
       <div className="flex-1 overflow-hidden">
         <MobileHeader />
-        <Switch>
-          <Route path="/" component={Dashboard} />
-          <Route path="/teams" component={Teams} />
-          <Route path="/schedule" component={Schedule} />
-          <Route path="/facilities" component={Facilities} />
-          <Route path="/payments" component={Payments} />
-          <Route path="/notifications" component={Notifications} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/admin" component={AdminDashboard} />
-          <Route component={NotFound} />
-        </Switch>
+        <div className="flex-1 overflow-hidden">
+          <Switch>
+            <Route path="/" component={Dashboard} />
+            <Route path="/teams" component={Teams} />
+            <Route path="/schedule" component={Schedule} />
+            <Route path="/facilities" component={Facilities} />
+            <Route path="/payments" component={Payments} />
+            <Route path="/notifications" component={Notifications} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/admin" component={AdminDashboard} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
       </div>
       <MobileBottomNav />
     </div>

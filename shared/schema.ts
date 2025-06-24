@@ -352,6 +352,107 @@ export const communicationLogs = pgTable("communication_logs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Advanced Facility Booking System
+export const facilityBookings = pgTable("facility_bookings", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id),
+  eventId: integer("event_id").references(() => events.id),
+  bookedBy: varchar("booked_by").references(() => users.id).notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+  status: varchar("status", { length: 20 }).default("confirmed"), // confirmed, pending, cancelled, completed
+  recurringPattern: varchar("recurring_pattern", { length: 50 }), // none, daily, weekly, monthly
+  recurringUntil: timestamp("recurring_until"),
+  attendeeCount: integer("attendee_count"),
+  equipmentNeeded: jsonb("equipment_needed"), // Array of equipment requirements
+  specialRequirements: text("special_requirements"),
+  cost: decimal("cost", { precision: 8, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }).default("pending"), // pending, paid, refunded
+  confirmationCode: varchar("confirmation_code", { length: 50 }),
+  checkedInAt: timestamp("checked_in_at"),
+  checkedOutAt: timestamp("checked_out_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const facilityAvailability = pgTable("facility_availability", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  dayOfWeek: integer("day_of_week").notNull(), // 0-6 (Sunday-Saturday)
+  startTime: varchar("start_time", { length: 8 }).notNull(), // HH:MM:SS format
+  endTime: varchar("end_time", { length: 8 }).notNull(),
+  isAvailable: boolean("is_available").default(true),
+  maxBookingsPerSlot: integer("max_bookings_per_slot").default(1),
+  advanceBookingDays: integer("advance_booking_days").default(30),
+  minimumBookingDuration: integer("minimum_booking_duration").default(60), // minutes
+  maximumBookingDuration: integer("maximum_booking_duration").default(480), // minutes
+  bufferTimeBefore: integer("buffer_time_before").default(0), // minutes
+  bufferTimeAfter: integer("buffer_time_after").default(0), // minutes
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const facilityUnavailability = pgTable("facility_unavailability", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+  reason: varchar("reason", { length: 100 }), // maintenance, private_event, holiday, etc.
+  description: text("description"),
+  isRecurring: boolean("is_recurring").default(false),
+  recurringPattern: varchar("recurring_pattern", { length: 50 }),
+  createdBy: varchar("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const bookingConflicts = pgTable("booking_conflicts", {
+  id: serial("id").primaryKey(),
+  bookingId: integer("booking_id").references(() => facilityBookings.id).notNull(),
+  conflictingBookingId: integer("conflicting_booking_id").references(() => facilityBookings.id),
+  conflictType: varchar("conflict_type", { length: 50 }).notNull(), // time_overlap, resource_conflict, capacity_exceeded
+  severity: varchar("severity", { length: 20 }).default("medium"), // low, medium, high, critical
+  description: text("description"),
+  isResolved: boolean("is_resolved").default(false),
+  resolvedBy: varchar("resolved_by").references(() => users.id),
+  resolvedAt: timestamp("resolved_at"),
+  resolution: text("resolution"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const facilityEquipment = pgTable("facility_equipment", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
+  category: varchar("category", { length: 50 }), // audio_visual, sports, furniture, technology
+  quantity: integer("quantity").default(1),
+  condition: varchar("condition", { length: 20 }).default("good"), // excellent, good, fair, poor, out_of_order
+  requiresTraining: boolean("requires_training").default(false),
+  costPerHour: decimal("cost_per_hour", { precision: 8, scale: 2 }),
+  description: text("description"),
+  maintenanceSchedule: jsonb("maintenance_schedule"),
+  lastMaintenanceDate: date("last_maintenance_date"),
+  nextMaintenanceDate: date("next_maintenance_date"),
+  isAvailable: boolean("is_available").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const realTimeBookingUpdates = pgTable("real_time_booking_updates", {
+  id: serial("id").primaryKey(),
+  bookingId: integer("booking_id").references(() => facilityBookings.id).notNull(),
+  updateType: varchar("update_type", { length: 50 }).notNull(), // created, modified, cancelled, checked_in, checked_out
+  previousData: jsonb("previous_data"),
+  newData: jsonb("new_data"),
+  updatedBy: varchar("updated_by").references(() => users.id).notNull(),
+  timestamp: timestamp("timestamp").defaultNow(),
+  broadcastChannels: jsonb("broadcast_channels"), // Array of channels to notify
+  notificationSent: boolean("notification_sent").default(false),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   ownedTeams: many(teams),
@@ -547,3 +648,17 @@ export type VideoAnalysis = typeof videoAnalysis.$inferSelect;
 export type InsertVideoAnalysis = typeof videoAnalysis.$inferInsert;
 export type FanEngagement = typeof fanEngagement.$inferSelect;
 export type InsertFanEngagement = typeof fanEngagement.$inferInsert;
+
+// Advanced Facility Booking Types
+export type FacilityBooking = typeof facilityBookings.$inferSelect;
+export type InsertFacilityBooking = typeof facilityBookings.$inferInsert;
+export type FacilityAvailability = typeof facilityAvailability.$inferSelect;
+export type InsertFacilityAvailability = typeof facilityAvailability.$inferInsert;
+export type FacilityUnavailability = typeof facilityUnavailability.$inferSelect;
+export type InsertFacilityUnavailability = typeof facilityUnavailability.$inferInsert;
+export type BookingConflict = typeof bookingConflicts.$inferSelect;
+export type InsertBookingConflict = typeof bookingConflicts.$inferInsert;
+export type FacilityEquipment = typeof facilityEquipment.$inferSelect;
+export type InsertFacilityEquipment = typeof facilityEquipment.$inferInsert;
+export type RealTimeBookingUpdate = typeof realTimeBookingUpdates.$inferSelect;
+export type InsertRealTimeBookingUpdate = typeof realTimeBookingUpdates.$inferInsert;
