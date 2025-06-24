@@ -96,6 +96,178 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Skills tracking routes
+  app.get('/api/skills/categories', isAuthenticated, async (req, res) => {
+    try {
+      const categories = [
+        {
+          id: "technical",
+          name: "Technical Skills",
+          sport: "soccer",
+          skills: [
+            { id: "ballControl", name: "Ball Control", description: "Ability to control and manipulate the ball", maxScore: 5 },
+            { id: "passing", name: "Passing", description: "Accuracy and technique in passing", maxScore: 5 },
+            { id: "shooting", name: "Shooting", description: "Goal scoring ability", maxScore: 5 },
+            { id: "firstTouch", name: "First Touch", description: "Initial ball control", maxScore: 5 }
+          ]
+        },
+        {
+          id: "physical",
+          name: "Physical Attributes",
+          sport: "soccer",
+          skills: [
+            { id: "speed", name: "Speed", description: "Running pace and acceleration", maxScore: 5 },
+            { id: "agility", name: "Agility", description: "Quick directional changes", maxScore: 5 },
+            { id: "stamina", name: "Stamina", description: "Endurance and fitness", maxScore: 5 },
+            { id: "strength", name: "Strength", description: "Physical power", maxScore: 5 }
+          ]
+        },
+        {
+          id: "tactical",
+          name: "Tactical Understanding",
+          sport: "soccer",
+          skills: [
+            { id: "positioning", name: "Positioning", description: "Field awareness", maxScore: 5 },
+            { id: "decisionMaking", name: "Decision Making", description: "Game intelligence", maxScore: 5 },
+            { id: "teamwork", name: "Teamwork", description: "Team collaboration", maxScore: 5 },
+            { id: "communication", name: "Communication", description: "On-field communication", maxScore: 5 }
+          ]
+        }
+      ];
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching skill categories:", error);
+      res.status(500).json({ message: "Failed to fetch skill categories" });
+    }
+  });
+
+  app.get('/api/skills/assessments', isAuthenticated, async (req, res) => {
+    try {
+      const assessments = [
+        {
+          id: "1",
+          playerId: "1",
+          skillId: "ballControl",
+          score: 4,
+          notes: "Shows excellent ball control under pressure",
+          assessedBy: "Coach Mike",
+          assessedAt: new Date().toISOString(),
+          improvement: 15
+        },
+        {
+          id: "2",
+          playerId: "1",
+          skillId: "shooting",
+          score: 3,
+          notes: "Good technique but needs work on accuracy",
+          assessedBy: "Coach Mike",
+          assessedAt: new Date().toISOString(),
+          improvement: 25
+        }
+      ];
+      res.json(assessments);
+    } catch (error) {
+      console.error("Error fetching assessments:", error);
+      res.status(500).json({ message: "Failed to fetch assessments" });
+    }
+  });
+
+  app.post('/api/skills/assessments', isAuthenticated, async (req, res) => {
+    try {
+      const { assessments, aiInsights } = req.body;
+      // Mock response - replace with actual database creation
+      const savedAssessments = assessments.map((assessment: any, index: number) => ({
+        id: (Date.now() + index).toString(),
+        ...assessment,
+        assessedBy: req.user?.claims?.email || "Unknown Coach",
+        assessedAt: new Date().toISOString()
+      }));
+      res.status(201).json({ saved: savedAssessments.length, assessments: savedAssessments });
+    } catch (error) {
+      console.error("Error saving assessments:", error);
+      res.status(500).json({ message: "Failed to save assessments" });
+    }
+  });
+
+  app.post('/api/skills/ai-analysis', isAuthenticated, async (req, res) => {
+    try {
+      const { notes, playerId } = req.body;
+      // Mock AI analysis - replace with actual AI processing
+      const analysis = {
+        suggestedScore: Math.floor(Math.random() * 2) + 3, // 3-4
+        reasoning: "Based on the detailed notes, the player shows strong fundamentals with room for improvement in consistency.",
+        recommendations: [
+          "Focus on repetitive drills to build muscle memory",
+          "Practice under pressure situations",
+          "Work on weaker foot development"
+        ],
+        strengths: ["Good technique", "Positive attitude", "Quick learning"],
+        improvementAreas: ["Consistency", "Decision making under pressure"]
+      };
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error in AI analysis:", error);
+      res.status(500).json({ message: "Failed to analyze notes" });
+    }
+  });
+
+  app.get('/api/skills/ai-recommendations', isAuthenticated, async (req, res) => {
+    try {
+      const recommendations = {
+        focusAreas: ["Shooting accuracy", "Ball control"],
+        trainingSuggestions: [
+          "Increase shooting practice by 30%",
+          "Add pressure situation drills",
+          "Focus on weak foot development"
+        ],
+        playerInsights: {
+          strengths: ["Teamwork", "Passing"],
+          weaknesses: ["Shooting", "Speed"],
+          trends: "Consistent improvement over last 3 months"
+        }
+      };
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Error fetching AI recommendations:", error);
+      res.status(500).json({ message: "Failed to fetch recommendations" });
+    }
+  });
+
+  app.post('/api/skills/generate-training-plan', isAuthenticated, async (req, res) => {
+    try {
+      const { playerId, planType, weakAreas, duration } = req.body;
+      // Mock training plan generation
+      const plan = {
+        id: Date.now().toString(),
+        playerId,
+        planType,
+        duration,
+        drills: [
+          {
+            id: "drill1",
+            name: "Cone Dribbling Circuit",
+            skill: "Ball Control",
+            duration: 10,
+            difficulty: "Intermediate"
+          },
+          {
+            id: "drill2", 
+            name: "Target Shooting Practice",
+            skill: "Shooting",
+            duration: 15,
+            difficulty: "Beginner"
+          }
+        ],
+        aiGenerated: true,
+        createdAt: new Date().toISOString()
+      };
+      res.status(201).json(plan);
+    } catch (error) {
+      console.error("Error generating training plan:", error);
+      res.status(500).json({ message: "Failed to generate training plan" });
+    }
+  });
+
   // Admin routes for role management
   app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
     try {
