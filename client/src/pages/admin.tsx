@@ -11,6 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import AiPromptHeader from "@/components/layout/ai-prompt-header";
+import IntelligentFormBuilder from "@/components/admin/intelligent-form-builder";
+import PlayerRosterManager from "@/components/admin/player-roster-manager";
 import { 
   Users, 
   Shield, 
@@ -22,7 +25,9 @@ import {
   BarChart3,
   AlertTriangle,
   CheckCircle,
-  XCircle
+  XCircle,
+  FileText,
+  UserPlus
 } from "lucide-react";
 import { isUnauthorizedError } from "@/lib/authUtils";
 

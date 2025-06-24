@@ -24,6 +24,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Player routes
+  app.get('/api/players', isAuthenticated, async (req, res) => {
+    try {
+      // Mock data for now - replace with actual database calls
+      const players = [
+        {
+          id: "1",
+          firstName: "John",
+          lastName: "Smith",
+          dateOfBirth: "2010-05-15",
+          position: "Forward",
+          jerseyNumber: 10,
+          email: "john.smith@email.com",
+          phone: "(555) 123-4567",
+          teamId: "team1",
+          guardians: [
+            {
+              id: "g1",
+              firstName: "Michael",
+              lastName: "Smith",
+              email: "michael.smith@email.com",
+              phone: "(555) 123-4567",
+              relationship: "parent",
+              isEmergencyContact: true
+            }
+          ],
+          emergencyContact: {
+            name: "Michael Smith",
+            phone: "(555) 123-4567",
+            relationship: "parent"
+          },
+          medicalNotes: "No known allergies",
+          photoUrl: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ];
+      res.json(players);
+    } catch (error) {
+      console.error("Error fetching players:", error);
+      res.status(500).json({ message: "Failed to fetch players" });
+    }
+  });
+
+  app.post('/api/players', isAuthenticated, async (req, res) => {
+    try {
+      const playerData = req.body;
+      // Mock response - replace with actual database creation
+      const newPlayer = {
+        id: Date.now().toString(),
+        ...playerData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      res.status(201).json(newPlayer);
+    } catch (error) {
+      console.error("Error creating player:", error);
+      res.status(500).json({ message: "Failed to create player" });
+    }
+  });
+
+  app.post('/api/players/import', isAuthenticated, async (req, res) => {
+    try {
+      // Mock CSV import - in real implementation, parse the uploaded file
+      const imported = Math.floor(Math.random() * 20) + 5;
+      res.json({ imported, message: `Successfully imported ${imported} players` });
+    } catch (error) {
+      console.error("Error importing players:", error);
+      res.status(500).json({ message: "Failed to import players" });
+    }
+  });
+
   // Admin routes for role management
   app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
     try {
