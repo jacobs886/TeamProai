@@ -86,7 +86,7 @@ export default function HamburgerNav() {
       items: [
         { title: "Smart Chatbots", icon: Bot, href: "/smart-chatbots", description: "AI assistant trained on team data", isNew: true, isPremium: true },
         { title: "Message Analysis", icon: Brain, href: "/message-analysis", description: "Intent & sentiment detection", isPremium: true },
-        { title: "Translation Hub", icon: Globe, href: "/ai/translation", description: "Multilingual support", isPremium: true },
+        { title: "Translation Hub", icon: Globe, href: "/translation-hub", description: "50+ languages with AI context", isPremium: true },
         { title: "Communication Logs", icon: MessageSquare, href: "/communication", description: "Message tracking" },
       ]
     },
