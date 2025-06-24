@@ -107,9 +107,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: email,
         firstName: 'Test',
         lastName: 'Admin',
-        profileImageUrl: null,
-        role: 'super_admin'
+        profileImageUrl: null
       });
+
+      // Update role separately since UpsertUser might not include role
+      const updatedUser = await storage.updateUserRole(testUser.id, 'super_admin');
+      console.log('User role updated:', updatedUser);
 
       console.log('Test user created:', testUser);
 
@@ -133,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Test login successful');
         res.json({ 
           message: 'Test admin user created and logged in',
-          user: testUser,
+          user: updatedUser || testUser,
           redirect: '/admin'
         });
       });

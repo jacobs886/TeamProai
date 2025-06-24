@@ -13,22 +13,13 @@ import Facilities from "@/pages/facilities";
 import Payments from "@/pages/payments";
 import Notifications from "@/pages/notifications";
 import Settings from "@/pages/settings";
+import AdminDashboard from "@/pages/admin";
+import AuthBypass from "@/pages/auth-bypass";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
 
-function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading || !isAuthenticated) {
-    return (
-      <Switch>
-        <Route path="/" component={Landing} />
-        <Route component={NotFound} />
-      </Switch>
-    );
-  }
-
+function AuthenticatedRouter() {
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -42,6 +33,7 @@ function Router() {
           <Route path="/payments" component={Payments} />
           <Route path="/notifications" component={Notifications} />
           <Route path="/settings" component={Settings} />
+          <Route path="/admin" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>
       </div>
@@ -50,12 +42,30 @@ function Router() {
   );
 }
 
+function AppRouter() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  return (
+    <Switch>
+      <Route path="/auth-bypass" component={AuthBypass} />
+      {!isLoading && isAuthenticated ? (
+        <Route path="/*" component={AuthenticatedRouter} />
+      ) : (
+        <>
+          <Route path="/" component={Landing} />
+          <Route component={NotFound} />
+        </>
+      )}
+    </Switch>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <AppRouter />
       </TooltipProvider>
     </QueryClientProvider>
   );
