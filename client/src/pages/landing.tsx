@@ -15,12 +15,23 @@ export default function Landing() {
               </div>
               <h1 className="ml-3 text-2xl font-bold text-gray-900">TeamPro.ai</h1>
             </div>
-            <Button onClick={() => {
-              console.log("Attempting login...");
-              window.location.href = "/api/login";
-            }}>
-              Sign In
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => {
+                console.log("Attempting login...");
+                window.location.href = "/api/login";
+              }}>
+                Sign In (OAuth)
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  console.log("Using auth bypass...");
+                  window.location.href = "/auth-bypass";
+                }}
+              >
+                Admin Bypass
+              </Button>
+            </div>
           </div>
         </div>
       </header>

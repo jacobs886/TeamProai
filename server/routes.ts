@@ -91,6 +91,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Temporary bypass for testing admin features without OAuth
+  app.post('/api/debug/bypass-auth', async (req: any, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: 'Email required' });
+      }
+
+      console.log('Creating test user for admin bypass:', email);
+      
+      // Create a test user directly
+      const testUser = await storage.upsertUser({
+        id: 'test-admin-' + Date.now(),
+        email: email,
+        firstName: 'Test',
+        lastName: 'Admin',
+        profileImageUrl: null,
+        role: 'super_admin'
+      });
+
+      console.log('Test user created:', testUser);
+
+      // Create a test session manually
+      const sessionUser = {
+        claims: {
+          sub: testUser.id,
+          email: testUser.email,
+          first_name: testUser.firstName,
+          last_name: testUser.lastName
+        },
+        expires_at: Math.floor(Date.now() / 1000) + 3600 // 1 hour
+      };
+
+      req.login(sessionUser, (err: any) => {
+        if (err) {
+          console.error('Test login failed:', err);
+          return res.status(500).json({ error: 'Login failed' });
+        }
+        
+        console.log('Test login successful');
+        res.json({ 
+          message: 'Test admin user created and logged in',
+          user: testUser,
+          redirect: '/admin'
+        });
+      });
+
+    } catch (error) {
+      console.error('Bypass auth error:', error);
+      res.status(500).json({ error: 'Failed to create test user' });
+    }
+  });
+
   // Setup initial super admin (one-time setup)
   app.post('/api/setup/super-admin', async (req: any, res) => {
     try {
