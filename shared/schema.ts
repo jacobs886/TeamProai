@@ -331,3 +331,20 @@ export type Payment = typeof payments.$inferSelect;
 export type TeamMessage = typeof teamMessages.$inferSelect;
 export type GameStats = typeof gameStats.$inferSelect;
 export type CalendarSync = typeof calendarSync.$inferSelect;
+
+// Youth Team Management Types
+export type Guardian = typeof guardians.$inferSelect;
+export type InsertGuardian = typeof guardians.$inferInsert;
+export type Player = typeof players.$inferSelect;
+export type InsertPlayer = typeof players.$inferInsert;
+export type PlayerGuardian = typeof playerGuardians.$inferSelect;
+export type SkillsTracking = typeof skillsTracking.$inferSelect;
+export type InsertSkillsTracking = typeof skillsTracking.$inferInsert;
+export type Equipment = typeof equipment.$inferSelect;
+export type InsertEquipment = typeof equipment.$inferInsert;
+export type Volunteer = typeof volunteers.$inferSelect;
+export type InsertVolunteer = typeof volunteers.$inferInsert;
+export type PlayerDevelopment = typeof playerDevelopment.$inferSelect;
+export type InsertPlayerDevelopment = typeof playerDevelopment.$inferInsert;
+export type CommunicationLog = typeof communicationLogs.$inferSelect;
+export type InsertCommunicationLog = typeof communicationLogs.$inferInsert;
