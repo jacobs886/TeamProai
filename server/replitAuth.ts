@@ -78,10 +78,17 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
-    updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
-    verified(null, user);
+    try {
+      const user = {};
+      updateUserSession(user, tokens);
+      console.log("Auth claims:", tokens.claims());
+      await upsertUser(tokens.claims());
+      console.log("User upserted successfully");
+      verified(null, user);
+    } catch (error) {
+      console.error("Auth verification error:", error);
+      verified(error);
+    }
   };
 
   for (const domain of process.env
@@ -102,14 +109,26 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    const hostname = req.hostname;
+    const domains = process.env.REPLIT_DOMAINS!.split(",");
+    const targetDomain = domains.find(domain => hostname.includes(domain.split('-')[0])) || domains[0];
+    
+    console.log("Login attempt - hostname:", hostname, "using domain:", targetDomain);
+    
+    passport.authenticate(`replitauth:${targetDomain}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    const hostname = req.hostname;
+    const domains = process.env.REPLIT_DOMAINS!.split(",");
+    const targetDomain = domains.find(domain => hostname.includes(domain.split('-')[0])) || domains[0];
+    
+    console.log("Callback received - hostname:", hostname, "using domain:", targetDomain);
+    
+    passport.authenticate(`replitauth:${targetDomain}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
@@ -129,9 +148,14 @@ export async function setupAuth(app: Express) {
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   const user = req.user as any;
+  console.log("Auth check - isAuthenticated:", req.isAuthenticated(), "user:", !!user);
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  if (!req.isAuthenticated() || !user) {
     return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  if (!user.expires_at) {
+    return res.status(401).json({ message: "Unauthorized - missing expires_at" });
   }
 
   const now = Math.floor(Date.now() / 1000);
