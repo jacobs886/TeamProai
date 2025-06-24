@@ -17,6 +17,7 @@ import AdminDashboard from "@/pages/admin";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
+import FloatingChatbot from "@/components/chat/floating-chatbot";
 
 function AuthenticatedRouter() {
   return (
@@ -39,6 +40,7 @@ function AuthenticatedRouter() {
         </div>
       </div>
       <MobileBottomNav />
+      <FloatingChatbot />
     </div>
   );
 }
