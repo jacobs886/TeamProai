@@ -166,9 +166,12 @@ export default function Teams() {
 
       {/* Team Form Modal */}
       <Dialog open={showTeamForm} onOpenChange={setShowTeamForm}>
-        <DialogContent>
+        <DialogContent aria-describedby="team-form-description">
           <DialogHeader>
             <DialogTitle>Create New Team</DialogTitle>
+            <div id="team-form-description" className="text-sm text-gray-600">
+              Create a new team for your organization. Fill in the team details below.
+            </div>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -189,7 +192,12 @@ export default function Teams() {
             </div>
             <div>
               <label className="text-sm font-medium">Sport</label>
-              <Input name="sport" required />
+              <select name="sport" required className="w-full p-2 border rounded-md">
+                <option value="">Select a sport</option>
+                <option value="basketball">Basketball</option>
+                <option value="volleyball">Volleyball</option>
+                <option value="baseball">Baseball</option>
+              </select>
             </div>
             <div>
               <label className="text-sm font-medium">Description</label>

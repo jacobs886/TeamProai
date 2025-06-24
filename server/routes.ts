@@ -789,12 +789,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/teams', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const teamData = insertTeamSchema.parse({ ...req.body, ownerId: userId });
+      console.log("Creating team with data:", req.body, "User ID:", userId);
+      
+      // Validate and sanitize sport field
+      const sportMapping: { [key: string]: string } = {
+        'Basketball': 'basketball',
+        'Volleyball': 'volleyball', 
+        'Baseball': 'baseball',
+        'basketball': 'basketball',
+        'volleyball': 'volleyball',
+        'baseball': 'baseball'
+      };
+      
+      const normalizedSport = sportMapping[req.body.sport] || req.body.sport?.toLowerCase();
+      
+      const teamData = insertTeamSchema.parse({ 
+        ...req.body, 
+        sport: normalizedSport,
+        ownerId: userId 
+      });
+      
       const team = await storage.createTeam(teamData);
       res.json(team);
     } catch (error) {
       console.error("Error creating team:", error);
-      res.status(400).json({ message: "Failed to create team" });
+      if (error.name === 'ZodError') {
+        console.error("Validation errors:", error.errors);
+        res.status(400).json({ 
+          message: "Validation failed", 
+          errors: error.errors 
+        });
+      } else {
+        res.status(400).json({ message: "Failed to create team" });
+      }
     }
   });
 
