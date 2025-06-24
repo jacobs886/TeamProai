@@ -20,6 +20,7 @@ import ParentPortal from "@/pages/parent-portal";
 import Players from "@/pages/players";
 import Skills from "@/pages/skills";
 import Guardians from "@/pages/guardians";
+import SmartChatbots from "@/pages/smart-chatbots";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -49,6 +50,7 @@ function AuthenticatedRouter() {
             <Route path="/players" component={Players} />
             <Route path="/skills" component={Skills} />
             <Route path="/guardians" component={Guardians} />
+            <Route path="/smart-chatbots" component={SmartChatbots} />
             <Route component={NotFound} />
           </Switch>
         </div>
