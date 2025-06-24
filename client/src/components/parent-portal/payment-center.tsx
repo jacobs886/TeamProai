@@ -481,12 +481,15 @@ export default function PaymentCenter({ childId, aiInsights }: PaymentCenterProp
       {/* Payment Detail Modal */}
       {selectedPayment && (
         <Dialog open={!!selectedPayment} onOpenChange={() => setSelectedPayment(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl" aria-describedby="payment-details-description">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <Receipt className="h-5 w-5" />
                 <span>Payment Details</span>
               </DialogTitle>
+              <div id="payment-details-description" className="sr-only">
+                View detailed payment information including amount, due date, and payment history.
+              </div>
             </DialogHeader>
             
             <div className="space-y-4">

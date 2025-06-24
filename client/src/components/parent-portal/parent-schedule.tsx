@@ -435,12 +435,15 @@ export default function ParentSchedule({ childId, aiInsights }: ParentSchedulePr
       {/* Event Detail Modal */}
       {selectedEvent && (
         <Dialog open={!!selectedEvent} onOpenChange={() => setSelectedEvent(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl" aria-describedby="event-details-description">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5" />
                 <span>{selectedEvent.title}</span>
               </DialogTitle>
+              <div id="event-details-description" className="sr-only">
+                View detailed event information including time, location, and RSVP options.
+              </div>
             </DialogHeader>
             
             <div className="space-y-4">

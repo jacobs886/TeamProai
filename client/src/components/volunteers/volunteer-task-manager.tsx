@@ -480,13 +480,16 @@ export default function VolunteerTaskManager({ volunteers, tasks, aiInsights }: 
       {/* Task Detail Modal */}
       {selectedTask && (
         <Dialog open={!!selectedTask} onOpenChange={() => setSelectedTask(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="task-details-description">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5" />
                 <span>{selectedTask.title}</span>
                 {getStatusIcon(selectedTask.status)}
               </DialogTitle>
+              <div id="task-details-description" className="sr-only">
+                View detailed volunteer task information including requirements, schedule, and assignment status.
+              </div>
             </DialogHeader>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
@@ -565,9 +568,12 @@ export default function VolunteerTaskManager({ volunteers, tasks, aiInsights }: 
 
       {/* Create Task Modal */}
       <Dialog open={showCreateTask} onOpenChange={setShowCreateTask}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl" aria-describedby="create-task-description">
           <DialogHeader>
             <DialogTitle>Create New Volunteer Task</DialogTitle>
+            <div id="create-task-description" className="sr-only">
+              Create a new volunteer task with details including requirements, skills needed, and scheduling.
+            </div>
           </DialogHeader>
           <CreateTaskForm 
             onSubmit={handleCreateTask}
