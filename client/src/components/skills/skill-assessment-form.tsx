@@ -199,7 +199,7 @@ export default function SkillAssessmentForm({
     ]
   };
 
-  const currentSkills = selectedCategory ? mockSkills[selectedCategory as keyof typeof mockSkills] || [] : [];
+  const availableSkills = selectedCategory ? mockSkills[selectedCategory as keyof typeof mockSkills] || [] : [];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
