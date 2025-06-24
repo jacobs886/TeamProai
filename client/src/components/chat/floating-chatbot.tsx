@@ -212,19 +212,19 @@ export default function FloatingChatbot() {
 
   if (!isOpen) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-4 right-4 z-40">
         <Button
           onClick={() => setIsOpen(true)}
           className={`
-            relative w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 
-            hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl 
+            relative w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 
+            hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg 
             transition-all duration-300 hover:scale-105
             ${hasUnread ? 'animate-pulse' : ''}
           `}
         >
-          <MessageCircle className="h-6 w-6 text-white" />
+          <MessageCircle className="h-4 w-4 text-white" />
           {hasUnread && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
           )}
         </Button>
       </div>
@@ -232,22 +232,22 @@ export default function FloatingChatbot() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 z-40">
       <Card className={`
-        w-96 shadow-2xl border-0 transition-all duration-300
-        ${isMinimized ? 'h-16' : 'h-[500px]'}
+        w-80 shadow-xl border-0 transition-all duration-300
+        ${isMinimized ? 'h-12' : 'h-[400px]'}
       `}>
         {/* Header */}
-        <CardHeader className="p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center justify-between">
+        <CardHeader className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
+          <CardTitle className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-2">
               <div className="relative">
-                <Avatar className="w-8 h-8 bg-white/20">
+                <Avatar className="w-6 h-6 bg-white/20">
                   <AvatarFallback className="bg-white/20 text-white">
-                    <Brain className="h-4 w-4" />
+                    <Brain className="h-3 w-3" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-green-400 rounded-full border border-white"></div>
               </div>
               <div>
                 <span className="font-medium text-sm">AI Assistant</span>
