@@ -111,9 +111,9 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     const hostname = req.hostname;
     const domains = process.env.REPLIT_DOMAINS!.split(",");
-    const targetDomain = domains.find(domain => hostname.includes(domain.split('-')[0])) || domains[0];
+    const targetDomain = domains[0]; // Always use the first (and only) domain
     
-    console.log("Login attempt - hostname:", hostname, "using domain:", targetDomain);
+    console.log("Login attempt - hostname:", hostname, "domains:", domains, "using domain:", targetDomain);
     
     passport.authenticate(`replitauth:${targetDomain}`, {
       prompt: "login consent",
@@ -124,9 +124,9 @@ export async function setupAuth(app: Express) {
   app.get("/api/callback", (req, res, next) => {
     const hostname = req.hostname;
     const domains = process.env.REPLIT_DOMAINS!.split(",");
-    const targetDomain = domains.find(domain => hostname.includes(domain.split('-')[0])) || domains[0];
+    const targetDomain = domains[0]; // Always use the first (and only) domain
     
-    console.log("Callback received - hostname:", hostname, "using domain:", targetDomain);
+    console.log("Callback received - hostname:", hostname, "domains:", domains, "using domain:", targetDomain);
     
     passport.authenticate(`replitauth:${targetDomain}`, {
       successReturnToOrRedirect: "/",
