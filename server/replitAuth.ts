@@ -139,6 +139,10 @@ export async function setupAuth(app: Express) {
       
       console.log("Manual auth URL:", authUrl.href);
       
+      // Test: redirect directly to manual auth URL instead of using passport
+      console.log("Redirecting to manual auth URL for testing...");
+      return res.redirect(authUrl.href);
+      
       // Try passport authentication
       passport.authenticate(`replitauth:${targetDomain}`, {
         prompt: "login consent", 
