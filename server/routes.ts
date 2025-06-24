@@ -1169,6 +1169,217 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Calendar Sync API endpoints
+  app.get("/api/calendar-sync/connections", isAuthenticated, async (req: any, res) => {
+    try {
+      const connections = [
+        {
+          id: "1",
+          provider: "google",
+          email: "coach@example.com",
+          name: "Coach Martinez Google Calendar",
+          status: "connected",
+          lastSync: new Date("2025-01-20T18:30:00"),
+          syncedEvents: 45,
+          conflicts: 2,
+          isActive: true,
+          syncFrequency: "realtime"
+        },
+        {
+          id: "2",
+          provider: "microsoft",
+          email: "parent@example.com",
+          name: "Sarah Johnson Outlook",
+          status: "connected",
+          lastSync: new Date("2025-01-20T17:45:00"),
+          syncedEvents: 23,
+          conflicts: 0,
+          isActive: true,
+          syncFrequency: "hourly"
+        },
+        {
+          id: "3",
+          provider: "apple",
+          email: "admin@example.com",
+          name: "Team Admin iCloud",
+          status: "syncing",
+          lastSync: new Date("2025-01-20T16:00:00"),
+          syncedEvents: 67,
+          conflicts: 1,
+          isActive: true,
+          syncFrequency: "realtime"
+        }
+      ];
+      
+      res.json(connections);
+    } catch (error) {
+      console.error("Calendar connections fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch calendar connections" });
+    }
+  });
+
+  app.get("/api/calendar-sync/conflicts", isAuthenticated, async (req: any, res) => {
+    try {
+      const conflicts = [
+        {
+          id: "1",
+          eventTitle: "Team Practice vs Doctor Appointment",
+          teamProEvent: "Soccer Practice - Main Field, 4:00 PM - 6:00 PM",
+          externalEvent: "Doctor Appointment - Medical Center, 5:00 PM - 6:00 PM",
+          conflictType: "time_overlap",
+          severity: "high",
+          date: new Date("2025-01-23T16:00:00"),
+          suggestedResolution: "Reschedule practice to 3:00 PM - 5:00 PM or move to Tuesday",
+          autoResolvable: false,
+          status: "pending"
+        },
+        {
+          id: "2",
+          eventTitle: "Game Day vs Family Event",
+          teamProEvent: "Championship Game - Stadium Field, 10:00 AM - 12:00 PM",
+          externalEvent: "Family Reunion - Home, 9:00 AM - 2:00 PM",
+          conflictType: "time_overlap",
+          severity: "medium",
+          date: new Date("2025-01-25T10:00:00"),
+          suggestedResolution: "Notify family about game priority or arrange late arrival",
+          autoResolvable: false,
+          status: "pending"
+        },
+        {
+          id: "3",
+          eventTitle: "Volunteer Task vs Work Meeting",
+          teamProEvent: "Equipment Setup - Gymnasium, 8:00 AM - 9:00 AM",
+          externalEvent: "Weekly Team Meeting - Office, 8:30 AM - 9:30 AM",
+          conflictType: "time_overlap",
+          severity: "low",
+          date: new Date("2025-01-24T08:00:00"),
+          suggestedResolution: "Reassign volunteer task to another parent",
+          autoResolvable: true,
+          status: "pending"
+        }
+      ];
+      
+      res.json(conflicts);
+    } catch (error) {
+      console.error("Calendar conflicts fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch calendar conflicts" });
+    }
+  });
+
+  app.get("/api/calendar-sync/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalConnections: 8,
+        activeConnections: 6,
+        syncReliability: 99.5,
+        conflictResolutionRate: 87.3,
+        timesSaved: 24.5,
+        popularProviders: [
+          { provider: "google", count: 5 },
+          { provider: "microsoft", count: 2 },
+          { provider: "apple", count: 1 },
+          { provider: "ical", count: 0 }
+        ],
+        syncTrends: [
+          { date: "2025-01-15", synced: 89, conflicts: 3 },
+          { date: "2025-01-16", synced: 95, conflicts: 2 },
+          { date: "2025-01-17", synced: 102, conflicts: 4 },
+          { date: "2025-01-18", synced: 87, conflicts: 1 },
+          { date: "2025-01-19", synced: 114, conflicts: 2 },
+          { date: "2025-01-20", synced: 108, conflicts: 3 }
+        ]
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Calendar sync analytics error:", error);
+      res.status(500).json({ message: "Failed to fetch sync analytics" });
+    }
+  });
+
+  app.post("/api/calendar-sync/connect", isAuthenticated, async (req: any, res) => {
+    try {
+      const { provider, email, syncFrequency } = req.body;
+      
+      // Simulate OAuth connection process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const newConnection = {
+        id: Date.now().toString(),
+        provider,
+        email,
+        name: `${email} ${provider} Calendar`,
+        status: "connected",
+        lastSync: new Date(),
+        syncedEvents: 0,
+        conflicts: 0,
+        isActive: true,
+        syncFrequency: syncFrequency || "realtime"
+      };
+      
+      res.json(newConnection);
+    } catch (error) {
+      console.error("Calendar connect error:", error);
+      res.status(500).json({ message: "Failed to connect calendar" });
+    }
+  });
+
+  app.delete("/api/calendar-sync/connections/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate disconnection
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      res.json({ 
+        message: "Calendar disconnected successfully",
+        connectionId: id
+      });
+    } catch (error) {
+      console.error("Calendar disconnect error:", error);
+      res.status(500).json({ message: "Failed to disconnect calendar" });
+    }
+  });
+
+  app.post("/api/calendar-sync/connections/:id/sync", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate manual sync
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const eventCount = Math.floor(Math.random() * 20) + 5;
+      
+      res.json({ 
+        message: "Sync completed successfully",
+        connectionId: id,
+        eventCount,
+        conflicts: Math.floor(Math.random() * 3)
+      });
+    } catch (error) {
+      console.error("Calendar sync error:", error);
+      res.status(500).json({ message: "Failed to sync calendar" });
+    }
+  });
+
+  app.post("/api/calendar-sync/conflicts/:id/resolve", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate conflict resolution
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      res.json({ 
+        message: "Conflict resolved successfully",
+        conflictId: id,
+        resolution: "AI-powered automatic resolution applied"
+      });
+    } catch (error) {
+      console.error("Conflict resolution error:", error);
+      res.status(500).json({ message: "Failed to resolve conflict" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
