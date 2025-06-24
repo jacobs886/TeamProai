@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { db } from "./db";
+import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -18,6 +20,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Admin routes for role management
+  app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      // Only super_admin can assign roles
+      if (currentUser?.role !== 'super_admin') {
+        return res.status(403).json({ message: "Access denied. Super admin privileges required." });
+      }
+
+      const { targetUserId, role } = req.body;
+      const updatedUser = await storage.updateUserRole(targetUserId, role);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ message: "Role updated successfully", user: updatedUser });
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
+  // Get all users for admin management
+  app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      // Only super_admin and admin_operations can view all users
+      if (!['super_admin', 'admin_operations'].includes(currentUser?.role || '')) {
+        return res.status(403).json({ message: "Access denied. Admin privileges required." });
+      }
+
+      const allUsers = await db.select().from(users).orderBy(users.createdAt);
+      res.json(allUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
     }
   });
 
