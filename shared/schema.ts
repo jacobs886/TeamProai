@@ -120,7 +120,7 @@ export const teamMessages = pgTable("team_messages", {
   senderId: varchar("sender_id").references(() => users.id).notNull(),
   message: text("message").notNull(),
   isUrgent: boolean("is_urgent").default(false),
-  replyToId: integer("reply_to_id").references(() => teamMessages.id),
+  replyToId: integer("reply_to_id"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

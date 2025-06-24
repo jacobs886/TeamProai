@@ -399,7 +399,7 @@ export class DatabaseStorage implements IStorage {
   async createGameStats(eventId: number, playerId: string, sport: string, stats: any): Promise<any> {
     const [created] = await db
       .insert(gameStats)
-      .values({ eventId, playerId, sport, stats })
+      .values({ eventId, playerId, sport: sport as any, stats })
       .returning();
     return created;
   }
