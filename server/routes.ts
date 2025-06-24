@@ -93,6 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Temporary bypass for testing admin features without OAuth
   app.post('/api/debug/bypass-auth', async (req: any, res) => {
+    console.log('Bypass auth endpoint hit:', req.body);
     try {
       const { email } = req.body;
       if (!email) {

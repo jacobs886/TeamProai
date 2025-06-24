@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,51 +7,47 @@ import { Trophy, Shield } from "lucide-react";
 
 export default function AuthBypass() {
   const [email, setEmail] = useState("");
-  const { user, isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  const bypassMutation = useMutation({
-    mutationFn: async (email: string) => {
-      const response = await apiRequest("POST", "/api/debug/bypass-auth", { email });
-      return response;
-    },
-    onSuccess: (data) => {
-      console.log("Bypass successful:", data);
-      // Reload the page to refresh auth state
-      setTimeout(() => {
-        window.location.href = "/admin";
-      }, 1000);
-    },
-    onError: (error) => {
+  const handleBypass = async () => {
+    if (!email) return;
+    
+    setLoading(true);
+    setMessage("");
+    setIsError(false);
+
+    try {
+      const response = await fetch("/api/debug/bypass-auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Test admin user created successfully! Redirecting to admin dashboard...");
+        console.log("Bypass successful:", data);
+        setTimeout(() => {
+          window.location.href = "/admin";
+        }, 1000);
+      } else {
+        setIsError(true);
+        setMessage(data.error || "Failed to create test admin user");
+      }
+    } catch (error) {
       console.error("Bypass failed:", error);
+      setIsError(true);
+      setMessage("Failed to create test admin user. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  });
-
-  if (isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <Shield className="mx-auto h-12 w-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Already Authenticated</h3>
-              <p className="text-sm text-gray-500 mb-4">
-                You are logged in as: {user?.email}
-              </p>
-              <p className="text-sm text-gray-500 mb-4">
-                Role: {user?.role}
-              </p>
-              <Button 
-                onClick={() => window.location.href = "/admin"}
-                className="w-full"
-              >
-                Go to Admin Dashboard
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -101,25 +94,17 @@ export default function AuthBypass() {
               </div>
 
               <Button
-                onClick={() => bypassMutation.mutate(email)}
-                disabled={!email || bypassMutation.isPending}
+                onClick={handleBypass}
+                disabled={!email || loading}
                 className="w-full"
               >
-                {bypassMutation.isPending ? "Creating Admin User..." : "Create Test Admin & Login"}
+                {loading ? "Creating Admin User..." : "Create Test Admin & Login"}
               </Button>
 
-              {bypassMutation.isError && (
-                <Alert variant="destructive">
+              {message && (
+                <Alert variant={isError ? "destructive" : "default"}>
                   <AlertDescription>
-                    Failed to create test admin user. Please try again.
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {bypassMutation.isSuccess && (
-                <Alert>
-                  <AlertDescription>
-                    Test admin user created successfully! Redirecting to admin dashboard...
+                    {message}
                   </AlertDescription>
                 </Alert>
               )}
