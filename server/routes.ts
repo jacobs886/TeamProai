@@ -375,6 +375,119 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Volunteer management routes
+  app.get('/api/volunteers', isAuthenticated, async (req, res) => {
+    try {
+      const volunteers = [
+        {
+          id: "v1",
+          name: "Sarah Johnson",
+          email: "sarah@example.com",
+          phone: "(555) 123-4567",
+          status: "active",
+          skills: ["Scorekeeping", "Event Management", "First Aid"],
+          availability: ["Weekend Mornings", "Weekday Evenings"],
+          preferredRoles: ["Scorekeeper", "Team Manager"],
+          reliability: 98,
+          totalHours: 45,
+          backgroundCheck: "cleared"
+        },
+        {
+          id: "v2",
+          name: "Mike Thompson",
+          email: "mike@example.com",
+          phone: "(555) 234-5678",
+          status: "active",
+          skills: ["Equipment Setup", "Coaching", "Technology"],
+          availability: ["Weekends", "Evenings"],
+          preferredRoles: ["Equipment Manager", "Assistant Coach"],
+          reliability: 92,
+          totalHours: 38,
+          backgroundCheck: "pending"
+        },
+        {
+          id: "v3",
+          name: "Jennifer Adams",
+          email: "jennifer@example.com",
+          phone: "(555) 345-6789",
+          status: "active",
+          skills: ["Communication", "Organization", "Fundraising"],
+          availability: ["Flexible"],
+          preferredRoles: ["Event Coordinator", "Communication"],
+          reliability: 95,
+          totalHours: 42,
+          backgroundCheck: "needs_renewal"
+        }
+      ];
+      res.json(volunteers);
+    } catch (error) {
+      console.error("Error fetching volunteers:", error);
+      res.status(500).json({ message: "Failed to fetch volunteers" });
+    }
+  });
+
+  app.get('/api/volunteers/tasks', isAuthenticated, async (req, res) => {
+    try {
+      const tasks = [
+        {
+          id: "1",
+          title: "Soccer Game Scorekeeper",
+          description: "Keep score and stats for U12 soccer game",
+          sport: "soccer",
+          eventName: "Hawks vs Eagles - Championship",
+          date: "2024-07-20",
+          time: "10:00 AM",
+          volunteersNeeded: 2,
+          volunteersAssigned: 1,
+          status: "partially_filled",
+          priority: "high"
+        },
+        {
+          id: "2",
+          title: "Equipment Setup Crew",
+          description: "Set up goals, nets, and field markers",
+          sport: "soccer",
+          eventName: "Tournament Day 1 Setup",
+          date: "2024-07-21",
+          time: "7:00 AM",
+          volunteersNeeded: 4,
+          volunteersAssigned: 4,
+          status: "filled",
+          priority: "medium"
+        }
+      ];
+      res.json(tasks);
+    } catch (error) {
+      console.error("Error fetching volunteer tasks:", error);
+      res.status(500).json({ message: "Failed to fetch volunteer tasks" });
+    }
+  });
+
+  app.get('/api/volunteers/ai-insights', isAuthenticated, async (req, res) => {
+    try {
+      const insights = {
+        matchingAccuracy: 95,
+        automationSavings: 70,
+        attendanceRate: 95,
+        satisfactionScore: 88,
+        recommendations: [
+          "Send reminder emails to non-responders on weekday mornings",
+          "Pair experienced volunteers with newcomers for training",
+          "Schedule recognition events quarterly to boost engagement"
+        ],
+        trends: {
+          volunteerGrowth: 12,
+          taskCompletionRate: 89,
+          averageResponseTime: "2.3 hours"
+        }
+      };
+      res.json(insights);
+    } catch (error) {
+      console.error("Error fetching volunteer AI insights:", error);
+      res.status(500).json({ message: "Failed to fetch volunteer AI insights" });
+    }
+  });
+
   // Admin routes for role management
   app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
     try {
