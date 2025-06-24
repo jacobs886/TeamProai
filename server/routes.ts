@@ -5,6 +5,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
+import { setupInitialSuperAdmin, hasSuperAdmin } from "./setup-admin";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -64,6 +65,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Setup initial super admin (one-time setup)
+  app.post('/api/setup/super-admin', async (req: any, res) => {
+    try {
+      // Check if super admin already exists
+      const adminExists = await hasSuperAdmin();
+      if (adminExists) {
+        return res.status(400).json({ message: "Super admin already exists" });
+      }
+
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      const success = await setupInitialSuperAdmin(email);
+      if (success) {
+        res.json({ message: "Super admin setup successful" });
+      } else {
+        res.status(400).json({ message: "Failed to setup super admin. User may not exist." });
+      }
+    } catch (error) {
+      console.error("Error setting up super admin:", error);
+      res.status(500).json({ message: "Failed to setup super admin" });
     }
   });
 
