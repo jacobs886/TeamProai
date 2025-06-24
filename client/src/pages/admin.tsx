@@ -499,9 +499,12 @@ export default function AdminDashboard() {
       {/* Role Assignment Dialog */}
       {selectedUser && (
         <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-          <DialogContent>
+          <DialogContent aria-describedby="manage-role-description">
             <DialogHeader>
               <DialogTitle>Manage User Role</DialogTitle>
+              <div id="manage-role-description" className="sr-only">
+                Assign or modify user roles and permissions for team management access control.
+              </div>
             </DialogHeader>
             <div className="space-y-4">
               <div>

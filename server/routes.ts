@@ -477,6 +477,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Guardians routes
+  app.get('/api/guardians', isAuthenticated, async (req, res) => {
+    try {
+      const guardians = [
+        {
+          id: "g1",
+          firstName: "Sarah",
+          lastName: "Johnson", 
+          email: "sarah.johnson@email.com",
+          phone: "(555) 123-4567",
+          relationship: "parent",
+          isEmergencyContact: true,
+          playerId: "1",
+          address: "123 Main St, Anytown, ST 12345",
+          occupation: "Marketing Manager",
+          workPhone: "(555) 123-4568"
+        },
+        {
+          id: "g2",
+          firstName: "Michael",
+          lastName: "Davis",
+          email: "michael.davis@email.com", 
+          phone: "(555) 234-5678",
+          relationship: "parent",
+          isEmergencyContact: true,
+          playerId: "2",
+          address: "456 Oak Ave, Anytown, ST 12345",
+          occupation: "Software Engineer",
+          workPhone: "(555) 234-5679"
+        },
+        {
+          id: "g3",
+          firstName: "Carlos",
+          lastName: "Rodriguez",
+          email: "carlos.rodriguez@email.com",
+          phone: "(555) 345-6789", 
+          relationship: "parent",
+          isEmergencyContact: true,
+          playerId: "3",
+          address: "789 Pine St, Anytown, ST 12345",
+          occupation: "Teacher",
+          workPhone: "(555) 345-6790"
+        }
+      ];
+      res.json(guardians);
+    } catch (error) {
+      console.error("Error fetching guardians:", error);
+      res.status(500).json({ message: "Failed to fetch guardians" });
+    }
+  });
+
   // Volunteer management routes
   app.get('/api/volunteers', isAuthenticated, async (req, res) => {
     try {
