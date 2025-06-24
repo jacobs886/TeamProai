@@ -19,6 +19,7 @@ import Equipment from "@/pages/equipment";
 import ParentPortal from "@/pages/parent-portal";
 import Players from "@/pages/players";
 import Skills from "@/pages/skills";
+import Guardians from "@/pages/guardians";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -47,6 +48,7 @@ function AuthenticatedRouter() {
             <Route path="/parent-portal" component={ParentPortal} />
             <Route path="/players" component={Players} />
             <Route path="/skills" component={Skills} />
+            <Route path="/guardians" component={Guardians} />
             <Route component={NotFound} />
           </Switch>
         </div>
