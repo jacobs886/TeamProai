@@ -54,7 +54,7 @@ export default function DevLogin({ open, onOpenChange }: DevLoginProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Shield className="h-5 w-5 text-blue-600" />
@@ -62,7 +62,7 @@ export default function DevLogin({ open, onOpenChange }: DevLoginProps) {
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-4 pr-2">
           <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
               <strong>Development Mode:</strong> This bypasses OAuth for testing purposes only.
@@ -98,24 +98,27 @@ export default function DevLogin({ open, onOpenChange }: DevLoginProps) {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-48 overflow-y-auto">
             <h4 className="text-sm font-medium">Quick Login Options:</h4>
-            {devCredentials.map((cred, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setDevEmail(cred.email);
-                  setDevPassword(cred.password);
-                }}
-                className="w-full text-left p-2 text-xs bg-gray-50 hover:bg-gray-100 rounded border"
-              >
-                <div className="font-medium">{cred.role}</div>
-                <div className="text-gray-600">{cred.email} / {cred.password}</div>
-              </button>
-            ))}
+            <div className="space-y-1 pr-1">
+              {devCredentials.map((cred, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setDevEmail(cred.email);
+                    setDevPassword(cred.password);
+                  }}
+                  className="w-full text-left p-3 text-xs bg-gray-50 hover:bg-gray-100 rounded border transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{cred.role}</div>
+                  <div className="text-gray-600 break-all">{cred.email}</div>
+                  <div className="text-gray-500">Password: {cred.password}</div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 pt-2 border-t">
             <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
               Cancel
             </Button>
