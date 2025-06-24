@@ -260,7 +260,7 @@ export default function Landing() {
             <span className="ml-3 text-lg font-semibold text-gray-900">TeamPro.ai</span>
           </div>
           <p className="text-center text-gray-600 mt-4">
-            © 2024 TeamPro.ai. All rights reserved.
+            © 2025 TeamPro.ai. All rights reserved.
           </p>
         </div>
       </footer>
