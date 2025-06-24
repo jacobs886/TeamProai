@@ -30,7 +30,7 @@ export default function Landing() {
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
             Unify team communication, advanced scorekeeping, and seamless scheduling in one powerful platform. 
-            Built for volleyball, basketball, and baseball teams who demand reliability.
+            Built for team sports organizations who demand reliability.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
@@ -62,7 +62,7 @@ export default function Landing() {
               Everything You Need to Manage Sports
             </h3>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              From volleyball and basketball to baseball - manage all your sports activities in one place.
+              Manage all your team sports activities in one comprehensive platform.
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export default function Landing() {
                   <h4 className="ml-3 text-lg font-semibold">Advanced Scorekeeping & Stats</h4>
                 </div>
                 <p className="text-gray-600">
-                  Professional-grade statistics tracking with 150+ baseball/softball metrics, 
+                  Professional-grade statistics tracking with 150+ sport-specific metrics, 
                   real-time scorekeeping, and comprehensive performance analytics.
                 </p>
                 <div className="mt-3">
