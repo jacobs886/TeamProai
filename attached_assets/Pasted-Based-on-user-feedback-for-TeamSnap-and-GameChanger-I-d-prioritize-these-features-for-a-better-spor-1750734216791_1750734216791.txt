@@ -1,0 +1,23 @@
+Based on user feedback for TeamSnap and GameChanger, I’d prioritize these features for a better sports management app:
+
+1. **Seamless Communication**: Unified, reliable team chat with push notifications, urgent message flags, and app icon badges for unread messages. Users report TeamSnap’s chat notifications fail 30% of the time, and GameChanger’s communication is adequate but not as robust.[](https://apps.apple.com/us/app/teamsnap/id393048976)[](https://www.reddit.com/r/Softball/comments/cp0ekb/teamsnap_or_gamechanger_or_both/)
+
+2. **Integrated Scorekeeping and Stats**: Combine TeamSnap’s scheduling with GameChanger’s advanced scorekeeping (150+ baseball/softball stats, pitch tracking). Users want scorekeeping in TeamSnap to avoid multiple apps.[](https://www.capterra.co.uk/software/123208/teamsnap)[](https://www.reddit.com/r/Softball/comments/cp0ekb/teamsnap_or_gamechanger_or_both/)
+
+3. **User-Friendly Interface**: Intuitive design for all users, with faster mobile app performance on weak networks. TeamSnap’s interface can be confusing for infrequent users, and manual event entry is time-consuming.[](https://www.capterra.com/p/123208/TeamSnap/)[](https://apps.apple.com/us/app/teamsnap/id393048976)
+
+4. **Free Core Features with Ad-Free Option**: Offer free messaging, scheduling, and basic stats without ads, addressing complaints about TeamSnap’s ads despite paid subscriptions ($100 CAD). Provide affordable premium tiers for advanced features.[](https://www.capterra.co.uk/software/123208/teamsnap)[](https://www.reddit.com/r/Softball/comments/cp0ekb/teamsnap_or_gamechanger_or_both/)
+
+5. **Calendar Sync and Scheduling**: Robust scheduling with auto-sync to personal calendars (Apple, Google, Outlook) and automated reminders. Users value TeamSnap’s scheduling but want simpler event setup.[](https://www.capterra.com/p/123208/TeamSnap/)[](https://www.softwareadvice.com/registration/teamsnap-profile/)
+
+6. **Video Streaming and Highlights**: Enhance GameChanger’s free live streaming with AI-driven AutoStream for all sports, not just basketball, and auto-clipped highlights. Users love GameChanger’s video archive but want broader sport coverage.[](https://play.google.com/store/apps/details?id=com.gc.teammanager&hl=en_US&gl=US)[](https://apps.apple.com/us/app/gamechanger/id1308415878)
+
+7. **Roster and Payment Management**: Streamlined roster imports (e.g., from MaxPreps) and secure invoicing/sponsorship tools. Users praise GameChanger’s roster management but find TeamSnap’s refund processing slow.[](https://www.softwareadvice.com/registration/teamsnap-profile/)[](https://play.google.com/store/apps/details?id=com.gc.teammanager&hl=en_US&gl=US)
+
+8. **Offline Functionality**: Offline access for schedules, rosters, and scorekeeping, addressing cellular network issues at fields. Both apps struggle with connectivity.[](https://www.capterra.co.uk/software/123208/teamsnap)[](https://www.capterra.com/p/123208/TeamSnap/)
+
+9. **Customizable Permissions**: Granular admin controls for clubs/leagues, allowing role delegation while protecting sensitive data. TeamSnap’s advanced permissioning is a strength to emulate.[](https://www.teamsnap.com/for-business/features/program-management)
+
+10. **Responsive Customer Support**: Fast, accessible support, unlike TeamSnap’s reported mediocre help files and outdated documentation.[](https://www.softwareadvice.com/registration/teamsnap-profile/)
+
+These features address key pain points: unreliable communication, fragmented functionality, costly subscriptions, and poor usability, while enhancing strengths like streaming and stats.
