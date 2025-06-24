@@ -81,7 +81,7 @@ export default function Landing() {
                 </p>
                 <div className="mt-3">
                   <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                    Addresses TeamSnap's 30% notification failure rate
+                    Industry-leading reliability
                   </span>
                 </div>
               </CardContent>
@@ -101,69 +101,129 @@ export default function Landing() {
                 </p>
                 <div className="mt-3">
                   <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                    GameChanger's power + TeamSnap's simplicity
+                    Advanced analytics made simple
                   </span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-purple-500">
               <CardContent className="pt-6">
                 <div className="flex items-center mb-4">
-                  <div className="bg-accent/10 p-3 rounded-lg">
-                    <Building className="h-6 w-6 text-accent" />
+                  <div className="bg-purple-100 p-3 rounded-lg">
+                    <Clock className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h4 className="ml-3 text-lg font-semibold">Facility Booking</h4>
+                  <h4 className="ml-3 text-lg font-semibold">Intuitive Interface & Fast Performance</h4>
                 </div>
                 <p className="text-gray-600">
-                  Book courts and fields with real-time availability checking.
-                  Manage multiple facilities and their resources.
+                  Mobile-first design with offline functionality for weak networks. 
+                  Lightning-fast performance on all devices, even with poor connectivity.
                 </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
+                    Works anywhere, anytime
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-orange-500">
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <div className="bg-orange-100 p-3 rounded-lg">
+                    <Calendar className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <h4 className="ml-3 text-lg font-semibold">Smart Scheduling & Calendar Sync</h4>
+                </div>
+                <p className="text-gray-600">
+                  Auto-sync with Google, Apple, and Outlook calendars. Intelligent conflict detection 
+                  and automated reminders keep everyone on schedule.
+                </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded">
+                    Never miss another game
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-green-500">
               <CardContent className="pt-6">
                 <div className="flex items-center mb-4">
                   <div className="bg-green-100 p-3 rounded-lg">
                     <CreditCard className="h-6 w-6 text-green-600" />
                   </div>
-                  <h4 className="ml-3 text-lg font-semibold">Payment Processing</h4>
+                  <h4 className="ml-3 text-lg font-semibold">Streamlined Payment Processing</h4>
                 </div>
                 <p className="text-gray-600">
-                  Collect registration fees, facility payments, and manage
-                  recurring billing with automated reminders.
+                  Secure payment collection with fast processing and automated invoicing. 
+                  Built-in financial reporting and sponsorship management tools.
                 </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                    Fast & secure transactions
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-red-500">
               <CardContent className="pt-6">
                 <div className="flex items-center mb-4">
-                  <div className="bg-purple-100 p-3 rounded-lg">
-                    <Bell className="h-6 w-6 text-purple-600" />
+                  <div className="bg-red-100 p-3 rounded-lg">
+                    <Bell className="h-6 w-6 text-red-600" />
                   </div>
-                  <h4 className="ml-3 text-lg font-semibold">Smart Notifications</h4>
+                  <h4 className="ml-3 text-lg font-semibold">Real-time Notifications</h4>
                 </div>
                 <p className="text-gray-600">
-                  Keep everyone informed with automated notifications for
-                  schedule changes, payments, and important updates.
+                  Instant alerts for schedule changes, weather updates, and urgent announcements. 
+                  Push notifications that actually reach your entire team.
                 </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
+                    Everyone stays informed
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-indigo-500">
               <CardContent className="pt-6">
                 <div className="flex items-center mb-4">
-                  <div className="bg-orange-100 p-3 rounded-lg">
-                    <Trophy className="h-6 w-6 text-orange-600" />
+                  <div className="bg-indigo-100 p-3 rounded-lg">
+                    <Building className="h-6 w-6 text-indigo-600" />
                   </div>
-                  <h4 className="ml-3 text-lg font-semibold">Multi-Role Access</h4>
+                  <h4 className="ml-3 text-lg font-semibold">Facility Management</h4>
                 </div>
                 <p className="text-gray-600">
-                  Role-based dashboards for administrators, coaches, players,
-                  and view-only users with appropriate permissions.
+                  Complete facility booking system with real-time availability, 
+                  automated scheduling, and integrated billing for courts and fields.
                 </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">
+                    Maximize facility usage
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-blue-500">
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <Shield className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h4 className="ml-3 text-lg font-semibold">Enterprise Security & Privacy</h4>
+                </div>
+                <p className="text-gray-600">
+                  Bank-level security with granular permissions and complete data protection. 
+                  Your team's information is always safe and private.
+                </p>
+                <div className="mt-3">
+                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                    Your data is protected
+                  </span>
+                </div>
               </CardContent>
             </Card>
           </div>
