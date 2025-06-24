@@ -14,6 +14,7 @@ import {
   Settings 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import HamburgerNav from "./hamburger-nav";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -56,7 +57,8 @@ export default function Sidebar() {
     <div className="hidden lg:flex lg:w-64 lg:flex-col">
       <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-4">
-          <div className="flex items-center">
+          <HamburgerNav />
+          <div className="flex items-center ml-3">
             <div className="bg-primary text-white p-2 rounded-lg">
               <Trophy className="h-6 w-6" />
             </div>
