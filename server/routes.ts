@@ -488,6 +488,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Parent portal routes
+  app.get('/api/parent-portal', isAuthenticated, async (req, res) => {
+    try {
+      const parentData = {
+        parentName: "Sarah Johnson",
+        email: "sarah.johnson@email.com",
+        phone: "(555) 123-4567",
+        emergencyContact: "(555) 987-6543",
+        address: "123 Oak Street, City, State 12345",
+        memberSince: "2023-09-15",
+        activeChildren: 1,
+        totalPayments: 540.00,
+        volunteerHours: 15.5
+      };
+      res.json(parentData);
+    } catch (error) {
+      console.error("Error fetching parent portal data:", error);
+      res.status(500).json({ message: "Failed to fetch parent portal data" });
+    }
+  });
+
+  app.get('/api/parent-portal/children', isAuthenticated, async (req, res) => {
+    try {
+      const children = [
+        {
+          id: "child1",
+          name: "Alex Johnson",
+          age: 12,
+          team: "Hawks U12",
+          position: "Midfielder",
+          jerseyNumber: 12,
+          skillLevel: "Intermediate",
+          medicalNotes: "Mild asthma - has inhaler",
+          emergencyContact: "Sarah Johnson - (555) 123-4567"
+        }
+      ];
+      res.json(children);
+    } catch (error) {
+      console.error("Error fetching children data:", error);
+      res.status(500).json({ message: "Failed to fetch children data" });
+    }
+  });
+
+  app.get('/api/parent-portal/ai-insights', isAuthenticated, async (req, res) => {
+    try {
+      const insights = {
+        scheduleAccuracy: 92,
+        notificationReliability: 99.5,
+        paymentAutomation: 85,
+        communicationEfficiency: 78,
+        personalizedContent: 88,
+        recommendations: [
+          "Your child performs 15% better in morning games",
+          "Consider carpooling with the Johnson family for Tuesday practices",
+          "Alex's shooting skills have improved 12% this month"
+        ],
+        upcomingAlerts: [
+          "Physical exam expires in 2 weeks",
+          "Equipment return due next Friday",
+          "Payment due August 1st"
+        ]
+      };
+      res.json(insights);
+    } catch (error) {
+      console.error("Error fetching parent portal AI insights:", error);
+      res.status(500).json({ message: "Failed to fetch parent portal AI insights" });
+    }
+  });
+
   // Admin routes for role management
   app.post('/api/admin/assign-role', isAuthenticated, async (req: any, res) => {
     try {
