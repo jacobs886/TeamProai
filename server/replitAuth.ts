@@ -144,8 +144,8 @@ export async function setupAuth(app: Express) {
       
       console.log("Manual auth URL:", authUrl.href);
       
-      // Test: redirect directly to manual auth URL instead of using passport
-      console.log("Redirecting to manual auth URL for testing...");
+      // Direct OAuth flow - skip test callbacks for now
+      console.log("Redirecting directly to Replit OAuth:", authUrl.href);
       return res.redirect(authUrl.href);
       
       // Try passport authentication
@@ -160,52 +160,60 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/callback", async (req, res, next) => {
-    const hostname = req.hostname;
+    console.log("=== CALLBACK RECEIVED ===");
+    console.log("Query params:", req.query);
+    console.log("Headers:", req.headers);
+    console.log("URL:", req.url);
+    console.log("Method:", req.method);
+    
     const domains = process.env.REPLIT_DOMAINS!.split(",");
     const targetDomain = domains[0];
     
-    console.log("Callback received - hostname:", hostname, "query:", req.query);
-    
-    // Manual callback handling since passport is having issues
     try {
       if (req.query.code) {
-        console.log("Authorization code received:", req.query.code);
+        console.log("Processing authorization code...");
         
-        // Exchange code for tokens manually
         const tokenResponse = await client.authorizationCodeGrant(config, {
           code: req.query.code as string,
           redirect_uri: `https://${targetDomain}/api/callback`,
         });
         
-        console.log("Token exchange successful");
+        console.log("Token exchange successful, processing claims...");
         const claims = tokenResponse.claims();
-        console.log("User claims:", claims);
         
-        // Create user session manually
-        const user = {};
-        updateUserSession(user, tokenResponse);
-        await upsertUser(claims);
+        // Create and save user
+        const userData = await upsertUser(claims);
+        console.log("User created/updated:", userData);
         
-        // Set session manually
-        (req as any).login(user, (err: any) => {
+        // Create session object
+        const sessionUser = {
+          claims,
+          access_token: tokenResponse.access_token,
+          refresh_token: tokenResponse.refresh_token,
+          expires_at: claims?.exp
+        };
+        
+        // Use passport login to set session
+        req.login(sessionUser, (err) => {
           if (err) {
-            console.error("Login error:", err);
-            return res.redirect("/api/login");
+            console.error("Session creation failed:", err);
+            return res.status(500).send(`Login failed: ${err.message}`);
           }
-          console.log("Manual login successful, redirecting to dashboard");
+          
+          console.log("Session created successfully, redirecting...");
           res.redirect("/");
         });
         
       } else if (req.query.error) {
-        console.error("OAuth error:", req.query.error, req.query.error_description);
-        res.redirect("/api/login");
+        console.error("OAuth callback error:", req.query.error, req.query.error_description);
+        res.status(400).send(`OAuth Error: ${req.query.error} - ${req.query.error_description}`);
       } else {
-        console.error("No code or error in callback");
-        res.redirect("/api/login");
+        console.error("Invalid callback - no code or error");
+        res.status(400).send("Invalid OAuth callback - missing code or error parameter");
       }
     } catch (error) {
-      console.error("Manual callback error:", error);
-      res.redirect("/api/login");
+      console.error("Callback processing error:", error);
+      res.status(500).send(`Callback error: ${error.message}`);
     }
   });
 

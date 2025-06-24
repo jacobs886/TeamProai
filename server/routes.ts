@@ -74,7 +74,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       isAuthenticated: req.isAuthenticated(),
       user: req.user ? 'Present' : 'None',
       session: req.session ? 'Present' : 'None',
-      sessionID: req.sessionID
+      sessionID: req.sessionID,
+      cookies: req.headers.cookie || 'None',
+      hostname: req.hostname,
+      url: req.url
+    });
+  });
+
+  // Test callback endpoint to see if callbacks are reaching the server
+  app.get('/api/test-callback', (req: any, res) => {
+    console.log('Test callback hit with query:', req.query);
+    res.json({
+      message: 'Test callback received',
+      query: req.query,
+      headers: req.headers
     });
   });
 
