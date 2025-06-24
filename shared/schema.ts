@@ -163,6 +163,194 @@ export const payments = pgTable("payments", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Youth Team Management Extensions
+export const guardians = pgTable("guardians", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  emergencyPhone: varchar("emergency_phone", { length: 20 }),
+  relationship: varchar("relationship", { length: 50 }),
+  address: text("address"),
+  preferredLanguage: varchar("preferred_language", { length: 10 }).default("en"),
+  canPickup: boolean("can_pickup").default(true),
+  medicalNotes: text("medical_notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const players = pgTable("players", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  dateOfBirth: date("date_of_birth"),
+  jerseyNumber: integer("jersey_number"),
+  position: varchar("position", { length: 50 }),
+  skillLevel: varchar("skill_level", { length: 20 }),
+  medicalConditions: text("medical_conditions"),
+  allergies: text("allergies"),
+  emergencyContact: text("emergency_contact"),
+  profileImageUrl: varchar("profile_image_url"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const playerGuardians = pgTable("player_guardians", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => players.id),
+  guardianId: integer("guardian_id").references(() => guardians.id),
+  isPrimary: boolean("is_primary").default(false),
+  canReceiveUpdates: boolean("can_receive_updates").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const skillsTracking = pgTable("skills_tracking", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => players.id),
+  skill: varchar("skill", { length: 100 }).notNull(),
+  currentLevel: integer("current_level").default(1),
+  targetLevel: integer("target_level"),
+  assessmentDate: timestamp("assessment_date").defaultNow(),
+  assessedBy: varchar("assessed_by").references(() => users.id),
+  notes: text("notes"),
+  developmentPlan: text("development_plan"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const equipment = pgTable("equipment", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  playerId: integer("player_id").references(() => players.id),
+  type: varchar("type", { length: 50 }).notNull(),
+  item: varchar("item", { length: 100 }).notNull(),
+  size: varchar("size", { length: 20 }),
+  condition: varchar("condition", { length: 20 }).default("good"),
+  issuedDate: timestamp("issued_date"),
+  returnDate: timestamp("return_date"),
+  cost: decimal("cost", { precision: 8, scale: 2 }),
+  status: varchar("status", { length: 20 }).default("available"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const volunteers = pgTable("volunteers", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  userId: varchar("user_id").references(() => users.id),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  role: varchar("role", { length: 50 }),
+  availability: jsonb("availability"),
+  skills: text("skills"),
+  backgroundCheckStatus: varchar("background_check_status", { length: 20 }).default("pending"),
+  backgroundCheckExpiry: date("background_check_expiry"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const playerDevelopment = pgTable("player_development", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => players.id),
+  assessmentDate: timestamp("assessment_date").defaultNow(),
+  assessedBy: varchar("assessed_by").references(() => users.id),
+  physicalMetrics: jsonb("physical_metrics"),
+  technicalSkills: jsonb("technical_skills"),
+  mentalAspects: jsonb("mental_aspects"),
+  goals: text("goals"),
+  recommendations: text("recommendations"),
+  videoAnalysisUrl: varchar("video_analysis_url"),
+  benchmarkComparison: jsonb("benchmark_comparison"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// AI-Driven Features Schema
+export const aiChatbots = pgTable("ai_chatbots", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  name: varchar("name", { length: 100 }).notNull(),
+  purpose: varchar("purpose", { length: 100 }),
+  knowledgeBase: jsonb("knowledge_base"),
+  isActive: boolean("is_active").default(true),
+  responseCount: integer("response_count").default(0),
+  averageRating: decimal("average_rating", { precision: 3, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const sentimentAnalysis = pgTable("sentiment_analysis", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").references(() => teamMessages.id),
+  sentiment: varchar("sentiment", { length: 20 }),
+  confidence: decimal("confidence", { precision: 3, scale: 2 }),
+  urgencyScore: integer("urgency_score"),
+  keywords: jsonb("keywords"),
+  analyzedAt: timestamp("analyzed_at").defaultNow(),
+});
+
+export const scheduleOptimization = pgTable("schedule_optimization", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  originalSchedule: jsonb("original_schedule"),
+  optimizedSchedule: jsonb("optimized_schedule"),
+  conflictsResolved: integer("conflicts_resolved"),
+  efficiencyGain: decimal("efficiency_gain", { precision: 5, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const videoAnalysis = pgTable("video_analysis", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => players.id),
+  eventId: integer("event_id").references(() => events.id),
+  videoUrl: varchar("video_url").notNull(),
+  analysisType: varchar("analysis_type", { length: 50 }),
+  aiInsights: jsonb("ai_insights"),
+  highlights: jsonb("highlights"),
+  performanceMetrics: jsonb("performance_metrics"),
+  improvementSuggestions: text("improvement_suggestions"),
+  processingStatus: varchar("processing_status", { length: 20 }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const fanEngagement = pgTable("fan_engagement", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  userId: varchar("user_id").references(() => users.id),
+  engagementType: varchar("engagement_type", { length: 50 }),
+  points: integer("points").default(0),
+  level: varchar("level", { length: 20 }).default("bronze"),
+  badges: jsonb("badges"),
+  streakCount: integer("streak_count").default(0),
+  lastActivity: timestamp("last_activity"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const communicationLogs = pgTable("communication_logs", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  senderId: varchar("sender_id").references(() => users.id),
+  recipientType: varchar("recipient_type", { length: 20 }),
+  recipientIds: jsonb("recipient_ids"),
+  channel: varchar("channel", { length: 20 }),
+  subject: varchar("subject", { length: 200 }),
+  message: text("message"),
+  translatedMessages: jsonb("translated_messages"),
+  isEmergency: boolean("is_emergency").default(false),
+  deliveryStatus: jsonb("delivery_status"),
+  sentAt: timestamp("sent_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   ownedTeams: many(teams),
@@ -348,3 +536,13 @@ export type PlayerDevelopment = typeof playerDevelopment.$inferSelect;
 export type InsertPlayerDevelopment = typeof playerDevelopment.$inferInsert;
 export type CommunicationLog = typeof communicationLogs.$inferSelect;
 export type InsertCommunicationLog = typeof communicationLogs.$inferInsert;
+
+// AI-Driven Features Types
+export type AiChatbot = typeof aiChatbots.$inferSelect;
+export type InsertAiChatbot = typeof aiChatbots.$inferInsert;
+export type SentimentAnalysis = typeof sentimentAnalysis.$inferSelect;
+export type ScheduleOptimization = typeof scheduleOptimization.$inferSelect;
+export type VideoAnalysis = typeof videoAnalysis.$inferSelect;
+export type InsertVideoAnalysis = typeof videoAnalysis.$inferInsert;
+export type FanEngagement = typeof fanEngagement.$inferSelect;
+export type InsertFanEngagement = typeof fanEngagement.$inferInsert;
