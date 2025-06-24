@@ -48,7 +48,7 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
     },
   });
@@ -67,13 +67,18 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
-  await storage.upsertUser({
+  console.log("Upserting user with claims:", claims);
+  const userData = {
     id: claims["sub"],
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
-  });
+  };
+  console.log("User data to upsert:", userData);
+  const user = await storage.upsertUser(userData);
+  console.log("User upserted successfully:", user);
+  return user;
 }
 
 export async function setupAuth(app: Express) {
@@ -154,21 +159,52 @@ export async function setupAuth(app: Express) {
     }
   });
 
-  app.get("/api/callback", (req, res, next) => {
+  app.get("/api/callback", async (req, res, next) => {
     const hostname = req.hostname;
     const domains = process.env.REPLIT_DOMAINS!.split(",");
-    const targetDomain = domains[0]; // Always use the first (and only) domain
+    const targetDomain = domains[0];
     
-    console.log("Callback received - hostname:", hostname, "domains:", domains, "using domain:", targetDomain);
+    console.log("Callback received - hostname:", hostname, "query:", req.query);
     
+    // Manual callback handling since passport is having issues
     try {
-      passport.authenticate(`replitauth:${targetDomain}`, {
-        successReturnToOrRedirect: "/",
-        failureRedirect: "/api/login",
-        failureFlash: false
-      })(req, res, next);
+      if (req.query.code) {
+        console.log("Authorization code received:", req.query.code);
+        
+        // Exchange code for tokens manually
+        const tokenResponse = await client.authorizationCodeGrant(config, {
+          code: req.query.code as string,
+          redirect_uri: `https://${targetDomain}/api/callback`,
+        });
+        
+        console.log("Token exchange successful");
+        const claims = tokenResponse.claims();
+        console.log("User claims:", claims);
+        
+        // Create user session manually
+        const user = {};
+        updateUserSession(user, tokenResponse);
+        await upsertUser(claims);
+        
+        // Set session manually
+        (req as any).login(user, (err: any) => {
+          if (err) {
+            console.error("Login error:", err);
+            return res.redirect("/api/login");
+          }
+          console.log("Manual login successful, redirecting to dashboard");
+          res.redirect("/");
+        });
+        
+      } else if (req.query.error) {
+        console.error("OAuth error:", req.query.error, req.query.error_description);
+        res.redirect("/api/login");
+      } else {
+        console.error("No code or error in callback");
+        res.redirect("/api/login");
+      }
     } catch (error) {
-      console.error("Callback authentication error:", error);
+      console.error("Manual callback error:", error);
       res.redirect("/api/login");
     }
   });
