@@ -23,6 +23,7 @@ import Guardians from "@/pages/guardians";
 import SmartChatbots from "@/pages/smart-chatbots";
 import MessageAnalysis from "@/pages/message-analysis";
 import TranslationHub from "@/pages/translation-hub";
+import CommunicationLogs from "@/pages/communication-logs";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -55,6 +56,7 @@ function AuthenticatedRouter() {
             <Route path="/smart-chatbots" component={SmartChatbots} />
             <Route path="/message-analysis" component={MessageAnalysis} />
             <Route path="/translation-hub" component={TranslationHub} />
+            <Route path="/communication-logs" component={CommunicationLogs} />
             <Route component={NotFound} />
           </Switch>
         </div>
