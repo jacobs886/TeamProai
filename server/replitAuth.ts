@@ -181,6 +181,31 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  // Check for development mode bypass
+  if (process.env.NODE_ENV === 'development') {
+    const devAuthHeader = req.headers['x-dev-auth'];
+    if (devAuthHeader) {
+      try {
+        const devAuth = JSON.parse(devAuthHeader as string);
+        // Validate dev session is still valid (24 hours)
+        if (Date.now() - devAuth.timestamp < 24 * 60 * 60 * 1000) {
+          // Attach mock user for development
+          req.user = {
+            claims: {
+              sub: 'dev_user',
+              email: devAuth.email,
+              first_name: devAuth.firstName,
+              last_name: devAuth.lastName
+            }
+          };
+          return next();
+        }
+      } catch (e) {
+        // Invalid dev auth, continue to normal auth check
+      }
+    }
+  }
+
   const user = req.user as any;
   console.log("Auth check - isAuthenticated:", req.isAuthenticated(), "user:", !!user);
 
