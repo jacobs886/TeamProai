@@ -1623,6 +1623,425 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Advanced Stats API endpoints
+  app.get("/api/stats/players", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, period, category } = req.query;
+      
+      const playerStats = [
+        {
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          position: "Forward",
+          sport: "Soccer",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          stats: {
+            gamesPlayed: 12,
+            totalMinutes: 980,
+            goals: 8,
+            assists: 5,
+            saves: 0,
+            shots: 24,
+            passes: 156,
+            tackles: 18,
+            fouls: 7,
+            yellowCards: 2,
+            redCards: 0,
+            rating: 8.2
+          },
+          trends: {
+            performance: "improving",
+            attendance: 0.92,
+            effort: 0.88,
+            teamwork: 0.91
+          },
+          milestones: [
+            {
+              achievement: "Hat-trick vs Lions FC",
+              date: new Date("2025-01-15T00:00:00"),
+              type: "goal"
+            },
+            {
+              achievement: "10th Goal of Season",
+              date: new Date("2025-01-10T00:00:00"),
+              type: "goal"
+            }
+          ]
+        },
+        {
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          position: "Midfielder",
+          sport: "Soccer",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          stats: {
+            gamesPlayed: 11,
+            totalMinutes: 890,
+            goals: 3,
+            assists: 9,
+            saves: 0,
+            shots: 15,
+            passes: 298,
+            tackles: 32,
+            fouls: 4,
+            yellowCards: 1,
+            redCards: 0,
+            rating: 7.8
+          },
+          trends: {
+            performance: "stable",
+            attendance: 0.95,
+            effort: 0.93,
+            teamwork: 0.96
+          },
+          milestones: [
+            {
+              achievement: "Most Assists in Match",
+              date: new Date("2025-01-18T00:00:00"),
+              type: "assist"
+            }
+          ]
+        },
+        {
+          playerId: "player-3",
+          playerName: "Mike Rodriguez",
+          position: "Goalkeeper",
+          sport: "Soccer",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          stats: {
+            gamesPlayed: 12,
+            totalMinutes: 1080,
+            goals: 0,
+            assists: 1,
+            saves: 34,
+            shots: 2,
+            passes: 89,
+            tackles: 3,
+            fouls: 2,
+            yellowCards: 0,
+            redCards: 0,
+            rating: 8.5
+          },
+          trends: {
+            performance: "improving",
+            attendance: 1.0,
+            effort: 0.89,
+            teamwork: 0.87
+          },
+          milestones: [
+            {
+              achievement: "Clean Sheet Streak (5 games)",
+              date: new Date("2025-01-12T00:00:00"),
+              type: "save"
+            }
+          ]
+        }
+      ];
+      
+      res.json(playerStats);
+    } catch (error) {
+      console.error("Player stats fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch player stats" });
+    }
+  });
+
+  app.get("/api/stats/teams", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, period } = req.query;
+      
+      const teamStats = [
+        {
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          sport: "Soccer",
+          coach: "Coach Martinez",
+          season: "2024-25",
+          record: {
+            wins: 8,
+            losses: 2,
+            draws: 2,
+            points: 26
+          },
+          stats: {
+            goalsFor: 24,
+            goalsAgainst: 8,
+            possession: 58,
+            passAccuracy: 82,
+            shots: 156,
+            saves: 34,
+            fouls: 67,
+            cards: 12
+          },
+          trends: {
+            form: ["W", "W", "D", "W", "L"],
+            momentum: "positive",
+            improvement: 15
+          },
+          playerCount: 18,
+          averageAge: 14.2
+        },
+        {
+          teamId: "team-2",
+          teamName: "Lions FC",
+          sport: "Soccer",
+          coach: "Coach Johnson",
+          season: "2024-25",
+          record: {
+            wins: 6,
+            losses: 4,
+            draws: 2,
+            points: 20
+          },
+          stats: {
+            goalsFor: 18,
+            goalsAgainst: 15,
+            possession: 52,
+            passAccuracy: 78,
+            shots: 134,
+            saves: 28,
+            fouls: 89,
+            cards: 18
+          },
+          trends: {
+            form: ["L", "W", "W", "D", "L"],
+            momentum: "neutral",
+            improvement: -5
+          },
+          playerCount: 16,
+          averageAge: 13.8
+        }
+      ];
+      
+      res.json(teamStats);
+    } catch (error) {
+      console.error("Team stats fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch team stats" });
+    }
+  });
+
+  app.get("/api/stats/games", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, period } = req.query;
+      
+      const gameStats = [
+        {
+          gameId: "game-1",
+          homeTeam: "Eagles FC",
+          awayTeam: "Lions FC",
+          score: "3-1",
+          date: new Date("2025-01-18T15:00:00"),
+          venue: "Central Stadium",
+          sport: "Soccer",
+          duration: 90,
+          highlights: [
+            {
+              type: "goal",
+              player: "Alex Johnson",
+              time: 15,
+              description: "Alex Johnson scores from close range"
+            },
+            {
+              type: "goal",
+              player: "Sarah Wilson",
+              time: 34,
+              description: "Sarah Wilson converts from penalty spot"
+            },
+            {
+              type: "goal",
+              player: "Lions Player",
+              time: 67,
+              description: "Lions FC pulls one back"
+            },
+            {
+              type: "goal",
+              player: "Alex Johnson",
+              time: 82,
+              description: "Alex Johnson seals the victory"
+            }
+          ],
+          teamStats: {
+            home: {
+              possession: 58,
+              shots: 12,
+              shotsOnTarget: 6,
+              corners: 7,
+              fouls: 11
+            },
+            away: {
+              possession: 42,
+              shots: 8,
+              shotsOnTarget: 3,
+              corners: 4,
+              fouls: 15
+            }
+          },
+          keyMoments: [
+            {
+              time: 15,
+              event: "First goal sets the tone",
+              impact: "high"
+            },
+            {
+              time: 34,
+              event: "Penalty conversion",
+              impact: "high"
+            },
+            {
+              time: 67,
+              event: "Lions fight back",
+              impact: "medium"
+            }
+          ]
+        },
+        {
+          gameId: "game-2",
+          homeTeam: "Lions FC",
+          awayTeam: "Eagles FC",
+          score: "0-2",
+          date: new Date("2025-01-12T14:00:00"),
+          venue: "Lions Ground",
+          sport: "Soccer",
+          duration: 90,
+          highlights: [
+            {
+              type: "goal",
+              player: "Sarah Wilson",
+              time: 23,
+              description: "Sarah Wilson opens scoring"
+            },
+            {
+              type: "save",
+              player: "Mike Rodriguez",
+              time: 56,
+              description: "Crucial save by Mike Rodriguez"
+            },
+            {
+              type: "goal",
+              player: "Alex Johnson",
+              time: 78,
+              description: "Alex Johnson doubles the lead"
+            }
+          ],
+          teamStats: {
+            home: {
+              possession: 48,
+              shots: 10,
+              shotsOnTarget: 4,
+              corners: 5,
+              fouls: 12
+            },
+            away: {
+              possession: 52,
+              shots: 9,
+              shotsOnTarget: 5,
+              corners: 6,
+              fouls: 8
+            }
+          },
+          keyMoments: [
+            {
+              time: 23,
+              event: "Early breakthrough",
+              impact: "high"
+            },
+            {
+              time: 56,
+              event: "Goalkeeper heroics",
+              impact: "high"
+            }
+          ]
+        }
+      ];
+      
+      res.json(gameStats);
+    } catch (error) {
+      console.error("Game stats fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch game stats" });
+    }
+  });
+
+  app.get("/api/stats/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalPlayers: 45,
+        totalTeams: 8,
+        totalGames: 24,
+        averageRating: 7.6,
+        topPerformers: [
+          {
+            playerId: "player-3",
+            name: "Mike Rodriguez",
+            metric: "Save Rate",
+            value: 89,
+            improvement: 12
+          },
+          {
+            playerId: "player-1",
+            name: "Alex Johnson",
+            metric: "Goals per Game",
+            value: 0.67,
+            improvement: 8
+          },
+          {
+            playerId: "player-2",
+            name: "Sarah Wilson",
+            metric: "Assist Rate",
+            value: 0.82,
+            improvement: 5
+          }
+        ],
+        teamRankings: [
+          {
+            teamId: "team-1",
+            name: "Eagles FC",
+            points: 26,
+            rank: 1,
+            change: 2
+          },
+          {
+            teamId: "team-2",
+            name: "Lions FC",
+            points: 20,
+            rank: 2,
+            change: -1
+          }
+        ],
+        trends: {
+          playerDevelopment: 85,
+          teamPerformance: 78,
+          gameQuality: 82
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Stats analytics fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
+  app.post("/api/stats/generate-report", isAuthenticated, async (req: any, res) => {
+    try {
+      const { type, filters } = req.body;
+      
+      // Simulate report generation
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Return a mock PDF blob
+      const pdfContent = `Advanced Stats Report - ${type}\nGenerated: ${new Date().toISOString()}\nFilters: ${JSON.stringify(filters)}`;
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${type}-report.pdf"`);
+      res.send(Buffer.from(pdfContent));
+    } catch (error) {
+      console.error("Report generation error:", error);
+      res.status(500).json({ message: "Failed to generate report" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
