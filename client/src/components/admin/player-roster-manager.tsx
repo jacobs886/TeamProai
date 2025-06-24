@@ -293,9 +293,12 @@ export default function PlayerRosterManager() {
 
       {/* Import Modal */}
       <Dialog open={importMode} onOpenChange={setImportMode}>
-        <DialogContent>
+        <DialogContent aria-describedby="import-description">
           <DialogHeader>
             <DialogTitle>Import Players</DialogTitle>
+            <div id="import-description" className="text-sm text-gray-600">
+              Import player data from CSV or Excel files with automatic validation and duplicate detection.
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             <Alert>
@@ -376,9 +379,12 @@ export default function PlayerRosterManager() {
 
       {/* Add/Edit Player Modal */}
       <Dialog open={showAddPlayer} onOpenChange={setShowAddPlayer}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="add-player-description">
           <DialogHeader>
             <DialogTitle>Add New Player</DialogTitle>
+            <div id="add-player-description" className="text-sm text-gray-600">
+              Add a new player to your roster with complete profile information and guardian details.
+            </div>
           </DialogHeader>
           <AddPlayerForm
             onSubmit={(data) => createPlayerMutation.mutate(data)}
@@ -393,7 +399,10 @@ export default function PlayerRosterManager() {
       {/* Player Details Modal */}
       {selectedPlayer && (
         <Dialog open={!!selectedPlayer} onOpenChange={() => setSelectedPlayer(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="player-details-description">
+            <div id="player-details-description" className="sr-only">
+              View detailed player profile including stats, guardian information, and performance metrics.
+            </div>
             <PlayerDetailsView player={selectedPlayer} />
           </DialogContent>
         </Dialog>

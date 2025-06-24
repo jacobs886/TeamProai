@@ -109,6 +109,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Changelog
 
+**June 24, 2025 - Debugging and Quality Improvements**
+- Fixed database connection issues and PostgreSQL pool errors with new database provisioning
+- Resolved team creation validation errors with proper sport field mapping and Zod schema validation
+- Added comprehensive error handling for team creation with detailed validation feedback
+- Fixed React warnings about missing dialog descriptions by adding aria-describedby attributes
+- Enhanced all dialog components with proper accessibility descriptions
+- Improved team creation form with dropdown sport selection for better validation
+- Updated skill assessment forms with proper error handling and loading states
+- Fixed authentication flow for skills tracking API endpoints
+- Added comprehensive logging for team creation debugging
+- Implemented proper sport field normalization (Basketball -> basketball, etc.)
+- Enhanced dialog accessibility across notifications, payments, and player roster components
+- Fixed all DialogContent components to include proper ARIA descriptions for screen readers
+- Improved data validation and error messages throughout the application
+
 **June 24, 2025 - Enhanced TeamPro.ai with Priority Features**
 - Implemented seamless team communication system with real-time chat, urgent message flags, and 99.5% notification reliability
 - Added comprehensive scorekeeping and statistics tracking for team sports with 150+ sport-specific metrics

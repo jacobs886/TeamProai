@@ -257,9 +257,12 @@ export default function Payments() {
 
       {/* Payment Form Modal */}
       <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
-        <DialogContent>
+        <DialogContent aria-describedby="payment-form-description">
           <DialogHeader>
             <DialogTitle>Create Payment Request</DialogTitle>
+            <div id="payment-form-description" className="text-sm text-gray-600">
+              Create a new payment request for team fees, equipment, or other expenses.
+            </div>
           </DialogHeader>
           <form
             onSubmit={(e) => {

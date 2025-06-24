@@ -299,9 +299,12 @@ export default function Notifications() {
 
       {/* Notification Form Modal */}
       <Dialog open={showNotificationForm} onOpenChange={setShowNotificationForm}>
-        <DialogContent>
+        <DialogContent aria-describedby="notification-form-description">
           <DialogHeader>
             <DialogTitle>Send Notification</DialogTitle>
+            <div id="notification-form-description" className="text-sm text-gray-600">
+              Send notifications to team members via multiple channels including email, SMS, and push notifications.
+            </div>
           </DialogHeader>
           <form
             onSubmit={(e) => {
