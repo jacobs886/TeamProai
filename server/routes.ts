@@ -68,85 +68,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Debug endpoint to check auth status
-  app.get('/api/debug/auth', (req: any, res) => {
-    res.json({
-      isAuthenticated: req.isAuthenticated(),
-      user: req.user ? 'Present' : 'None',
-      session: req.session ? 'Present' : 'None',
-      sessionID: req.sessionID,
-      cookies: req.headers.cookie || 'None',
-      hostname: req.hostname,
-      url: req.url
-    });
-  });
 
-  // Test callback endpoint to see if callbacks are reaching the server
-  app.get('/api/test-callback', (req: any, res) => {
-    console.log('Test callback hit with query:', req.query);
-    res.json({
-      message: 'Test callback received',
-      query: req.query,
-      headers: req.headers
-    });
-  });
 
-  // Temporary bypass for testing admin features without OAuth
-  app.post('/api/debug/bypass-auth', async (req: any, res) => {
-    console.log('Bypass auth endpoint hit:', req.body);
-    try {
-      const { email } = req.body;
-      if (!email) {
-        return res.status(400).json({ error: 'Email required' });
-      }
 
-      console.log('Creating test user for admin bypass:', email);
-      
-      // Create a test user directly
-      const testUser = await storage.upsertUser({
-        id: 'test-admin-' + Date.now(),
-        email: email,
-        firstName: 'Test',
-        lastName: 'Admin',
-        profileImageUrl: null
-      });
-
-      // Update role separately since UpsertUser might not include role
-      const updatedUser = await storage.updateUserRole(testUser.id, 'super_admin');
-      console.log('User role updated:', updatedUser);
-
-      console.log('Test user created:', testUser);
-
-      // Create a test session manually
-      const sessionUser = {
-        claims: {
-          sub: testUser.id,
-          email: testUser.email,
-          first_name: testUser.firstName,
-          last_name: testUser.lastName
-        },
-        expires_at: Math.floor(Date.now() / 1000) + 3600 // 1 hour
-      };
-
-      req.login(sessionUser, (err: any) => {
-        if (err) {
-          console.error('Test login failed:', err);
-          return res.status(500).json({ error: 'Login failed' });
-        }
-        
-        console.log('Test login successful');
-        res.json({ 
-          message: 'Test admin user created and logged in',
-          user: updatedUser || testUser,
-          redirect: '/admin'
-        });
-      });
-
-    } catch (error) {
-      console.error('Bypass auth error:', error);
-      res.status(500).json({ error: 'Failed to create test user' });
-    }
-  });
 
   // Setup initial super admin (one-time setup)
   app.post('/api/setup/super-admin', async (req: any, res) => {

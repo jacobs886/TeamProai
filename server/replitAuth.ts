@@ -144,11 +144,7 @@ export async function setupAuth(app: Express) {
       
       console.log("Manual auth URL:", authUrl.href);
       
-      // Direct OAuth flow - skip test callbacks for now
-      console.log("Redirecting directly to Replit OAuth:", authUrl.href);
-      return res.redirect(authUrl.href);
-      
-      // Try passport authentication
+      // Use passport authentication strategy
       passport.authenticate(`replitauth:${targetDomain}`, {
         prompt: "login consent", 
         scope: ["openid", "email", "profile", "offline_access"],
@@ -159,62 +155,17 @@ export async function setupAuth(app: Express) {
     }
   });
 
-  app.get("/api/callback", async (req, res, next) => {
-    console.log("=== CALLBACK RECEIVED ===");
-    console.log("Query params:", req.query);
-    console.log("Headers:", req.headers);
-    console.log("URL:", req.url);
-    console.log("Method:", req.method);
-    
+  app.get("/api/callback", (req, res, next) => {
+    const hostname = req.hostname;
     const domains = process.env.REPLIT_DOMAINS!.split(",");
     const targetDomain = domains[0];
     
-    try {
-      if (req.query.code) {
-        console.log("Processing authorization code...");
-        
-        const tokenResponse = await client.authorizationCodeGrant(config, {
-          code: req.query.code as string,
-          redirect_uri: `https://${targetDomain}/api/callback`,
-        });
-        
-        console.log("Token exchange successful, processing claims...");
-        const claims = tokenResponse.claims();
-        
-        // Create and save user
-        const userData = await upsertUser(claims);
-        console.log("User created/updated:", userData);
-        
-        // Create session object
-        const sessionUser = {
-          claims,
-          access_token: tokenResponse.access_token,
-          refresh_token: tokenResponse.refresh_token,
-          expires_at: claims?.exp
-        };
-        
-        // Use passport login to set session
-        req.login(sessionUser, (err) => {
-          if (err) {
-            console.error("Session creation failed:", err);
-            return res.status(500).send(`Login failed: ${err.message}`);
-          }
-          
-          console.log("Session created successfully, redirecting...");
-          res.redirect("/");
-        });
-        
-      } else if (req.query.error) {
-        console.error("OAuth callback error:", req.query.error, req.query.error_description);
-        res.status(400).send(`OAuth Error: ${req.query.error} - ${req.query.error_description}`);
-      } else {
-        console.error("Invalid callback - no code or error");
-        res.status(400).send("Invalid OAuth callback - missing code or error parameter");
-      }
-    } catch (error) {
-      console.error("Callback processing error:", error);
-      res.status(500).send(`Callback error: ${error.message}`);
-    }
+    console.log("Callback received for domain:", targetDomain);
+    
+    passport.authenticate(`replitauth:${targetDomain}`, {
+      successReturnToOrRedirect: "/",
+      failureRedirect: "/api/login",
+    })(req, res, next);
   });
 
   app.get("/api/logout", (req, res) => {

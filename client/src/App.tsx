@@ -14,7 +14,6 @@ import Payments from "@/pages/payments";
 import Notifications from "@/pages/notifications";
 import Settings from "@/pages/settings";
 import AdminDashboard from "@/pages/admin";
-import AuthBypass from "@/pages/auth-bypass";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -45,19 +44,16 @@ function AuthenticatedRouter() {
 function AppRouter() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  return (
-    <Switch>
-      <Route path="/auth-bypass" component={AuthBypass} />
-      {!isLoading && isAuthenticated ? (
-        <Route path="/*" component={AuthenticatedRouter} />
-      ) : (
-        <>
-          <Route path="/" component={Landing} />
-          <Route component={NotFound} />
-        </>
-      )}
-    </Switch>
-  );
+  if (isLoading || !isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="/" component={Landing} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
+
+  return <AuthenticatedRouter />;
 }
 
 function App() {
