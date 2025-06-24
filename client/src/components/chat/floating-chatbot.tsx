@@ -283,9 +283,9 @@ export default function FloatingChatbot() {
         {!isMinimized && (
           <CardContent className="p-0 flex flex-col h-full">
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4 space-y-4">
+            <div className="flex-1 p-4 space-y-4 overflow-y-auto max-h-80 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
               {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+                <div key={message.id} className={`flex mb-4 ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`
                     max-w-[80%] rounded-lg p-3 space-y-2
                     ${message.type === "user" 
@@ -362,7 +362,7 @@ export default function FloatingChatbot() {
                 </div>
               )}
               <div ref={messagesEndRef} />
-            </ScrollArea>
+            </div>
 
             {/* Input */}
             <div className="p-4 border-t border-gray-200">
