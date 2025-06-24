@@ -1,194 +1,213 @@
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Users, Calendar, Trophy, MessageCircle, BarChart3 } from "lucide-react";
 import { useState } from "react";
-import TeamCard from "@/components/teams/team-card";
-import TeamChat from "@/components/chat/team-chat";
-import Scorekeeping from "@/components/stats/scorekeeping";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import AiPromptHeader from "@/components/layout/ai-prompt-header";
+import {
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Trophy,
+  Calendar,
+  MapPin,
+  Star
+} from "lucide-react";
 
 export default function Teams() {
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showTeamForm, setShowTeamForm] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
 
-  const { data: teams, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  // Fetch teams data
+  const { data: teams = [], isLoading } = useQuery({
     queryKey: ["/api/teams"],
   });
 
-  if (isLoading) {
-    return (
-      <main className="flex-1 relative overflow-y-auto focus:outline-none">
-        <div className="py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-48 bg-gray-200 rounded-lg"></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  // Create team mutation
+  const createTeamMutation = useMutation({
+    mutationFn: (teamData: any) => apiRequest("POST", "/api/teams", teamData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/teams"] });
+      toast({
+        title: "Team Created",
+        description: "New team has been successfully created.",
+      });
+      setShowTeamForm(false);
+    },
+  });
+
+  const filteredTeams = teams.filter((team: any) =>
+    team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    team.sport?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleCreateTeam = (teamData: any) => {
+    createTeamMutation.mutate(teamData);
+  };
 
   return (
-    <main className="flex-1 relative overflow-y-auto focus:outline-none">
-      <div className="py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-          {/* Teams Header */}
-          <div className="md:flex md:items-center md:justify-between mb-8">
-            <div className="flex-1 min-w-0">
-              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                My Teams
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Manage your volleyball, basketball, and baseball teams
-              </p>
-            </div>
-            <div className="mt-4 flex md:mt-0 md:ml-4">
-              <Button 
-                onClick={() => setShowCreateForm(true)}
-                className="inline-flex items-center"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create Team
-              </Button>
-            </div>
+    <div className="flex-1 overflow-auto bg-gray-50">
+      <AiPromptHeader />
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Team Management</h1>
+            <p className="text-gray-600">Manage your teams, rosters, and performance</p>
           </div>
+          <Button onClick={() => setShowTeamForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Team
+          </Button>
+        </div>
 
-          {/* Teams Content */}
-          {teams && teams.length > 0 ? (
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="chat">Team Chat</TabsTrigger>
-                <TabsTrigger value="stats">Live Stats</TabsTrigger>
-                <TabsTrigger value="calendar">Calendar</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="overview" className="mt-6">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {teams.map((team: any) => (
-                    <div key={team.id} onClick={() => setSelectedTeam(team)} className="cursor-pointer">
-                      <TeamCard team={team} />
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="chat" className="mt-6">
-                {selectedTeam ? (
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-1">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Select Team</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2">
-                            {teams.map((team: any) => (
-                              <Button
-                                key={team.id}
-                                variant={selectedTeam?.id === team.id ? "default" : "ghost"}
-                                className="w-full justify-start"
-                                onClick={() => setSelectedTeam(team)}
-                              >
-                                <span className="mr-2">
-                                  {team.sport === 'volleyball' ? '🏐' : 
-                                   team.sport === 'basketball' ? '🏀' : '⚾'}
-                                </span>
-                                {team.name}
-                              </Button>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                    <div className="lg:col-span-2">
-                      <TeamChat teamId={selectedTeam.id} teamName={selectedTeam.name} />
-                    </div>
-                  </div>
-                ) : (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center py-12">
-                        <MessageCircle className="mx-auto h-12 w-12 text-gray-400" />
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">Select a team to start chatting</h3>
-                        <p className="mt-1 text-sm text-gray-500">
-                          Choose a team from your list to access team chat and communication.
-                        </p>
+        {/* Search */}
+        <Card className="mb-6">
+          <CardContent className="pt-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search teams by name or sport..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Teams Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <CardContent className="pt-6">
+                  <div className="h-6 bg-gray-200 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : filteredTeams.length === 0 ? (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center py-12">
+                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Found</h3>
+                <p className="text-gray-600 mb-4">Create your first team to get started.</p>
+                <Button onClick={() => setShowTeamForm(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create First Team
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTeams.map((team: any) => (
+              <Card key={team.id} className="hover:shadow-lg transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <Trophy className="h-6 w-6 text-blue-600" />
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="stats" className="mt-6">
-                {selectedTeam ? (
-                  <Scorekeeping 
-                    eventId={1} // In real app, this would be selected from current/upcoming games
-                    sport={selectedTeam.sport}
-                    players={[
-                      { id: '1', name: 'Player 1', jerseyNumber: 10, position: 'Guard' },
-                      { id: '2', name: 'Player 2', jerseyNumber: 23, position: 'Forward' },
-                      { id: '3', name: 'Player 3', jerseyNumber: 7, position: 'Center' },
-                    ]}
-                  />
-                ) : (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center py-12">
-                        <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">Select a team for live scorekeeping</h3>
-                        <p className="mt-1 text-sm text-gray-500">
-                          Choose a team to track game statistics and performance metrics.
-                        </p>
+                      <div>
+                        <h3 className="font-semibold text-lg">{team.name}</h3>
+                        <Badge variant="secondary">{team.sport}</Badge>
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-              
-              <TabsContent value="calendar" className="mt-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center py-12">
-                      <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">Calendar sync coming soon</h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        Auto-sync with Google, Apple, and Outlook calendars.
-                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center py-12">
-                  <Users className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No teams yet</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Get started by creating your first team.
-                  </p>
-                  <div className="mt-6">
-                    <Button onClick={() => setShowCreateForm(true)}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Team
+                    <Button variant="ghost" size="sm" onClick={() => setSelectedTeam(team)}>
+                      <Edit className="h-4 w-4" />
                     </Button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>{team.memberCount || 0} players</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>Next: {team.nextEvent || "No events scheduled"}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>{team.homeVenue || "No home venue"}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      <span className="text-sm">{team.rating || "No rating"}</span>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
-    </main>
+
+      {/* Team Form Modal */}
+      <Dialog open={showTeamForm} onOpenChange={setShowTeamForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Team</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const teamData = {
+                name: formData.get("name"),
+                sport: formData.get("sport"),
+                description: formData.get("description"),
+              };
+              handleCreateTeam(teamData);
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <label className="text-sm font-medium">Team Name</label>
+              <Input name="name" required />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Sport</label>
+              <Input name="sport" required />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Description</label>
+              <textarea
+                name="description"
+                className="w-full p-2 border rounded-md"
+                rows={3}
+              />
+            </div>
+            <div className="flex space-x-3">
+              <Button type="button" variant="outline" onClick={() => setShowTeamForm(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Create Team</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

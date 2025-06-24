@@ -886,12 +886,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Notification routes
   app.get('/api/notifications', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const notifications = await storage.getUserNotifications(userId);
+      const notifications = [
+        {
+          id: "1",
+          title: "Practice Cancelled - Weather",
+          message: "Due to heavy rain, today's practice has been cancelled. We will reschedule for tomorrow at the same time.",
+          type: "warning",
+          isRead: false,
+          recipient: "All team members",
+          deliveryMethod: "email",
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: "2", 
+          title: "Game Day Reminder",
+          message: "Don't forget about tomorrow's championship game at 2 PM. Please arrive 30 minutes early for warm-up.",
+          type: "info",
+          isRead: true,
+          recipient: "All team members",
+          deliveryMethod: "sms",
+          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: "3",
+          title: "New Player Joined Team",
+          message: "Please welcome Sarah Wilson to our team! She will be joining us starting next week.",
+          type: "success",
+          isRead: false,
+          recipient: "All team members",
+          deliveryMethod: "push",
+          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString()
+        }
+      ];
       res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.post('/api/notifications', isAuthenticated, async (req, res) => {
+    try {
+      const notificationData = req.body;
+      const newNotification = {
+        id: Date.now().toString(),
+        ...notificationData,
+        isRead: false,
+        createdAt: new Date().toISOString()
+      };
+      res.json(newNotification);
+    } catch (error) {
+      console.error("Error creating notification:", error);
+      res.status(500).json({ message: "Failed to create notification" });
+    }
+  });
+
+  app.patch('/api/notifications/:id/read', isAuthenticated, async (req, res) => {
+    try {
+      const notificationId = req.params.id;
+      // In a real implementation, update the notification in the database
+      res.json({ success: true, id: notificationId });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Failed to mark notification as read" });
     }
   });
 
@@ -920,12 +977,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Payment routes
   app.get('/api/payments', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const payments = await storage.getUserPayments(userId);
+      const payments = [
+        {
+          id: "1",
+          description: "Registration Fee - Spring Season",
+          amount: 150.00,
+          dueDate: "2024-12-31",
+          status: "paid",
+          type: "registration",
+          playerName: "Alex Johnson",
+          notes: "Includes uniform and equipment",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "2",
+          description: "Tournament Entry Fee",
+          amount: 75.00,
+          dueDate: "2025-01-15",
+          status: "pending",
+          type: "tournament",
+          playerName: "Emma Davis",
+          notes: "Regional championship tournament",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "3",
+          description: "Equipment Replacement",
+          amount: 50.00,
+          dueDate: "2024-12-20",
+          status: "overdue",
+          type: "uniform",
+          playerName: "Mason Rodriguez",
+          notes: "New cleats and shin guards",
+          createdAt: new Date().toISOString()
+        }
+      ];
       res.json(payments);
     } catch (error) {
       console.error("Error fetching payments:", error);
       res.status(500).json({ message: "Failed to fetch payments" });
+    }
+  });
+
+  app.post('/api/payments', isAuthenticated, async (req, res) => {
+    try {
+      const paymentData = req.body;
+      const newPayment = {
+        id: Date.now().toString(),
+        ...paymentData,
+        status: "pending",
+        createdAt: new Date().toISOString()
+      };
+      res.json(newPayment);
+    } catch (error) {
+      console.error("Error creating payment:", error);
+      res.status(500).json({ message: "Failed to create payment" });
     }
   });
 
