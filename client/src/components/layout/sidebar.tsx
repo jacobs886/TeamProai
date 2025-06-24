@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import HamburgerNav from "./hamburger-nav";
+import NineDotMenu from "./nine-dot-menu";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -114,14 +115,17 @@ export default function Sidebar() {
                 {user?.role && formatRole(user.role)}
               </p>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => window.location.href = "/api/logout"}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              Sign out
-            </Button>
+            <div className="flex items-center space-x-2">
+              <NineDotMenu />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.location.href = "/api/logout"}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Sign out
+              </Button>
+            </div>
           </div>
         </div>
       </div>

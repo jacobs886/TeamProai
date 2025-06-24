@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import HamburgerNav from "./hamburger-nav";
+import NineDotMenu from "./nine-dot-menu";
 
 export default function MobileHeader() {
   const { data: unreadCount = 0 } = useQuery({
@@ -36,6 +37,7 @@ export default function MobileHeader() {
               )}
             </Button>
           </Link>
+          <NineDotMenu />
         </div>
       </div>
     </header>
