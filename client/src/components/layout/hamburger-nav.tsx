@@ -119,7 +119,7 @@ export default function HamburgerNav() {
     {
       title: "Fan Engagement",
       items: [
-        { title: "Social Highlights", icon: Trophy, href: "/social", description: "AI-curated content", isNew: true },
+        { title: "AI Social Highlights", icon: Users, href: "/fan-engagement", description: "AI-curated social media content with platform optimization", isNew: true, isPremium: true },
         { title: "Fan Rewards", icon: Star, href: "/rewards", description: "Gamified experience" },
         { title: "Leaderboards", icon: TrendingUp, href: "/leaderboards", description: "Team competitions" },
         { title: "Newsletters", icon: MessageCircle, href: "/newsletters", description: "Automated updates" },
