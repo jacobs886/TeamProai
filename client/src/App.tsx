@@ -73,6 +73,7 @@ function AuthenticatedRouter() {
             <Route path="/performance-analysis" component={PerformanceAnalysis} />
             <Route path="/player-development" component={PlayerDevelopment} />
             <Route path="/benchmarks" component={Benchmarks} />
+            <Route path="/autostream" component={AutoStream} />
             <Route path="/admin/database" component={DatabaseManagement} />
             <Route component={NotFound} />
           </Switch>

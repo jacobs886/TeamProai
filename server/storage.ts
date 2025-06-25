@@ -432,6 +432,117 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return created;
   }
+  // AutoStream implementation
+  private streams: any[] = [];
+  private highlights: any[] = [];
+  private streamingAnalytics = {
+    totalStreams: 0,
+    totalViewers: 0,
+    avgWatchTime: 0,
+    highlightAccuracy: 0.91,
+    engagementRate: 0.78
+  };
+
+  async getStreams(): Promise<any[]> {
+    return this.streams;
+  }
+
+  async getStream(id: number): Promise<any> {
+    return this.streams.find(s => s.id === id);
+  }
+
+  async createStream(streamData: any): Promise<any> {
+    const newStream = {
+      id: this.streams.length + 1,
+      ...streamData,
+      createdAt: new Date().toISOString(),
+      thumbnailUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400",
+      metrics: {
+        quality: streamData.quality || "720p",
+        bandwidth: "2.5 Mbps",
+        latency: 2.1
+      }
+    };
+    this.streams.push(newStream);
+    this.streamingAnalytics.totalStreams++;
+    return newStream;
+  }
+
+  async updateStream(id: number, updates: any): Promise<any> {
+    const streamIndex = this.streams.findIndex(s => s.id === id);
+    if (streamIndex !== -1) {
+      this.streams[streamIndex] = { ...this.streams[streamIndex], ...updates };
+      return this.streams[streamIndex];
+    }
+    throw new Error("Stream not found");
+  }
+
+  async getHighlights(): Promise<any[]> {
+    return this.highlights;
+  }
+
+  async createHighlight(highlightData: any): Promise<any> {
+    const newHighlight = {
+      id: this.highlights.length + 1,
+      ...highlightData,
+      thumbnailUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=300",
+      videoUrl: `https://demo.video.url/highlight${this.highlights.length + 1}.mp4`,
+      duration: Math.floor(Math.random() * 30) + 10,
+      metrics: [
+        { name: "Sprint Speed", value: "7.2 m/s", benchmark: "Above Average" },
+        { name: "Shot Accuracy", value: "95%", benchmark: "Excellent" }
+      ],
+      tags: ["goal", "sprint", "accuracy"],
+      translations: {
+        es: "Jugada destacada",
+        fr: "Action remarquable"
+      }
+    };
+    this.highlights.push(newHighlight);
+    return newHighlight;
+  }
+
+  async getStreamingAnalytics(): Promise<any> {
+    return {
+      ...this.streamingAnalytics,
+      streamEngagement: 0.78,
+      avgWatchTime: 24,
+      highlightAccuracy: 0.91,
+      languagesServed: 12,
+      recentStreams: this.streams.slice(-5),
+      topHighlights: this.highlights.slice(-3)
+    };
+  }
+
+  async updateStreamSettings(streamId: number, settings: any): Promise<any> {
+    return await this.updateStream(streamId, { settings });
+  }
+
+  async getStreamEngagement(streamId: number): Promise<any> {
+    return {
+      streamId,
+      viewerCount: Math.floor(Math.random() * 100) + 20,
+      avgWatchTime: Math.floor(Math.random() * 30) + 15,
+      interactions: Math.floor(Math.random() * 50) + 10,
+      shares: Math.floor(Math.random() * 20) + 5,
+      comments: Math.floor(Math.random() * 30) + 8
+    };
+  }
+
+  async addHighlightToStream(streamId: number, highlight: any): Promise<void> {
+    const stream = await this.getStream(streamId);
+    if (stream) {
+      if (!stream.highlights) stream.highlights = [];
+      stream.highlights.push(highlight);
+    }
+  }
+
+  async updateStreamMetrics(streamId: number, metrics: any): Promise<void> {
+    const stream = await this.getStream(streamId);
+    if (stream) {
+      stream.metrics = { ...stream.metrics, ...metrics };
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

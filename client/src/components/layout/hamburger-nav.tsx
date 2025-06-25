@@ -32,7 +32,6 @@ import {
   Star,
   MessageCircle,
   Database,
-  Video,
 } from "lucide-react";
 
 interface NavItem {
@@ -112,7 +111,7 @@ export default function HamburgerNav() {
     {
       title: "Video & Streaming",
       items: [
-        { title: "AutoStream", icon: Video, href: "/streaming", description: "AI-powered streaming", isNew: true, isPremium: true },
+        { title: "AutoStream", icon: Video, href: "/autostream", description: "AI-powered streaming", isNew: true, isPremium: true },
         { title: "Video Analysis", icon: Camera, href: "/video-analysis", description: "Technique improvement", isPremium: true },
         { title: "Highlight Clips", icon: Star, href: "/highlights", description: "Auto-generated clips", isPremium: true },
       ]
