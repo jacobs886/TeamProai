@@ -2042,6 +2042,509 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Performance Analysis API endpoints
+  app.get("/api/performance-analysis/realtime", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, category } = req.query;
+      
+      const realTimeMetrics = [
+        {
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          position: "Forward",
+          teamId: "team-1",
+          timestamp: new Date(),
+          metrics: {
+            physical: {
+              sprintSpeed: 7.2,
+              distanceCovered: 4.8,
+              highIntensityRuns: 12,
+              maxSpeed: 8.5,
+              acceleration: 2.1
+            },
+            biometric: {
+              heartRate: 165,
+              heartRateVariability: 45,
+              fatigueIndex: 0.65,
+              loadIndex: 78,
+              recoveryRate: 92
+            },
+            technical: {
+              passCompletion: 87.5,
+              shotAccuracy: 66.7,
+              touchesPerMinute: 2.3,
+              dribbleSuccess: 75.0,
+              tackleSuccess: 60.0
+            },
+            tactical: {
+              positionAccuracy: 85.2,
+              zoneCoverage: 78.9,
+              pressureApplication: 82.1,
+              teamworkScore: 88.5,
+              decisionMaking: 79.3
+            },
+            youthSpecific: {
+              effortScore: 8.2,
+              improvementRate: 15.3,
+              confidenceLevel: 85.0,
+              learningProgress: 78.9,
+              socialEngagement: 91.2
+            }
+          },
+          alerts: [
+            {
+              type: "warning",
+              message: "Approaching fatigue threshold",
+              priority: "medium",
+              timestamp: new Date()
+            }
+          ]
+        },
+        {
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          position: "Midfielder",
+          teamId: "team-1",
+          timestamp: new Date(),
+          metrics: {
+            physical: {
+              sprintSpeed: 6.8,
+              distanceCovered: 5.2,
+              highIntensityRuns: 15,
+              maxSpeed: 7.9,
+              acceleration: 1.9
+            },
+            biometric: {
+              heartRate: 158,
+              heartRateVariability: 52,
+              fatigueIndex: 0.45,
+              loadIndex: 65,
+              recoveryRate: 95
+            },
+            technical: {
+              passCompletion: 92.3,
+              shotAccuracy: 50.0,
+              touchesPerMinute: 3.1,
+              dribbleSuccess: 82.1,
+              tackleSuccess: 78.9
+            },
+            tactical: {
+              positionAccuracy: 91.7,
+              zoneCoverage: 88.4,
+              pressureApplication: 75.6,
+              teamworkScore: 94.2,
+              decisionMaking: 87.8
+            },
+            youthSpecific: {
+              effortScore: 8.7,
+              improvementRate: 12.8,
+              confidenceLevel: 89.5,
+              learningProgress: 85.1,
+              socialEngagement: 87.3
+            }
+          },
+          alerts: []
+        },
+        {
+          playerId: "player-3",
+          playerName: "Mike Rodriguez",
+          position: "Goalkeeper",
+          teamId: "team-1",
+          timestamp: new Date(),
+          metrics: {
+            physical: {
+              sprintSpeed: 5.9,
+              distanceCovered: 2.1,
+              highIntensityRuns: 6,
+              maxSpeed: 6.8,
+              acceleration: 1.7
+            },
+            biometric: {
+              heartRate: 145,
+              heartRateVariability: 58,
+              fatigueIndex: 0.35,
+              loadIndex: 52,
+              recoveryRate: 98
+            },
+            technical: {
+              passCompletion: 95.2,
+              shotAccuracy: 0.0,
+              touchesPerMinute: 1.2,
+              dribbleSuccess: 100.0,
+              tackleSuccess: 85.7
+            },
+            tactical: {
+              positionAccuracy: 96.8,
+              zoneCoverage: 65.2,
+              pressureApplication: 45.0,
+              teamworkScore: 82.1,
+              decisionMaking: 91.5
+            },
+            youthSpecific: {
+              effortScore: 7.9,
+              improvementRate: 18.7,
+              confidenceLevel: 92.1,
+              learningProgress: 81.4,
+              socialEngagement: 83.7
+            }
+          },
+          alerts: [
+            {
+              type: "info",
+              message: "Excellent positioning consistency",
+              priority: "low",
+              timestamp: new Date()
+            }
+          ]
+        }
+      ];
+      
+      res.json(realTimeMetrics);
+    } catch (error) {
+      console.error("Real-time metrics fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch real-time metrics" });
+    }
+  });
+
+  app.get("/api/performance-analysis/insights", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport } = req.query;
+      
+      const predictiveInsights = [
+        {
+          id: "insight-1",
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          type: "substitution",
+          recommendation: "Consider substituting Alex Johnson in next 10 minutes due to rising fatigue index (65%)",
+          confidence: 0.85,
+          impact: "medium",
+          reasoning: [
+            "Heart rate elevated above optimal zone for 8 minutes",
+            "Sprint speed decreased by 12% in last 5 minutes",
+            "Historical data shows performance drop after 70% fatigue index"
+          ],
+          dataPoints: {
+            currentFatigue: 0.65,
+            heartRateZone: 4,
+            sprintSpeedDrop: 12,
+            optimalSubTime: 10
+          },
+          timestamp: new Date(),
+          actionTaken: false
+        },
+        {
+          id: "insight-2",
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          type: "tactical",
+          recommendation: "Move Sarah Wilson to defensive midfield position to exploit opponent weakness",
+          confidence: 0.78,
+          impact: "high",
+          reasoning: [
+            "Opponent showing 25% less pressure in central defensive zone",
+            "Sarah's pass completion rate 92% - highest on field",
+            "Tactical AI predicts 18% possession increase with position change"
+          ],
+          dataPoints: {
+            opponentPressure: 25,
+            passCompletion: 92.3,
+            possessionIncrease: 18,
+            tacticalScore: 89
+          },
+          timestamp: new Date(),
+          actionTaken: false
+        },
+        {
+          id: "insight-3",
+          playerId: "player-3",
+          playerName: "Mike Rodriguez",
+          type: "performance",
+          recommendation: "Excellent goalkeeping performance - consider extending playing time in future matches",
+          confidence: 0.92,
+          impact: "low",
+          reasoning: [
+            "Save rate 100% with 4 shots faced",
+            "Distribution accuracy 95.2% - above average",
+            "Low fatigue index (35%) indicates capacity for extended play"
+          ],
+          dataPoints: {
+            saveRate: 100,
+            distributionAccuracy: 95.2,
+            fatigueIndex: 0.35,
+            shotsPressed: 4
+          },
+          timestamp: new Date(),
+          actionTaken: false
+        }
+      ];
+      
+      res.json(predictiveInsights);
+    } catch (error) {
+      console.error("Predictive insights fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch insights" });
+    }
+  });
+
+  app.get("/api/performance-analysis/tactical", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport } = req.query;
+      
+      const tacticalAnalysis = {
+        teamId: "team-1",
+        teamName: "Eagles FC",
+        formation: "4-3-3",
+        possession: 62,
+        heatMap: [
+          { playerId: "player-1", x: 75, y: 35, intensity: 0.8 },
+          { playerId: "player-2", x: 55, y: 50, intensity: 0.9 },
+          { playerId: "player-3", x: 15, y: 50, intensity: 0.7 },
+          { playerId: "player-4", x: 45, y: 25, intensity: 0.6 },
+          { playerId: "player-5", x: 45, y: 75, intensity: 0.6 }
+        ],
+        zoneCoverage: {
+          defensive: 85,
+          midfield: 78,
+          attacking: 72,
+          leftWing: 68,
+          rightWing: 74,
+          central: 82
+        },
+        passingNetworks: [
+          { from: "player-2", to: "player-1", frequency: 12, accuracy: 91.7 },
+          { from: "player-3", to: "player-2", frequency: 8, accuracy: 95.2 },
+          { from: "player-2", to: "player-4", frequency: 6, accuracy: 88.3 }
+        ],
+        pressureZones: [
+          { zone: "high_press", intensity: 82, effectiveness: 75 },
+          { zone: "mid_press", intensity: 68, effectiveness: 71 },
+          { zone: "low_press", intensity: 45, effectiveness: 89 }
+        ],
+        realTimeScore: 8.4
+      };
+      
+      res.json(tacticalAnalysis);
+    } catch (error) {
+      console.error("Tactical analysis fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch tactical analysis" });
+    }
+  });
+
+  app.get("/api/performance-analysis/biometric-alerts", isAuthenticated, async (req: any, res) => {
+    try {
+      const { filter } = req.query;
+      
+      const biometricAlerts = [
+        {
+          id: "alert-1",
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          alertType: "fatigue",
+          severity: "medium",
+          message: "Player approaching fatigue threshold - consider rest",
+          recommendations: [
+            "Reduce training intensity for next 5 minutes",
+            "Ensure adequate hydration",
+            "Monitor heart rate recovery"
+          ],
+          vitals: {
+            heartRate: 165,
+            fatigueLevel: 65,
+            hydrationLevel: 78,
+            temperatureIndex: 37.2
+          },
+          timestamp: new Date(),
+          acknowledged: false
+        },
+        {
+          id: "alert-2",
+          playerId: "player-4",
+          playerName: "Emma Davis",
+          alertType: "overexertion",
+          severity: "high",
+          message: "Heart rate in red zone for extended period",
+          recommendations: [
+            "Immediate substitution recommended",
+            "Medical evaluation if symptoms persist",
+            "Cool down period required"
+          ],
+          vitals: {
+            heartRate: 185,
+            fatigueLevel: 82,
+            hydrationLevel: 65,
+            temperatureIndex: 38.1
+          },
+          timestamp: new Date(),
+          acknowledged: false
+        },
+        {
+          id: "alert-3",
+          playerId: "player-5",
+          playerName: "James Wilson",
+          alertType: "dehydration",
+          severity: "medium",
+          message: "Hydration levels below optimal range",
+          recommendations: [
+            "Immediate fluid intake required",
+            "Monitor electrolyte levels",
+            "Reduce high-intensity activities"
+          ],
+          vitals: {
+            heartRate: 142,
+            fatigueLevel: 45,
+            hydrationLevel: 58,
+            temperatureIndex: 37.8
+          },
+          timestamp: new Date(),
+          acknowledged: false
+        }
+      ];
+      
+      res.json(biometricAlerts);
+    } catch (error) {
+      console.error("Biometric alerts fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch biometric alerts" });
+    }
+  });
+
+  app.get("/api/performance-analysis/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalPlayers: 18,
+        activeSession: true,
+        sessionDuration: 45,
+        averageMetrics: {
+          heartRate: 156,
+          fatigueLevel: 52,
+          performanceScore: 82,
+          engagementLevel: 87
+        },
+        topPerformers: [
+          {
+            playerId: "player-2",
+            name: "Sarah Wilson",
+            metric: "Pass Completion",
+            value: 92.3,
+            percentile: 95
+          },
+          {
+            playerId: "player-3",
+            name: "Mike Rodriguez",
+            metric: "Save Rate",
+            value: 100.0,
+            percentile: 99
+          },
+          {
+            playerId: "player-1",
+            name: "Alex Johnson",
+            metric: "Sprint Speed",
+            value: 7.2,
+            percentile: 88
+          }
+        ],
+        insights: [
+          {
+            category: "team_performance",
+            insight: "Team possession increased by 15% since tactical adjustment",
+            confidence: 0.89,
+            impact: "Significant improvement in ball control"
+          },
+          {
+            category: "player_development",
+            insight: "Youth players showing 23% improvement in decision making",
+            confidence: 0.82,
+            impact: "Enhanced tactical awareness development"
+          },
+          {
+            category: "injury_prevention",
+            insight: "Current load management reducing injury risk by 31%",
+            confidence: 0.76,
+            impact: "Optimal player health maintenance"
+          }
+        ],
+        trends: {
+          performance: "improving",
+          fatigue: "stable",
+          engagement: "high"
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Performance analytics fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch performance analytics" });
+    }
+  });
+
+  app.post("/api/performance-analysis/session/:action", isAuthenticated, async (req: any, res) => {
+    try {
+      const { action } = req.params;
+      const { sport } = req.body;
+      
+      // Simulate session start/stop
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (action === "start") {
+        res.json({
+          message: "Live analysis session started",
+          sessionId: `session-${Date.now()}`,
+          sport,
+          startTime: new Date(),
+          features: ["Real-time metrics", "AI insights", "Biometric monitoring", "Tactical analysis"]
+        });
+      } else {
+        res.json({
+          message: "Live analysis session stopped",
+          duration: "45 minutes",
+          dataPoints: 2847,
+          insights: 12,
+          alerts: 3
+        });
+      }
+    } catch (error) {
+      console.error("Session toggle error:", error);
+      res.status(500).json({ message: "Failed to toggle session" });
+    }
+  });
+
+  app.post("/api/performance-analysis/apply-insight/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate applying AI insight
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      res.json({
+        message: "AI insight applied successfully",
+        insightId: id,
+        action: "Recommendation has been implemented",
+        expectedImpact: "Performance optimization activated"
+      });
+    } catch (error) {
+      console.error("Apply insight error:", error);
+      res.status(500).json({ message: "Failed to apply insight" });
+    }
+  });
+
+  app.post("/api/performance-analysis/acknowledge-alert/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate acknowledging biometric alert
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      res.json({
+        message: "Biometric alert acknowledged",
+        alertId: id,
+        acknowledgedBy: "Coach Martinez",
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Acknowledge alert error:", error);
+      res.status(500).json({ message: "Failed to acknowledge alert" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

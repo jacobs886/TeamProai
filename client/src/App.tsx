@@ -28,6 +28,7 @@ import SmartScheduler from "@/pages/smart-scheduler";
 import CalendarSync from "@/pages/calendar-sync";
 import AvailabilityPrediction from "@/pages/availability-prediction";
 import AdvancedStats from "@/pages/advanced-stats";
+import PerformanceAnalysis from "@/pages/performance-analysis";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -65,6 +66,7 @@ function AuthenticatedRouter() {
             <Route path="/calendar-sync" component={CalendarSync} />
             <Route path="/availability-prediction" component={AvailabilityPrediction} />
             <Route path="/advanced-stats" component={AdvancedStats} />
+            <Route path="/performance-analysis" component={PerformanceAnalysis} />
             <Route component={NotFound} />
           </Switch>
         </div>
