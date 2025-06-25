@@ -15,7 +15,8 @@ import {
   Users,
   Trophy,
   Edit,
-  Filter
+  Filter,
+  Mountain
 } from "lucide-react";
 
 export default function Schedule() {
@@ -112,6 +113,10 @@ export default function Schedule() {
                 <Users className="h-4 w-4 mr-2" />
                 Practices Only
               </Button>
+              <Button variant="outline" size="sm">
+                <Mountain className="h-4 w-4 mr-2" />
+                Camps Only
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -153,6 +158,8 @@ export default function Schedule() {
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                         {event.type === "game" ? (
                           <Trophy className="h-6 w-6 text-blue-600" />
+                        ) : event.type === "camp" ? (
+                          <Mountain className="h-6 w-6 text-blue-600" />
                         ) : (
                           <Users className="h-6 w-6 text-blue-600" />
                         )}
@@ -236,6 +243,7 @@ export default function Schedule() {
                 <option value="game">Game</option>
                 <option value="practice">Practice</option>
                 <option value="tournament">Tournament</option>
+                <option value="camp">Camp</option>
                 <option value="meeting">Team Meeting</option>
               </select>
             </div>
