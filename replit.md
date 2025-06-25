@@ -227,6 +227,8 @@ Preferred communication style: Simple, everyday language.
 - Built database management interface accessible through admin navigation for easy data population and platform demonstration
 - Added realistic sports league data with multi-sport support (soccer, basketball, volleyball) and youth-focused team structures
 - Implemented comprehensive user roles, team hierarchies, event scheduling, payment tracking, and performance analytics with sample data
+- Added "Camps Only" filter button to schedule page with Mountain icon and camp event type support
+- Enhanced Send Notification popup with scrollable content, fixed header/footer, and improved UX for long forms
 
 **June 24, 2025 - Enhanced TeamPro.ai with Priority Features**
 - Implemented seamless team communication system with real-time chat, urgent message flags, and 99.5% notification reliability

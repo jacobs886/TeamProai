@@ -299,28 +299,29 @@ export default function Notifications() {
 
       {/* Notification Form Modal */}
       <Dialog open={showNotificationForm} onOpenChange={setShowNotificationForm}>
-        <DialogContent aria-describedby="notification-form-description">
-          <DialogHeader>
+        <DialogContent aria-describedby="notification-form-description" className="max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>Send Notification</DialogTitle>
             <div id="notification-form-description" className="text-sm text-gray-600">
               Send notifications to team members via multiple channels including email, SMS, and push notifications.
             </div>
           </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const notificationData = {
-                title: formData.get("title"),
-                message: formData.get("message"),
-                type: formData.get("type"),
-                recipient: formData.get("recipient"),
-                deliveryMethod: formData.get("deliveryMethod"),
-              };
-              handleCreateNotification(notificationData);
-            }}
-            className="space-y-4"
-          >
+          <div className="flex-1 overflow-y-auto pr-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const notificationData = {
+                  title: formData.get("title"),
+                  message: formData.get("message"),
+                  type: formData.get("type"),
+                  recipient: formData.get("recipient"),
+                  deliveryMethod: formData.get("deliveryMethod"),
+                };
+                handleCreateNotification(notificationData);
+              }}
+              className="space-y-4"
+            >
             <div>
               <label className="text-sm font-medium">Title</label>
               <Input name="title" placeholder="Notification title" required />
@@ -367,13 +368,14 @@ export default function Notifications() {
                 <option value="coaches">Coaches Only</option>
               </select>
             </div>
-            <div className="flex space-x-3">
-              <Button type="button" variant="outline" onClick={() => setShowNotificationForm(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">Send Notification</Button>
-            </div>
-          </form>
+              <div className="flex space-x-3 pt-4 border-t bg-white sticky bottom-0">
+                <Button type="button" variant="outline" onClick={() => setShowNotificationForm(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Send Notification</Button>
+              </div>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
