@@ -35,6 +35,7 @@ import AutoStream from "@/pages/autostream";
 import VideoAnalysis from "@/pages/video-analysis";
 import Highlights from "@/pages/highlights";
 import FanEngagement from "@/pages/fan-engagement";
+import EnhancedDashboard from "@/pages/enhanced-dashboard";
 import DatabaseManagement from "@/pages/admin/database-management";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
@@ -80,6 +81,7 @@ function AuthenticatedRouter() {
             <Route path="/video-analysis" component={VideoAnalysis} />
             <Route path="/highlights" component={Highlights} />
             <Route path="/fan-engagement" component={FanEngagement} />
+            <Route path="/enhanced-dashboard" component={EnhancedDashboard} />
             <Route path="/admin/database" component={DatabaseManagement} />
             <Route component={NotFound} />
           </Switch>

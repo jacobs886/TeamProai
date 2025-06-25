@@ -1,0 +1,244 @@
+To enhance TeamPro.ai’s **Dashboard** by replicating the core features of GameChanger (gc.com) and TeamSnap (teamsnap.com), while laying a foundation for AI-driven enhancements, I’ll outline requirements to ensure robust team management, scheduling, communication, scorekeeping, and fan engagement, tailored for youth sports. Leveraging AWS, Supabase, Grok 3 on MCP servers, HelloPayments.net, and existing features (e.g., AutoStream, Video Analysis, Highlight Clips, Social Highlights, Advanced Performance Analytics, AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub), the dashboard will prioritize core functionalities before integrating advanced AI capabilities. This addresses competitor strengths and gaps, aligning with your strategy for a scalable, user-friendly youth sports platform. Below are the requirements, prioritized features, and implementation strategy, informed by web sources on GameChanger and TeamSnap.
+
+### Competitor Core Features (GameChanger and TeamSnap)
+Based on web sources, here are the core features of GameChanger and TeamSnap to replicate:
+
+- **GameChanger** (gc.com):[](https://gc.com/)[](https://help.gc.com/hc/en-us/articles/115005511266-What-is-GameChanger)[](https://apps.apple.com/us/app/gamechanger/id1308415878)
+  - **Team Management**: Free scheduling, rosters, RSVPs, and messaging for coaches/parents.
+  - **Scorekeeping**: Easy-to-use tools for baseball, softball, soccer, basketball, etc., with live updates.
+  - **Live Streaming**: Free streaming with external camera support (e.g., Mevo, GoPro via RTMP).
+  - **Stats Tracking**: Pitch counts, batting spray charts, and shareable athlete profiles (premium for fans).
+  - **Communication**: Team messaging, but lacks email integration and thread naming compared to TeamSnap.[](https://www.reddit.com/r/GameChangerApp/comments/xts2uy/could_gc_free_replace_teamsnap/)
+  - **Web Portal**: Manage rosters, schedules, and stats at web.gc.com (beta for staff).[](https://gamechanger.zendesk.com/hc/en-us/articles/360060231712-Explainer-Migrating-From-Old-GameChanger-to-New-GameChanger-Team-Manager)
+
+- **TeamSnap** (teamsnap.com):[](https://slashdot.org/software/comparison/GameChanger-vs-TeamSnap/)[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)[](https://www.teamsnap.com/for-business/make-the-switch-to-teamsnap)
+  - **Scheduling**: Single source for games, practices, and events, syncing with calendar apps.
+  - **Communication**: Push notifications, text/email alerts, and group messaging with thread naming.
+  - **Assignments**: Volunteer tasks, snacks, and signups.
+  - **Payments**: In-app registration and payment processing.
+  - **Photo Sharing**: Organized photo uploads by team members.
+  - **Roster Importing**: Import from MaxPreps, Sports Connect, or past seasons.
+  - **Mobile-Friendly Website**: Drag-and-drop tools for league websites integrated with TeamSnap data.
+
+- **Competitor Gaps**:[](https://www.reddit.com/r/GameChangerApp/comments/xts2uy/could_gc_free_replace_teamsnap/)[](https://www.reddit.com/r/GameChangerApp/comments/10po6rs/team_manager_as_teamsnap_replacement/)[](https://www.reddit.com/r/Softball/comments/cp0ekb/teamsnap_or_gamechanger_or_both/)
+  - GameChanger: Weak messaging (no email, poor thread organization), no payment processing, laggy app with crashes.
+  - TeamSnap: Intrusive ads, slow performance, high costs ($9–$10/month), limited stats and streaming.
+  - Both: Limited AI-driven insights, youth-specific customization, multilingual support, and offline access.
+
+### Requirements for TeamPro.ai Enhanced Dashboard
+#### Parameters
+1. **Accessibility**: Mobile-first React PWA, offline access via Supabase edge functions for field use.
+2. **Security**: Supabase RBAC restricts access (e.g., parents view child’s data, coaches manage team). AWS KMS encrypts sensitive data.
+3. **Scalability**: AWS CloudFront for UI, Lambda for processing, Supabase for thousands of users.
+4. **AI Foundation**: Grok 3 on MCP servers to support future AI enhancements (e.g., predictive insights).
+5. **Integration**: Connects with AutoStream, Video Analysis, Highlight Clips, Social Highlights, Advanced Performance Analytics, AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub, and HelloPayments.net.
+6. **Sport Support**: Covers baseball, softball, soccer, basketball, hockey, lacrosse, etc.
+7. **User Roles**: Coaches, parents, players, admins, and fans with role-specific views.
+
+#### Baseline Functionalities (Core Features to Replicate)
+1. **Team Management**: Rosters, schedules, RSVPs, and profile management.
+2. **Scheduling**: Game/practice/event creation with calendar sync.
+3. **Communication**: Messaging, email, push notifications, and alerts.
+4. **Scorekeeping**: Real-time scoring with stats tracking.
+5. **Live Streaming**: Free streaming with external camera support.
+6. **Photo/Video Sharing**: Organized uploads and sharing.
+7. **Payments**: Registration and team fees via HelloPayments.net.
+8. **Web Portal**: Centralized management for all features.
+
+#### Prioritized Dashboard Features
+These replicate GameChanger and TeamSnap core features, with improvements to address gaps and prepare for AI integration.
+
+1. **Team Management Dashboard**:
+   - **Description**: Centralized view for rosters, schedules, RSVPs, and player profiles, replicating GameChanger’s free management and TeamSnap’s roster importing.[](https://apps.apple.com/us/app/gamechanger/id1308415878)[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+   - **Features**:
+     - Add/edit players with details (name, age, jersey number, medical info).
+     - Import rosters from Sports Connect, MaxPreps, or CSV.
+     - Track RSVPs for games/practices with Predictive Availability integration.
+     - Role-based views (e.g., parents see child’s schedule, coaches see team).
+   - **How**: Store in Supabase `user_profiles` and `team_rosters`, render in React with Tailwind CSS. Sync with Smart Scheduler.
+   - **Why**: Matches GameChanger’s free management, improves on TeamSnap’s slow UI.[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+
+2. **Scheduling Interface**:
+   - **Description**: Create and manage game/practice/event schedules, syncing with calendar apps, replicating TeamSnap’s single-source scheduling.[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+   - **Features**:
+     - Drag-and-drop schedule creation with conflict detection.
+     - Automatic reminders via push notifications, SMS, email (AWS SNS/SES).
+     - Maps/weather integration for location and conditions.
+     - Offline access to schedules via Supabase edge functions.
+   - **How**: Store in Supabase `events`, integrate with Calendar Sync, render in React. Use AWS Lambda for reminders.
+   - **Why**: Outperforms GameChanger’s basic scheduling, avoids TeamSnap’s performance issues.[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+
+3. **Communication Hub**:
+   - **Description**: Unified messaging with email, push notifications, and thread naming, improving on GameChanger’s weak messaging.[](https://www.reddit.com/r/GameChangerApp/comments/xts2uy/could_gc_free_replace_teamsnap/)
+   - **Features**:
+     - Team/group/individual messaging with titled threads (e.g., “Practice Updates”).
+     - Email integration for critical alerts (e.g., cancellations).
+     - Multilingual support via Translation Hub (50+ languages).
+     - Log messages in Communication Log for auditability.
+   - **How**: Store in Supabase `messages`, process via Lambda, send via SNS/SES. Render in React with real-time updates.
+   - **Why**: Addresses GameChanger’s email and thread naming gaps, matches TeamSnap’s communication strength.[](https://www.reddit.com/r/GameChangerApp/comments/xts2uy/could_gc_free_replace_teamsnap/)[](https://www.reddit.com/r/Softball/comments/cp0ekb/teamsnap_or_gamechanger_or_both/)
+
+4. **Scorekeeping Module**:
+   - **Description**: Real-time scorekeeping with stats tracking, replicating GameChanger’s easy-to-use tools.[](https://apps.apple.com/us/app/gamechanger/id1308415878)
+   - **Features**:
+     - Sport-specific scoring (e.g., pitch counts for baseball, goals for soccer).
+     - Live updates for fans via AutoStream.
+     - Basic stats (e.g., goals, assists, innings pitched) linked to player profiles.
+     - Offline scoring with sync on reconnect.
+   - **How**: Store in Supabase `game_stats`, process via Lambda, render in React. Integrate with Advanced Performance Analytics for future AI insights.
+   - **Why**: Matches GameChanger’s scorekeeping, prepares for AI-driven analytics, unlike TeamSnap’s limited stats.[](https://slashdot.org/software/comparison/GameChanger-vs-TeamSnap/)
+
+5. **Live Streaming Viewer**:
+   - **Description**: Free live streaming with external camera support, replicating GameChanger’s streaming.[](https://apps.apple.com/us/app/gamechanger/id1308415878)[](https://play.google.com/store/apps/details?id=com.gc.teammanager&amp=&hl=en_US)
+   - **Features**:
+     - Stream games/practices via AutoStream with Mevo/GoPro RTMP compatibility.
+     - Fan access to live feeds via React PWA.
+     - Archive streams for later viewing in player profiles.
+     - Low-bandwidth mode (e.g., 720p) for rural fields.
+   - **How**: Use AWS Elemental MediaLive for streaming, store in S3, tag in Supabase `media`. Render in React player.
+   - **Why**: Matches GameChanger’s free streaming, surpasses TeamSnap’s lack of streaming.[](https://slashdot.org/software/comparison/GameChanger-vs-TeamSnap/)
+
+6. **Photo/Video Sharing Panel**:
+   - **Description**: Organized uploads for photos/videos, replicating TeamSnap’s photo sharing.[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+   - **Features**:
+     - Team members upload photos/videos to shared albums.
+     - Auto-tagging with Highlight Clips for key moments.
+     - Privacy controls (e.g., team-only, public).
+     - Offline caching via Supabase edge functions.
+   - **How**: Store in S3, tag in Supabase `media`, render in React gallery. Integrate with Social Highlights for sharing.
+   - **Why**: Matches TeamSnap’s photo sharing, enhances with AI-driven tagging, unlike GameChanger’s limited sharing.[](https://www.discussfastpitch.com/threads/team-management-apps-what-do-you-like.34660/)
+
+7. **Payments and Registration**:
+   - **Description**: Manage team fees and registration, replicating TeamSnap’s payment processing.[](https://slashdot.org/software/comparison/GameChanger-vs-TeamSnap/)
+   - **Features**:
+     - Collect fees via HelloPayments.net with dual pricing (cash discounts).
+     - Automate registration with roster integration.
+     - Track payment status in dashboard.
+     - Notify unpaid members via SNS/SES.
+   - **How**: Integrate HelloPayments.net API via Lambda, store in Supabase `payments`. Render in React.
+   - **Why**: Matches TeamSnap’s payments, addresses GameChanger’s lack of payment processing.[](https://www.reddit.com/r/GameChangerApp/comments/10po6rs/team_manager_as_teamsnap_replacement/)
+
+8. **Web Portal Integration**:
+   - **Description**: Centralized web portal for all dashboard features, replicating GameChanger’s web.gc.com.[](https://apps.apple.com/us/app/gamechanger/id1308415878)
+   - **Features**:
+     - Role-based access (e.g., admin for league setup, coach for team management).
+     - Mobile-friendly design with drag-and-drop tools for league websites.
+     - View schedules, stats, and media in one place.
+     - Offline access to key data via Supabase edge functions.
+   - **How**: Serve via AWS CloudFront, store in Supabase, render in React. Integrate with all modules.
+   - **Why**: Matches GameChanger’s web portal, improves on TeamSnap’s slow performance.[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+
+### Framework and Organization
+#### Architecture
+- **Supabase**:
+  - **Tables**:
+    - `user_profiles`: Player/coach/parent details (id, name, role, medical_info).
+    - `team_rosters`: Team-player mappings (team_id, player_id).
+    - `events`: Schedules (event_id, type, start_time, location).
+    - `messages`: Communication logs (message_id, thread_name, content).
+    - `game_stats`: Scores and stats (game_id, player_id, metric_type, value).
+    - `media`: Videos/photos (media_id, url, tags, event_id).
+    - `payments`: Transaction records (payment_id, user_id, status).
+  - **RBAC**: Restrict access by role (e.g., parents view child’s stats, coaches edit scores).
+  - **pgvector**: Store embeddings for future AI content analysis.
+  - **Edge Functions**: Cache schedules, stats, and media offline.
+- **AWS**:
+  - **CloudFront**: Serve React dashboard.
+  - **Lambda**: Process real-time scoring, messaging, and payments.
+  - **S3**: Store videos/photos.
+  - **Elemental MediaLive**: Handle streaming.
+  - **SNS/SES**: Deliver multilingual alerts (via Translation Hub).
+  - **KMS**: Encrypt sensitive data.
+- **Grok 3 on MCP Servers**: Foundation for future AI enhancements (e.g., predictive RSVPs, automated stats analysis).
+- **APIs**: Integrate cameras (e.g., Mevo), wearables, HelloPayments.net, and social platforms.
+- **DocuSign**: eSignatures for registration consent, stored in Supabase.
+
+#### Workflow
+1. **Team Setup**: Coaches/admins create teams, import rosters, and set schedules in dashboard.
+2. **Scheduling**: Add events, sync with calendars, and send reminders via Communication Log.
+3. **Communication**: Send messages/emails with thread naming, log in Supabase.
+4. **Scorekeeping**: Enter scores/stats in real-time, sync with AutoStream for live updates.
+5. **Streaming**: Stream games via AutoStream, archive in player profiles.
+6. **Sharing**: Upload photos/videos, tag with Highlight Clips, share via Social Highlights.
+7. **Payments**: Collect fees via HelloPayments.net, track in dashboard.
+8. **Web Portal**: Access all features via centralized React UI.
+
+### Implementation Strategy
+- **MVP (3 Months)**: Build dashboard with team management, scheduling, communication, scorekeeping, and photo sharing. Integrate with Smart Scheduler, Calendar Sync, and HelloPayments.net. Use DocuSign for consent.
+- **Phase 2 (6 Months)**: Add live streaming, payments, and web portal. Prepare for AI enhancements (e.g., predictive analytics).
+- **Testing**: Deploy with 2–3 teams (e.g., soccer, baseball) to validate usability.
+- **UI**: React PWA with Tailwind CSS, featuring role-based views, drag-and-drop scheduling, and real-time stats.
+- **Training**: Coaches/admins onboard via tutorials in React UI.
+
+### Sample Code Snippet (Dashboard Handler)
+```javascript
+import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
+
+const supabase = createClient('SUPABASE_URL', 'SUPABASE_KEY');
+
+async function loadDashboard(userId, teamId) {
+  // Fetch user role
+  const { data: user } = await supabase
+    .from('user_profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+
+  // Fetch team data
+  const { data: roster } = await supabase
+    .from('team_rosters')
+    .select('player_id, user_profiles(name, jersey_number)')
+    .eq('team_id', teamId);
+
+  const { data: schedule } = await supabase
+    .from('events')
+    .select('event_id, type, start_time, location')
+    .eq('team_id', teamId);
+
+  const { data: stats } = await supabase
+    .from('game_stats')
+    .select('game_id, player_id, metric_type, value')
+    .eq('team_id', teamId);
+
+  const { data: media } = await supabase
+    .from('media')
+    .select('media_id, url, tags')
+    .eq('team_id', teamId);
+
+  // Fetch payment status
+  const paymentResponse = await axios.get('https://api.hellopayments.net/payments', {
+    params: { team_id: teamId },
+    headers: { Authorization: 'Bearer HELLOPAYMENTS_API_KEY' },
+  });
+
+  // Notify new content
+  if (media.length > 0) {
+    await axios.post('https://sns.amazonaws.com', {
+      Message: `New media for team ${teamId} available`,
+      TopicArn: 'arn:aws:sns:us-east-1:123456789012:TeamAlerts',
+    }, {
+      headers: { Authorization: 'AWS_SNS_CREDENTIALS' },
+    });
+  }
+
+  return {
+    role: user.role,
+    roster,
+    schedule,
+    stats,
+    media,
+    payments: paymentResponse.data,
+  };
+}
+```
+
+### Why This Approach Stands Out?
+- **Core Excellence**: Replicates GameChanger’s free management/streaming and TeamSnap’s scheduling/communication, ensuring basics are robust.[](https://apps.apple.com/us/app/gamechanger/id1308415878)[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+- **Gap Fixes**: Improves GameChanger’s messaging (email, threads) and TeamSnap’s performance (no ads, faster UI).[](https://www.reddit.com/r/GameChangerApp/comments/xts2uy/could_gc_free_replace_teamsnap/)[](https://appgrooves.com/compare/app-gamechanger-team-manager-by-gamechanger-media-inc/app-teamsnap-sport-team-management-by-teamsnap-inc)
+- **AI-Ready**: Supabase and Grok 3 lay groundwork for future AI enhancements, unlike competitors.
+- **Youth-Focused**: Tailored for young athletes with multilingual support via Translation Hub.
+- **Offline Access**: Supabase edge functions ensure field usability.
+- **Cost-Effective**: HelloPayments.net offers flexible pricing, addressing TeamSnap’s high costs.[](https://www.discussfastpitch.com/threads/team-management-apps-what-do-you-like.34660/)
+
+**Action**: Build MVP with team management, scheduling, communication, scorekeeping, and photo sharing. Test with 2–3 teams (e.g., soccer, baseball). Expand in phase 2 (6 months). Contact HelloPayments.net at https://hellopayments.net for API setup and DocuSign at https://www.docusign.com for consent forms.[](https://slashdot.org/software/comparison/GameChanger-vs-TeamSnap/)
