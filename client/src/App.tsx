@@ -29,6 +29,7 @@ import CalendarSync from "@/pages/calendar-sync";
 import AvailabilityPrediction from "@/pages/availability-prediction";
 import AdvancedStats from "@/pages/advanced-stats";
 import PerformanceAnalysis from "@/pages/performance-analysis";
+import PlayerDevelopment from "@/pages/player-development";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -67,6 +68,7 @@ function AuthenticatedRouter() {
             <Route path="/availability-prediction" component={AvailabilityPrediction} />
             <Route path="/advanced-stats" component={AdvancedStats} />
             <Route path="/performance-analysis" component={PerformanceAnalysis} />
+            <Route path="/player-development" component={PlayerDevelopment} />
             <Route component={NotFound} />
           </Switch>
         </div>

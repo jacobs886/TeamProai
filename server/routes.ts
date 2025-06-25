@@ -2545,6 +2545,648 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Player Development API endpoints
+  app.get("/api/player-development/plans", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, ageGroup, player } = req.query;
+      
+      const trainingPlans = [
+        {
+          id: "plan-1",
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          position: "Forward",
+          sport: "Soccer",
+          teamId: "team-1",
+          coachId: "coach-1",
+          title: "Speed & Finishing Development Program",
+          description: "8-week intensive program focused on improving sprint speed and goal-scoring ability",
+          goals: ["Increase sprint speed by 15%", "Improve shot accuracy to 75%", "Enhance first touch"],
+          drills: [
+            {
+              id: "drill-1",
+              name: "Sprint Intervals",
+              type: "fitness",
+              duration: 20,
+              intensity: "high",
+              description: "High-intensity sprint training with recovery periods",
+              equipment: ["Cones", "Stopwatch"],
+              targetMetrics: ["sprint_speed", "acceleration"]
+            },
+            {
+              id: "drill-2",
+              name: "Finishing Practice",
+              type: "skill",
+              duration: 25,
+              intensity: "medium",
+              description: "Shot accuracy training from various angles",
+              equipment: ["Soccer ball", "Goals", "Cones"],
+              targetMetrics: ["shot_accuracy", "goal_conversion"]
+            },
+            {
+              id: "drill-3",
+              name: "First Touch Drills",
+              type: "skill",
+              duration: 15,
+              intensity: "medium",
+              description: "Ball control and first touch improvement exercises",
+              equipment: ["Soccer ball", "Wall"],
+              targetMetrics: ["ball_control", "first_touch"]
+            }
+          ],
+          protocols: [
+            {
+              id: "protocol-1",
+              name: "Youth Sprint Training Protocol",
+              category: "fitness",
+              researchBacked: true,
+              vetted: true,
+              instructions: [
+                "Warm up with light jogging for 10 minutes",
+                "Perform dynamic stretches",
+                "Execute 6x30m sprints with 90s recovery",
+                "Cool down with walking and static stretches"
+              ],
+              safetyNotes: [
+                "Ensure proper warm-up to prevent injury",
+                "Monitor heart rate during recovery",
+                "Stop if any pain or discomfort occurs"
+              ],
+              references: ["NSCA Youth Training Guidelines", "ACSM Position Stand"]
+            }
+          ],
+          personalizedFor: {
+            weakAreas: ["Sprint speed", "Shot accuracy", "First touch"],
+            strengths: ["Positioning", "Game intelligence", "Teamwork"],
+            targetMetrics: {
+              sprintSpeed: 8.5,
+              shotAccuracy: 75,
+              firstTouch: 85
+            },
+            ageGroup: "U16",
+            skillLevel: "intermediate"
+          },
+          schedule: {
+            frequency: 3,
+            duration: 8,
+            sessionLength: 60,
+            preferredDays: ["Monday", "Wednesday", "Friday"]
+          },
+          createdAt: new Date("2025-01-15T00:00:00"),
+          updatedAt: new Date("2025-01-20T00:00:00"),
+          aiGenerated: true,
+          vetted: true,
+          active: true
+        },
+        {
+          id: "plan-2",
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          position: "Midfielder",
+          sport: "Soccer",
+          teamId: "team-1",
+          coachId: "coach-1",
+          title: "Passing & Vision Enhancement Program",
+          description: "6-week program to improve passing accuracy and field vision",
+          goals: ["Achieve 95% pass completion", "Increase assists by 40%", "Improve decision making"],
+          drills: [
+            {
+              id: "drill-4",
+              name: "Passing Accuracy Drill",
+              type: "skill",
+              duration: 30,
+              intensity: "medium",
+              description: "Progressive passing accuracy training with increasing difficulty",
+              equipment: ["Soccer ball", "Targets", "Cones"],
+              targetMetrics: ["pass_accuracy", "pass_completion"]
+            },
+            {
+              id: "drill-5",
+              name: "Vision Training",
+              type: "tactical",
+              duration: 25,
+              intensity: "medium",
+              description: "Field awareness and peripheral vision exercises",
+              equipment: ["Soccer ball", "Colored cones"],
+              targetMetrics: ["field_vision", "decision_making"]
+            }
+          ],
+          protocols: [
+            {
+              id: "protocol-2",
+              name: "Cognitive Training for Midfielders",
+              category: "tactical",
+              researchBacked: true,
+              vetted: true,
+              instructions: [
+                "Set up multiple passing targets",
+                "Player receives ball and must identify optimal pass",
+                "Increase complexity by adding defenders",
+                "Focus on quick decision making"
+              ],
+              safetyNotes: [
+                "Start with stationary training",
+                "Gradually increase movement speed",
+                "Ensure clear communication"
+              ],
+              references: ["FIFA Coaching Manual", "UEFA Technical Guidelines"]
+            }
+          ],
+          personalizedFor: {
+            weakAreas: ["Long passing", "Decision speed", "Creativity"],
+            strengths: ["Short passing", "Ball retention", "Work rate"],
+            targetMetrics: {
+              passAccuracy: 95,
+              assists: 12,
+              keyPasses: 8
+            },
+            ageGroup: "U16",
+            skillLevel: "advanced"
+          },
+          schedule: {
+            frequency: 4,
+            duration: 6,
+            sessionLength: 75,
+            preferredDays: ["Tuesday", "Thursday", "Saturday", "Sunday"]
+          },
+          createdAt: new Date("2025-01-10T00:00:00"),
+          updatedAt: new Date("2025-01-18T00:00:00"),
+          aiGenerated: true,
+          vetted: true,
+          active: true
+        }
+      ];
+      
+      res.json(trainingPlans);
+    } catch (error) {
+      console.error("Training plans fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch training plans" });
+    }
+  });
+
+  app.get("/api/player-development/progress", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, player } = req.query;
+      
+      const trainingProgress = [
+        {
+          id: "progress-1",
+          playerId: "player-1",
+          planId: "plan-1",
+          sessionDate: new Date("2025-01-18T16:00:00"),
+          completedDrills: ["drill-1", "drill-2"],
+          metrics: {
+            sprintSpeed: 7.8,
+            shotAccuracy: 68.5,
+            heartRate: 165,
+            fatigueLevel: 6.2
+          },
+          feedback: "Great intensity today! Sprint speed showing improvement. Need to focus more on shot placement.",
+          rating: 4,
+          adherence: 85,
+          improvements: [
+            {
+              metric: "sprint_speed",
+              before: 7.2,
+              after: 7.8,
+              improvement: 8.3
+            },
+            {
+              metric: "shot_accuracy",
+              before: 62.1,
+              after: 68.5,
+              improvement: 10.3
+            }
+          ],
+          coachNotes: "Excellent progress on speed work. Continue with current intensity but add more finishing practice.",
+          nextSession: new Date("2025-01-20T16:00:00")
+        },
+        {
+          id: "progress-2",
+          playerId: "player-2",
+          planId: "plan-2",
+          sessionDate: new Date("2025-01-17T17:00:00"),
+          completedDrills: ["drill-4", "drill-5"],
+          metrics: {
+            passAccuracy: 91.2,
+            assists: 3,
+            keyPasses: 7,
+            decisionTime: 1.8
+          },
+          feedback: "Vision training is helping a lot. Feel more confident in finding the right pass.",
+          rating: 5,
+          adherence: 92,
+          improvements: [
+            {
+              metric: "pass_accuracy",
+              before: 87.3,
+              after: 91.2,
+              improvement: 4.5
+            },
+            {
+              metric: "decision_making",
+              before: 2.3,
+              after: 1.8,
+              improvement: 21.7
+            }
+          ],
+          coachNotes: "Outstanding session. Pass accuracy improving rapidly. Ready for more complex scenarios.",
+          nextSession: new Date("2025-01-19T17:00:00")
+        }
+      ];
+      
+      res.json(trainingProgress);
+    } catch (error) {
+      console.error("Training progress fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch training progress" });
+    }
+  });
+
+  app.get("/api/player-development/insights", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport } = req.query;
+      
+      const developmentInsights = [
+        {
+          id: "insight-1",
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          type: "skill_improvement",
+          insight: "Sprint speed improvement rate exceeds age group average by 25%. Consider advanced plyometric training.",
+          confidence: 0.89,
+          priority: "medium",
+          recommendedActions: [
+            "Introduce advanced plyometric exercises",
+            "Increase training frequency to 4x per week",
+            "Monitor fatigue levels closely"
+          ],
+          dataPoints: {
+            currentSpeed: 7.8,
+            improvementRate: 8.3,
+            ageGroupAverage: 6.2,
+            trainingAdherence: 85
+          },
+          aiGenerated: true,
+          timestamp: new Date("2025-01-19T10:30:00"),
+          addressed: false
+        },
+        {
+          id: "insight-2",
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          type: "performance_prediction",
+          insight: "Current progress trajectory suggests 95% pass accuracy achievable within 3 weeks.",
+          confidence: 0.82,
+          priority: "low",
+          recommendedActions: [
+            "Maintain current training intensity",
+            "Add pressure situations to drills",
+            "Focus on long-range passing accuracy"
+          ],
+          dataPoints: {
+            currentAccuracy: 91.2,
+            targetAccuracy: 95,
+            improvementRate: 4.5,
+            timeToTarget: 3
+          },
+          aiGenerated: true,
+          timestamp: new Date("2025-01-19T11:15:00"),
+          addressed: false
+        },
+        {
+          id: "insight-3",
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          type: "injury_risk",
+          insight: "High training load combined with growth spurt indicators suggest 15% injury risk. Recommend load management.",
+          confidence: 0.76,
+          priority: "high",
+          recommendedActions: [
+            "Reduce high-intensity sessions to 2x per week",
+            "Increase recovery time between sessions",
+            "Add flexibility and mobility work",
+            "Monitor growth indicators weekly"
+          ],
+          dataPoints: {
+            trainingLoad: 82,
+            growthRate: 2.1,
+            fatigueLevel: 6.8,
+            injuryRisk: 15
+          },
+          aiGenerated: true,
+          timestamp: new Date("2025-01-19T14:20:00"),
+          addressed: false
+        }
+      ];
+      
+      res.json(developmentInsights);
+    } catch (error) {
+      console.error("Development insights fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch development insights" });
+    }
+  });
+
+  app.get("/api/player-development/protocols", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, category } = req.query;
+      
+      const coachProtocols = [
+        {
+          id: "protocol-1",
+          coachId: "coach-1",
+          coachName: "Coach Martinez",
+          name: "Youth Sprint Development Protocol",
+          category: "fitness",
+          sport: "Soccer",
+          ageGroup: "U16",
+          description: "Research-backed sprint training protocol specifically designed for youth athletes",
+          instructions: [
+            "Begin with 10-minute dynamic warm-up",
+            "Perform activation exercises (high knees, butt kicks)",
+            "Execute 6x30m sprints with 90-second recovery",
+            "Include deceleration training",
+            "Cool down with light jogging and stretching"
+          ],
+          equipment: ["Cones", "Stopwatch", "Sprint gates"],
+          safetyGuidelines: [
+            "Ensure proper warm-up completion",
+            "Monitor heart rate during recovery periods",
+            "Stop immediately if any pain occurs",
+            "Maintain hydration throughout session"
+          ],
+          researchReferences: [
+            "NSCA Youth Training Guidelines 2023",
+            "ACSM Position Stand on Youth Resistance Training",
+            "FIFA Medical Manual - Youth Development"
+          ],
+          duration: 45,
+          intensity: "high",
+          vetted: true,
+          vettedBy: "Dr. Sarah Chen",
+          vettedDate: new Date("2025-01-15T00:00:00"),
+          usageCount: 28,
+          rating: 4.7,
+          tags: ["sprint", "youth", "fitness", "speed"],
+          createdAt: new Date("2025-01-10T00:00:00"),
+          updatedAt: new Date("2025-01-15T00:00:00")
+        },
+        {
+          id: "protocol-2",
+          coachId: "coach-2",
+          coachName: "Coach Johnson",
+          name: "Cognitive Passing Enhancement Protocol",
+          category: "skill",
+          sport: "Soccer",
+          ageGroup: "U14-U18",
+          description: "Scientifically-designed passing drill that improves decision-making and accuracy simultaneously",
+          instructions: [
+            "Set up 4 targets at different distances and angles",
+            "Player receives ball from coach",
+            "Call out target color/number 0.5 seconds before pass",
+            "Player must pass to correct target with maximum accuracy",
+            "Progress to multiple ball drill for advanced players"
+          ],
+          equipment: ["Soccer balls", "Colored targets", "Cones", "Timer"],
+          safetyGuidelines: [
+            "Ensure clear sight lines to all targets",
+            "Start with stationary passing before adding movement",
+            "Maintain safe distance between players"
+          ],
+          researchReferences: [
+            "UEFA Technical Report on Passing Development",
+            "Journal of Sports Science - Cognitive Training in Soccer",
+            "FIFA Coaching Manual - Technical Skills"
+          ],
+          duration: 30,
+          intensity: "medium",
+          vetted: false,
+          usageCount: 12,
+          rating: 4.2,
+          tags: ["passing", "cognitive", "decision-making", "accuracy"],
+          createdAt: new Date("2025-01-12T00:00:00"),
+          updatedAt: new Date("2025-01-18T00:00:00")
+        },
+        {
+          id: "protocol-3",
+          coachId: "coach-1",
+          coachName: "Coach Martinez",
+          name: "Injury Prevention Mobility Protocol",
+          category: "recovery",
+          sport: "Multi-Sport",
+          ageGroup: "U12-U18",
+          description: "Comprehensive mobility and injury prevention routine based on latest sports medicine research",
+          instructions: [
+            "Dynamic warm-up with leg swings and arm circles",
+            "Hip mobility sequence (hip flexors, glutes, adductors)",
+            "Ankle mobility and calf stretches",
+            "Shoulder and thoracic spine mobility",
+            "Core stability exercises",
+            "Cool-down breathing exercises"
+          ],
+          equipment: ["Resistance bands", "Foam roller", "Yoga mat"],
+          safetyGuidelines: [
+            "Never force any stretch beyond comfortable range",
+            "Hold stretches for 30 seconds minimum",
+            "Breathe normally throughout all exercises",
+            "Stop if sharp pain occurs"
+          ],
+          researchReferences: [
+            "American Journal of Sports Medicine - Youth Injury Prevention",
+            "British Journal of Sports Medicine - Mobility Protocols",
+            "NATA Position Statement on Injury Prevention"
+          ],
+          duration: 25,
+          intensity: "low",
+          vetted: true,
+          vettedBy: "Dr. Michael Roberts",
+          vettedDate: new Date("2025-01-14T00:00:00"),
+          usageCount: 45,
+          rating: 4.9,
+          tags: ["injury-prevention", "mobility", "recovery", "flexibility"],
+          createdAt: new Date("2025-01-08T00:00:00"),
+          updatedAt: new Date("2025-01-14T00:00:00")
+        }
+      ];
+      
+      res.json(coachProtocols);
+    } catch (error) {
+      console.error("Coach protocols fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch coach protocols" });
+    }
+  });
+
+  app.get("/api/player-development/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalPlayers: 24,
+        activePlans: 18,
+        averageAdherence: 87.3,
+        averageImprovement: 14.2,
+        topImprovements: [
+          {
+            playerId: "player-2",
+            name: "Sarah Wilson",
+            metric: "Pass Accuracy",
+            improvement: 21.7,
+            timeframe: "4 weeks"
+          },
+          {
+            playerId: "player-1",
+            name: "Alex Johnson",
+            metric: "Sprint Speed",
+            improvement: 18.4,
+            timeframe: "6 weeks"
+          },
+          {
+            playerId: "player-3",
+            name: "Mike Rodriguez",
+            metric: "Reaction Time",
+            improvement: 15.8,
+            timeframe: "5 weeks"
+          }
+        ],
+        protocolUsage: [
+          {
+            protocolId: "protocol-3",
+            name: "Injury Prevention Mobility Protocol",
+            usageCount: 45,
+            effectiveness: 94
+          },
+          {
+            protocolId: "protocol-1",
+            name: "Youth Sprint Development Protocol",
+            usageCount: 28,
+            effectiveness: 89
+          },
+          {
+            protocolId: "protocol-2",
+            name: "Cognitive Passing Enhancement Protocol",
+            usageCount: 12,
+            effectiveness: 82
+          }
+        ],
+        insights: [
+          {
+            category: "skill_development",
+            insight: "Players following AI-generated plans show 23% faster improvement rates",
+            impact: "Significant enhancement in skill acquisition speed",
+            confidence: 0.91
+          },
+          {
+            category: "injury_prevention",
+            insight: "Mobility protocol usage correlates with 31% reduction in injury rates",
+            impact: "Substantial decrease in player downtime",
+            confidence: 0.87
+          },
+          {
+            category: "adherence_patterns",
+            insight: "Video-supported drills have 18% higher completion rates",
+            impact: "Improved training engagement and consistency",
+            confidence: 0.79
+          }
+        ],
+        trends: {
+          skillDevelopment: "improving",
+          adherence: "increasing",
+          engagement: "high"
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Player development analytics error:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
+  app.post("/api/player-development/generate-plan", isAuthenticated, async (req: any, res) => {
+    try {
+      const { playerId, sport, goals } = req.body;
+      
+      // Simulate AI plan generation
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      const result = {
+        planId: `plan-${Date.now()}`,
+        playerId,
+        sport,
+        goals,
+        drillsGenerated: 8,
+        protocolsIncluded: 3,
+        estimatedDuration: 6,
+        confidence: 0.91
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Plan generation error:", error);
+      res.status(500).json({ message: "Failed to generate training plan" });
+    }
+  });
+
+  app.post("/api/player-development/create-protocol", isAuthenticated, async (req: any, res) => {
+    try {
+      const protocol = req.body;
+      
+      // Simulate protocol creation and AI vetting
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const result = {
+        protocolId: `protocol-${Date.now()}`,
+        name: protocol.name,
+        category: protocol.category,
+        researchValidation: "Pending AI review",
+        vettingRequired: true,
+        createdAt: new Date()
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Protocol creation error:", error);
+      res.status(500).json({ message: "Failed to create protocol" });
+    }
+  });
+
+  app.post("/api/player-development/vet-protocol/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate protocol vetting process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      res.json({
+        message: "Protocol vetted successfully",
+        protocolId: id,
+        vettedBy: "Coach Martinez",
+        vettedDate: new Date(),
+        researchCompliance: "95% match with best practices"
+      });
+    } catch (error) {
+      console.error("Protocol vetting error:", error);
+      res.status(500).json({ message: "Failed to vet protocol" });
+    }
+  });
+
+  app.post("/api/player-development/update-progress/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      // Simulate progress update
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      res.json({
+        message: "Training progress updated successfully",
+        progressId: id,
+        updatedFields: Object.keys(updates),
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Progress update error:", error);
+      res.status(500).json({ message: "Failed to update progress" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
