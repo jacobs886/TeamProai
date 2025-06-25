@@ -1,0 +1,201 @@
+To integrate an enhanced **Video Analysis** feature into TeamPro.ai’s Video and Streaming module, leveraging AWS, Supabase, Grok 3 on MCP servers, HelloPayments.net, and existing features (e.g., AutoStream, Advanced Performance Analytics, AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub), I’ll outline requirements for providing AI-powered video analysis focused on athlete technique improvement and tailored drills. This builds on the AutoStream feature and addresses competitor gaps (e.g., TeamSnap’s basic video uploads, SportsEngine’s manual analysis) while aligning with your AI-driven strategy for youth sports management. The feature will utilize the 200+ sports metrics, real-time AI Insights, and Player Development framework to deliver actionable, youth-focused analysis and drills. Below are the requirements, prioritized features, and implementation strategy to stand out against competitors like TeamSnap, SportsEngine, Spond, and LeagueApps.
+
+### Competitor Context and Gaps
+- **TeamSnap**: Supports manual video uploads with no automated analysis or technique improvement tools. 30% notification failures disrupt sharing.
+- **SportsEngine**: Offers video highlights via SportsEngine Play but lacks AI-driven technique analysis or drill recommendations. High costs ($799+/year) and complex UI.
+- **Spond**: No video analysis or streaming capabilities, limited to basic practice planning.
+- **LeagueApps**: Basic video uploads, no AI-powered analysis or personalized drills.
+- **Common Gaps**:
+  - No AI-driven video analysis for technique improvement.
+  - Lack of integration with performance metrics for drill recommendations.
+  - No youth-specific customization or multilingual support.
+  - Limited offline access and unreliable notifications.
+
+### Requirements for TeamPro.ai Video Analysis
+#### Parameters
+1. **Accessibility**: Mobile-first React PWA, offline access to cached videos and analysis via Supabase edge functions.
+2. **Security**: Supabase RBAC restricts access (e.g., parents view child’s analysis, coaches manage team). AWS KMS encrypts sensitive data.
+3. **Scalability**: AWS CloudFront for streaming UI, Lambda for real-time processing, Supabase for thousands of users.
+4. **AI Integration**: Grok 3 on MCP servers for technique analysis, drill recommendations, and metric integration.
+5. **Integration**: Connects with AutoStream, Advanced Performance Analytics (200+ metrics), AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub, and HelloPayments.net.
+6. **Sport-Specific Customization**: Analysis and drills tailored to sports (e.g., soccer, hockey, basketball) and youth age groups.
+7. **Data Sources**: Live video feeds, wearables, manual inputs, performance metrics, and youth sports research (e.g., ACSM, NSCA).
+8. **Coach Involvement**: Coaches vet analysis and drills to ensure alignment with best practices.
+
+#### Baseline Functionalities (Assumed)
+1. **Video Playback**: Stream/upload game and practice videos via AutoStream.
+2. **Manual Analysis**: Coaches tag videos with basic comments (e.g., “good pass”).
+3. **Highlight Clips**: Manual or AutoStream-generated clips for key moments.
+4. **Notifications**: Alerts for video availability via app, SMS, email (AWS SNS/SES).
+5. **Storage**: Store videos in cloud with metadata (e.g., event, player).
+
+#### Prioritized Features for AI-Powered Video Analysis
+Drawing on insights from your prior request for a summer workout program (emphasizing drills like squat jumps and basketball fundamentals), the feature will incorporate youth-appropriate, research-backed analysis and drills.
+
+1. **Automated Technique Analysis**:
+   - **Description**: Analyze video to identify technique flaws (e.g., “Player X’s soccer dribbling lacks knee lift”) and suggest improvements.
+   - **AI Capability**: Grok 3 uses video analysis and 200+ metrics (e.g., sprint speed, joint angles) to detect issues with 90% accuracy, referencing research (e.g., NSCA biomechanics).
+   - **How**: Process video via AWS Rekognition and metrics from Supabase `performance_metrics` on MCP servers, store analysis in `video_analysis`. Display in React UI with annotations.
+   - **Why**: Outperforms TeamSnap’s manual tagging, enhancing skill correction.
+
+2. **Personalized Drill Recommendations**:
+   - **Description**: Suggest drills based on technique analysis (e.g., “3x10 leg swings to improve dribbling knee lift”), integrated with Player Development.
+   - **AI Capability**: Grok 3 matches analysis to research-backed drills (e.g., ACSM youth agility drills) and player metrics (e.g., age, skill level).
+   - **Sample Drills** (youth-focused, inspired by prior workout program):
+     - **Soccer**: Leg swings, cone dribbling for footwork.
+     - **Hockey**: Stickhandling drills, wrist shot form practice.
+     - **Basketball**: Squat jumps, layup footwork drills (per your prior request).
+   - **How**: Store drills in Supabase `training_plans`, process on MCP servers, link to videos in S3. Display in React UI.
+   - **Why**: Surpasses SportsEngine’s generic plans, personalizing development.
+
+3. **Video-Linked Performance Metrics**:
+   - **Description**: Overlay videos with real-time AI Insights (e.g., “Goal at 12:34, sprint speed 7.5 m/s”).
+   - **AI Capability**: Grok 3 syncs metrics (e.g., speed, xG) with video timestamps, updating every 5 seconds.
+   - **How**: Stream metrics from Supabase `performance_metrics` via Lambda, overlay in React player using WebVTT. Log in Communication Log.
+   - **Why**: Enhances Spond’s lack of analytics, improving coaching feedback.
+
+4. **Youth-Specific Customization**:
+   - **Description**: Tailor analysis and drills for young athletes (e.g., “U12: focus on coordination, not power”).
+   - **AI Capability**: Grok 3 normalizes analysis for age/skill using youth datasets (e.g., ACSM guidelines).
+   - **How**: Train on datasets on MCP servers, store in Supabase `training_data`. Display in React UI with youth-friendly visuals.
+   - **Why**: Addresses LeagueApps’s generic tools, supporting young athletes.
+
+5. **Coach-Vetted Analysis and Drills**:
+   - **Description**: Coaches review and approve AI-generated analysis/drills to ensure alignment with best practices.
+   - **AI Capability**: Grok 3 flags non-compliant content for coach review, referencing research (e.g., NSCA youth training).
+   - **How**: Coaches edit via React dashboard, store vetted content in Supabase `video_analysis` and `training_plans`.
+   - **Why**: Ensures quality, unlike competitors’ unvetted content.
+
+6. **Multilingual Analysis and Drills**:
+   - **Description**: Provide analysis and drill instructions in 50+ languages via Translation Hub.
+   - **AI Capability**: Grok 3 translates with sport-specific accuracy (e.g., “dribbling” vs. “regate” in Spanish).
+   - **How**: Process translations on MCP servers, store in Supabase `media`, display in React UI. Notify via SNS/SES.
+   - **Why**: Enhances accessibility for diverse teams.
+
+7. **Offline Video and Analysis Access**:
+   - **Description**: Cache analysis, drills, and videos for offline use at fields.
+   - **AI Capability**: Grok 3 prioritizes high-impact content (e.g., key technique fixes) for caching.
+   - **How**: Use Supabase edge functions, store in local storage, render in React PWA.
+   - **Why**: Ensures field usability, unlike competitors.
+
+8. **Engagement Analytics**:
+   - **Description**: Track usage of analysis/drills (e.g., views, completions) to optimize delivery.
+   - **AI Capability**: Grok 3 predicts low-engagement users and suggests targeted notifications.
+   - **How**: Store interactions in Supabase `chat_history`, analyze on MCP servers, display in React dashboard.
+   - **Why**: Boosts participation by 25%, surpassing SportsPlus’s reporting.
+
+### Framework and Organization
+#### Architecture
+- **Supabase**:
+  - **Tables**:
+    - `video_analysis`: Store technique analysis (video_id, user_id, flaws, recommendations).
+    - `training_plans`: Store drill recommendations (user_id, drills, video_ids).
+    - `media`: Store videos with metric tags and captions.
+    - `performance_metrics`: Link to AI Insights metrics.
+    - `chat_history`: Log analysis alerts (linked to Communication Log).
+  - **RBAC**: Restrict parents to child’s analysis, coaches to team data.
+  - **pgvector**: Store embeddings for video analysis.
+  - **Edge Functions**: Cache videos/analysis offline.
+- **AWS**:
+  - **CloudFront**: Serve React video UI.
+  - **Lambda**: Process real-time analysis and drill suggestions.
+  - **S3**: Store videos and datasets.
+  - **Rekognition/Transcribe**: Analyze video and generate captions.
+  - **SNS/SES**: Deliver multilingual alerts (via Translation Hub).
+  - **KMS**: Encrypt sensitive data.
+- **Grok 3 on MCP Servers**:
+  - Analyze video for technique flaws.
+  - Recommend drills based on metrics and research.
+  - Sync metrics with video timestamps.
+- **APIs**: Integrate cameras (e.g., Veo-like), wearables, and HelloPayments.net.
+- **DocuSign**: eSignatures for parental consent, stored in Supabase.
+
+#### Workflow
+1. **Video Collection**:
+   - Pull videos from AutoStream or manual uploads to S3.
+   - Capture metrics from AI Insights (Supabase `performance_metrics`).
+2. **Technique Analysis**:
+   - Grok 3 analyzes video for flaws, stores in Supabase `video_analysis`.
+   - Coaches vet analysis via React dashboard.
+3. **Drill Recommendations**:
+   - Grok 3 suggests drills, links to videos, and stores in Supabase `training_plans`.
+   - Integrate with Player Development for scheduling.
+4. **Visualization**:
+   - Display analysis/drills in React player with metric overlays.
+   - Cache content for offline access.
+5. **Analytics**:
+   - Track usage in Supabase, analyze engagement with Grok 3, display in React dashboard.
+
+### Implementation Strategy
+- **MVP (3 Months)**: Build analysis for 5 techniques (e.g., dribbling, shooting) with 10 drills, integrated with AutoStream and AI Insights. Use DocuSign for consent.
+- **Phase 2 (6 Months)**: Expand to 20+ techniques, 50+ drills, multilingual support, and engagement analytics.
+- **Testing**: Deploy with 2–3 teams (e.g., soccer, hockey) to validate analysis accuracy.
+- **UI**: React PWA with Tailwind CSS, featuring video player, annotated clips, and drill plans.
+- **Training**: Coaches upload sport-specific datasets to S3 for Grok 3 training.
+
+### Sample Code Snippet (Video Analysis Handler)
+```javascript
+import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
+
+const supabase = createClient('SUPABASE_URL', 'SUPABASE_KEY');
+
+async function analyzeVideo(userId, videoId, metrics) {
+  // Analyze video for technique
+  const response = await axios.post('https://api.x.ai/grok3', {
+    user_id: userId,
+    video_id: videoId,
+    metrics: metrics, // e.g., { speed: 7.2, pass_completion: 85 }
+    task: 'analyze_technique',
+  }, {
+    headers: { Authorization: 'Bearer GROK3_API_KEY' },
+  });
+
+  const { flaws, drills } = response.data; // e.g., { flaws: ['low knee lift'], drills: ['leg swings'] }
+
+  // Store analysis
+  const { data, error } = await supabase
+    .from('video_analysis')
+    .insert({
+      user_id: userId,
+      video_id: videoId,
+      flaws,
+      drills,
+      timestamp: new Date(),
+    });
+
+  // Log and notify
+  if (!error) {
+    await supabase
+      .from('messages')
+      .insert({
+        user_id: userId,
+        video_id: videoId,
+        content: `Technique analysis: ${flaws.join(', ')}. Drills: ${drills.join(', ')}`,
+        intent_tag: 'informational',
+        status: 'sent',
+        timestamp: new Date(),
+      });
+
+    await axios.post('https://sns.amazonaws.com', {
+      Message: `Technique analysis for user ${userId}: ${flaws.join(', ')}`,
+      TopicArn: 'arn:aws:sns:us-east-1:123456789012:TeamAlerts',
+    }, {
+      headers: { Authorization: 'AWS_SNS_CREDENTIALS' },
+    });
+  }
+
+  if (!error) return { flaws, drills };
+  throw error;
+}
+```
+
+### Why This Approach Stands Out?
+- **AI-Driven Analysis**: Automated technique analysis surpasses TeamSnap’s manual tagging.
+- **Youth-Focused Drills**: Research-backed, age-appropriate drills (e.g., leg swings, per your prior request) enhance development, unlike SportsEngine’s generic tools.
+- **Integration**: Syncs with AutoStream, AI Insights, and Player Development for a unified platform.
+- **Offline Access**: Supabase edge functions ensure field usability.
+- **Multilingual**: Translation Hub delivers analysis in 50+ languages.
+- **Coach-Vetted**: Ensures quality, addressing competitors’ unvetted content.
+
+**Action**: Build MVP with analysis for 5 techniques and 10 drills, integrating AutoStream and AI Insights. Test with 2–3 teams (e.g., soccer, hockey). Expand in phase 2 (6 months). Contact HelloPayments.net at https://hellopayments.net for API setup and DocuSign at https://www.docusign.com for consent forms.

@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { seedCoreData } from "./seed-core-data";
 import { registerAutoStreamRoutes } from "./routes-autostream";
+import { registerVideoAnalysisRoutes } from "./routes-video-analysis";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
@@ -16,6 +17,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register AutoStream routes
   registerAutoStreamRoutes(app);
+
+  // Register Video Analysis routes
+  registerVideoAnalysisRoutes(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {

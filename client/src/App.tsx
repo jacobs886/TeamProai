@@ -32,6 +32,7 @@ import PerformanceAnalysis from "@/pages/performance-analysis";
 import PlayerDevelopment from "@/pages/player-development";
 import Benchmarks from "@/pages/benchmarks";
 import AutoStream from "@/pages/autostream";
+import VideoAnalysis from "@/pages/video-analysis";
 import DatabaseManagement from "@/pages/admin/database-management";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
@@ -74,6 +75,7 @@ function AuthenticatedRouter() {
             <Route path="/player-development" component={PlayerDevelopment} />
             <Route path="/benchmarks" component={Benchmarks} />
             <Route path="/autostream" component={AutoStream} />
+            <Route path="/video-analysis" component={VideoAnalysis} />
             <Route path="/admin/database" component={DatabaseManagement} />
             <Route component={NotFound} />
           </Switch>

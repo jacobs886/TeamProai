@@ -93,6 +93,23 @@ export interface IStorage {
   getStreamEngagement(streamId: number): Promise<any>;
   addHighlightToStream(streamId: number, highlight: any): Promise<void>;
   updateStreamMetrics(streamId: number, metrics: any): Promise<void>;
+  
+  // Video Analysis operations
+  getVideoAnalyses(): Promise<any[]>;
+  getVideoAnalysis(id: string): Promise<any>;
+  uploadVideo(video: any): Promise<any>;
+  getDrillLibrary(): Promise<any[]>;
+  getVideoAnalysisStats(): Promise<any>;
+  updateAnalysisApproval(analysisId: string, status: string, userId: string, feedback?: string): Promise<any>;
+  generateTechniqueAnalysis(videoId: string, options: any): Promise<any>;
+  getPersonalizedDrills(playerId: string, criteria: any): Promise<any[]>;
+  recordDrillCompletion(drillId: string, playerId: string, completion: any): Promise<any>;
+  getNextDrillRecommendations(playerId: string): Promise<any[]>;
+  translateAnalysisContent(content: any, targetLanguage: string, context: any): Promise<any>;
+  getYouthAnalysisSettings(ageGroup: string): Promise<any>;
+  updateVideoAnalysis(videoId: string, data: any): Promise<void>;
+  updateDrillRecommendations(videoId: string, data: any): Promise<void>;
+  exportPlayerAnalysisData(playerId: string, options: any): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -542,6 +559,320 @@ export class DatabaseStorage implements IStorage {
     if (stream) {
       stream.metrics = { ...stream.metrics, ...metrics };
     }
+  }
+
+  // Video Analysis implementation
+  private videoAnalyses: any[] = [];
+  private drillLibrary: any[] = [
+    {
+      id: "drill-1",
+      name: "Dynamic Leg Swings",
+      description: "Forward and lateral leg swings to improve knee lift and hip mobility",
+      technique: "Dribbling",
+      difficulty: "beginner",
+      duration: 10,
+      equipment: ["Cones"],
+      instructions: [
+        "Stand facing forward, hold onto wall or cone for balance",
+        "Swing right leg forward and back 10 times",
+        "Switch to left leg, repeat 10 times",
+        "Perform lateral swings 10 times each leg"
+      ],
+      researchBasis: "ACSM Youth Movement Guidelines",
+      youthFriendly: true,
+      sport: "Soccer"
+    },
+    {
+      id: "drill-2",
+      name: "Cone Dribbling with High Knees",
+      description: "Dribble through cones focusing on knee lift",
+      technique: "Dribbling",
+      difficulty: "intermediate",
+      duration: 15,
+      equipment: ["Ball", "5 Cones"],
+      instructions: [
+        "Set up 5 cones in a straight line, 2 yards apart",
+        "Dribble through cones using inside of both feet",
+        "Focus on lifting knees higher than normal",
+        "Complete 3 sets of 5 runs"
+      ],
+      researchBasis: "NSCA Youth Training Guidelines",
+      youthFriendly: true,
+      sport: "Soccer"
+    },
+    {
+      id: "drill-3",
+      name: "Wall Shooting Form",
+      description: "Practice proper shooting form against a wall",
+      technique: "Shooting Form",
+      difficulty: "beginner",
+      duration: 10,
+      equipment: ["Basketball"],
+      instructions: [
+        "Stand 3 feet from wall with basketball",
+        "Practice shooting motion without releasing ball",
+        "Focus on consistent wrist snap and follow-through",
+        "Repeat 20 times"
+      ],
+      researchBasis: "Youth Basketball Development Standards",
+      youthFriendly: true,
+      sport: "Basketball"
+    },
+    {
+      id: "drill-4",
+      name: "Squat Jumps for Vertical",
+      description: "Explosive squat jumps to improve vertical leap",
+      technique: "Jumping",
+      difficulty: "intermediate",
+      duration: 12,
+      equipment: ["None"],
+      instructions: [
+        "Stand with feet shoulder-width apart",
+        "Lower into squat position",
+        "Explode upward jumping as high as possible",
+        "Land softly and immediately repeat",
+        "Complete 3 sets of 8-10 jumps"
+      ],
+      researchBasis: "NSCA Youth Plyometric Guidelines",
+      youthFriendly: true,
+      sport: "Basketball"
+    }
+  ];
+  private videoAnalysisStats = {
+    totalAnalyses: 0,
+    avgConfidence: 0.90,
+    coachApprovalRate: 0.85,
+    drillCompletionRate: 0.72
+  };
+
+  async getVideoAnalyses(): Promise<any[]> {
+    return this.videoAnalyses;
+  }
+
+  async getVideoAnalysis(id: string): Promise<any> {
+    return this.videoAnalyses.find(a => a.id === id);
+  }
+
+  async uploadVideo(videoData: any): Promise<any> {
+    const newVideo = {
+      id: `video-${this.videoAnalyses.length + 1}`,
+      ...videoData,
+      uploadedAt: new Date().toISOString(),
+      thumbnailUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
+      videoUrl: `https://demo.video.url/analysis${this.videoAnalyses.length + 1}.mp4`
+    };
+    
+    // Simulate AI analysis after upload
+    const analysis = await this.generateTechniqueAnalysis(newVideo.id, {
+      sport: videoData.sport || "Soccer",
+      ageGroup: videoData.ageGroup || "U16",
+      analyzedBy: videoData.uploadedBy
+    });
+    
+    this.videoAnalyses.push(analysis);
+    this.videoAnalysisStats.totalAnalyses++;
+    return newVideo;
+  }
+
+  async getDrillLibrary(): Promise<any[]> {
+    return this.drillLibrary;
+  }
+
+  async getVideoAnalysisStats(): Promise<any> {
+    return {
+      ...this.videoAnalysisStats,
+      totalAnalyses: this.videoAnalyses.length,
+      recentAnalyses: this.videoAnalyses.slice(-3),
+      topDrills: this.drillLibrary.slice(0, 5)
+    };
+  }
+
+  async updateAnalysisApproval(analysisId: string, status: string, userId: string, feedback?: string): Promise<any> {
+    const analysis = this.videoAnalyses.find(a => a.id === analysisId);
+    if (analysis) {
+      analysis.coachApproval = status;
+      analysis.reviewedBy = userId;
+      analysis.reviewedAt = new Date().toISOString();
+      if (feedback) analysis.coachFeedback = feedback;
+      return analysis;
+    }
+    throw new Error("Analysis not found");
+  }
+
+  async generateTechniqueAnalysis(videoId: string, options: any): Promise<any> {
+    const analysisId = `analysis-${this.videoAnalyses.length + 1}`;
+    
+    // Simulate AI-generated technique analysis
+    const mockTechniques = [
+      {
+        id: `tech-${Date.now()}`,
+        technique: "Dribbling",
+        flaw: "Insufficient knee lift during ball control",
+        severity: "medium",
+        timestamp: "1:23",
+        improvement: "Focus on higher knee lift to maintain better ball control",
+        confidence: 0.89 + Math.random() * 0.1
+      },
+      {
+        id: `tech-${Date.now() + 1}`,
+        technique: "First Touch",
+        flaw: "Ball bounces too far from foot on reception",
+        severity: "high",
+        timestamp: "2:45",
+        improvement: "Use inside of foot with more cushioning motion",
+        confidence: 0.91 + Math.random() * 0.08
+      }
+    ];
+
+    const mockDrills = this.drillLibrary.filter(drill => 
+      drill.sport === options.sport && drill.youthFriendly
+    ).slice(0, 2);
+
+    const analysis = {
+      id: analysisId,
+      videoId,
+      playerId: `player-${Math.floor(Math.random() * 10) + 1}`,
+      playerName: `Player ${Math.floor(Math.random() * 100) + 1}`,
+      title: `${options.sport} Analysis - ${options.ageGroup} Session`,
+      sport: options.sport,
+      ageGroup: options.ageGroup,
+      analysisDate: new Date().toISOString(),
+      thumbnailUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
+      videoUrl: `https://demo.video.url/analysis${analysisId}.mp4`,
+      duration: 120 + Math.floor(Math.random() * 180),
+      techniques: mockTechniques,
+      drills: mockDrills,
+      metrics: [
+        { name: "Sprint Speed", value: "6.8 m/s", benchmark: "Average", timestamp: "1:15" },
+        { name: "Ball Control", value: "78%", benchmark: "Below Average", timestamp: "1:23" }
+      ],
+      coachApproval: "pending",
+      confidence: 0.87 + Math.random() * 0.13,
+      translations: {
+        es: `Análisis de ${options.sport} - Sesión ${options.ageGroup}`,
+        fr: `Analyse de ${options.sport} - Session ${options.ageGroup}`
+      }
+    };
+
+    return analysis;
+  }
+
+  async getPersonalizedDrills(playerId: string, criteria: any): Promise<any[]> {
+    return this.drillLibrary.filter(drill => {
+      const sportMatch = !criteria.sport || drill.sport === criteria.sport;
+      const techniqueMatch = !criteria.techniques?.length || 
+        criteria.techniques.some((tech: string) => drill.technique.includes(tech));
+      return sportMatch && techniqueMatch && drill.youthFriendly;
+    });
+  }
+
+  async recordDrillCompletion(drillId: string, playerId: string, completion: any): Promise<any> {
+    const completionRecord = {
+      id: `completion-${Date.now()}`,
+      drillId,
+      playerId,
+      ...completion,
+      recordedAt: new Date().toISOString()
+    };
+    
+    // Update completion stats
+    this.videoAnalysisStats.drillCompletionRate = 
+      (this.videoAnalysisStats.drillCompletionRate * 10 + 1) / 11;
+    
+    return completionRecord;
+  }
+
+  async getNextDrillRecommendations(playerId: string): Promise<any[]> {
+    // Return next recommended drills based on completion history
+    return this.drillLibrary.slice(0, 3);
+  }
+
+  async translateAnalysisContent(content: any, targetLanguage: string, context: any): Promise<any> {
+    // Simulate sports-specific translation
+    const translations: any = {
+      'es': {
+        'Dribbling': 'Regate',
+        'Shooting Form': 'Forma de Tiro',
+        'insufficient knee lift': 'elevación insuficiente de rodilla',
+        'practice motion': 'practicar movimiento'
+      },
+      'fr': {
+        'Dribbling': 'Dribble',
+        'Shooting Form': 'Forme de Tir',
+        'insufficient knee lift': 'élévation insuffisante du genou',
+        'practice motion': 'pratiquer le mouvement'
+      }
+    };
+
+    const translatedContent = { ...content };
+    const languageMap = translations[targetLanguage] || {};
+    
+    // Apply translations to content
+    Object.keys(languageMap).forEach(key => {
+      if (typeof translatedContent === 'string') {
+        translatedContent = translatedContent.replace(new RegExp(key, 'gi'), languageMap[key]);
+      }
+    });
+
+    return translatedContent;
+  }
+
+  async getYouthAnalysisSettings(ageGroup: string): Promise<any> {
+    const ageSettings: any = {
+      'U10': {
+        focusAreas: ['Coordination', 'Basic Skills', 'Fun'],
+        maxDrillDuration: 10,
+        intensity: 'Low',
+        feedback: 'Positive reinforcement only'
+      },
+      'U12': {
+        focusAreas: ['Coordination', 'Skill Development', 'Teamwork'],
+        maxDrillDuration: 15,
+        intensity: 'Low-Medium',
+        feedback: 'Constructive with encouragement'
+      },
+      'U14': {
+        focusAreas: ['Technique', 'Tactical Awareness', 'Physical Development'],
+        maxDrillDuration: 20,
+        intensity: 'Medium',
+        feedback: 'Technical guidance with motivation'
+      },
+      'U16': {
+        focusAreas: ['Advanced Technique', 'Game Intelligence', 'Conditioning'],
+        maxDrillDuration: 25,
+        intensity: 'Medium-High',
+        feedback: 'Detailed technical analysis'
+      }
+    };
+
+    return ageSettings[ageGroup] || ageSettings['U14'];
+  }
+
+  async updateVideoAnalysis(videoId: string, data: any): Promise<void> {
+    const analysis = this.videoAnalyses.find(a => a.videoId === videoId);
+    if (analysis) {
+      Object.assign(analysis, data);
+    }
+  }
+
+  async updateDrillRecommendations(videoId: string, data: any): Promise<void> {
+    const analysis = this.videoAnalyses.find(a => a.videoId === videoId);
+    if (analysis) {
+      analysis.drills = [...(analysis.drills || []), ...data.drills];
+    }
+  }
+
+  async exportPlayerAnalysisData(playerId: string, options: any): Promise<any> {
+    const playerAnalyses = this.videoAnalyses.filter(a => a.playerId === playerId);
+    
+    return {
+      id: `export-${Date.now()}`,
+      playerId,
+      format: options.format,
+      data: playerAnalyses,
+      generatedAt: new Date().toISOString(),
+      totalAnalyses: playerAnalyses.length
+    };
   }
 }
 
