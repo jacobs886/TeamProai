@@ -31,6 +31,7 @@ import AdvancedStats from "@/pages/advanced-stats";
 import PerformanceAnalysis from "@/pages/performance-analysis";
 import PlayerDevelopment from "@/pages/player-development";
 import Benchmarks from "@/pages/benchmarks";
+import DatabaseManagement from "@/pages/admin/database-management";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileBottomNav from "@/components/layout/mobile-bottom-nav";
@@ -71,6 +72,7 @@ function AuthenticatedRouter() {
             <Route path="/performance-analysis" component={PerformanceAnalysis} />
             <Route path="/player-development" component={PlayerDevelopment} />
             <Route path="/benchmarks" component={Benchmarks} />
+            <Route path="/admin/database" component={DatabaseManagement} />
             <Route component={NotFound} />
           </Switch>
         </div>

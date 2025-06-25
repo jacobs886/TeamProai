@@ -132,6 +132,7 @@ export default function HamburgerNav() {
       items: [
         { title: "Admin Dashboard", icon: Shield, href: "/admin", description: "System management" },
         { title: "User Management", icon: Users, href: "/admin/users", description: "Role assignments" },
+        { title: "Database Management", icon: Database, href: "/admin/database", description: "Seed and manage database" },
         { title: "System Settings", icon: Settings, href: "/settings", description: "Global configuration" },
       ]
     }

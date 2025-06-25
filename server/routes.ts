@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { seedMockData } from "./mock-data";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
@@ -3693,6 +3694,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Address insight error:", error);
       res.status(500).json({ message: "Failed to address insight" });
+    }
+  });
+
+  // Database seeding endpoint (development only)
+  app.post("/api/admin/seed-database", async (req: any, res) => {
+    try {
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(403).json({ message: "Database seeding not allowed in production" });
+      }
+
+      console.log("Starting database seeding...");
+      const result = await seedMockData();
+      
+      res.json({
+        message: "Database seeded successfully",
+        recordsCreated: result,
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Database seeding error:", error);
+      res.status(500).json({ 
+        message: "Failed to seed database", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 
