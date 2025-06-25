@@ -31,6 +31,7 @@ import {
   TrendingUp,
   Star,
   MessageCircle,
+  Database,
 } from "lucide-react";
 
 interface NavItem {

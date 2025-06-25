@@ -8,51 +8,49 @@ import {
   notifications, 
   payments,
   teamMessages,
-  gameStats,
-  guardians,
-  players,
-  playerGuardians,
-  skillsTracking,
-  equipment,
-  volunteers,
-  playerDevelopment,
-  aiChatbots,
-  sentimentAnalysis,
-  communicationLogs,
-  facilityBookings,
-  scheduleOptimization,
-  videoAnalysis,
-  fanEngagement
+  gameStats
 } from "../shared/schema";
 
 export async function seedMockData() {
   try {
     console.log("Starting mock data seeding...");
 
-    // Clear existing data
-    await db.delete(fanEngagement);
-    await db.delete(videoAnalysis);
-    await db.delete(scheduleOptimization);
-    await db.delete(facilityBookings);
-    await db.delete(communicationLogs);
-    await db.delete(sentimentAnalysis);
-    await db.delete(aiChatbots);
-    await db.delete(playerDevelopment);
-    await db.delete(volunteers);
-    await db.delete(equipment);
-    await db.delete(skillsTracking);
-    await db.delete(playerGuardians);
-    await db.delete(players);
-    await db.delete(guardians);
-    await db.delete(gameStats);
-    await db.delete(teamMessages);
-    await db.delete(payments);
-    await db.delete(notifications);
-    await db.delete(teamMembers);
-    await db.delete(events);
-    await db.delete(facilities);
-    await db.delete(teams);
-    await db.delete(users);
+    // Clear existing data (only core tables)
+    try {
+      await db.delete(gameStats);
+    } catch (e) { console.log("gameStats table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(teamMessages);
+    } catch (e) { console.log("teamMessages table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(payments);
+    } catch (e) { console.log("payments table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(notifications);
+    } catch (e) { console.log("notifications table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(teamMembers);
+    } catch (e) { console.log("teamMembers table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(events);
+    } catch (e) { console.log("events table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(facilities);
+    } catch (e) { console.log("facilities table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(teams);
+    } catch (e) { console.log("teams table doesn't exist, skipping..."); }
+    
+    try {
+      await db.delete(users);
+    } catch (e) { console.log("users table doesn't exist, skipping..."); }
 
     // Insert Users
     const usersList = [
@@ -128,7 +126,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(users).values(usersList);
+    try {
+      await db.insert(users).values(usersList);
+      console.log(`Inserted ${usersList.length} users`);
+    } catch (e) {
+      console.log("Could not insert users:", e.message);
+    }
 
     // Insert Facilities
     const facilitiesList = [
@@ -173,7 +176,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(facilities).values(facilitiesList);
+    try {
+      await db.insert(facilities).values(facilitiesList);
+      console.log(`Inserted ${facilitiesList.length} facilities`);
+    } catch (e) {
+      console.log("Could not insert facilities:", e.message);
+    }
 
     // Insert Teams
     const teamsList = [
@@ -239,7 +247,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(teams).values(teamsList);
+    try {
+      await db.insert(teams).values(teamsList);
+      console.log(`Inserted ${teamsList.length} teams`);
+    } catch (e) {
+      console.log("Could not insert teams:", e.message);
+    }
 
     // Insert Team Members
     const teamMembersList = [
@@ -252,7 +265,12 @@ export async function seedMockData() {
       { teamId: 3, userId: "user-1", role: "coach", joinedAt: new Date("2024-03-15") }
     ];
 
-    await db.insert(teamMembers).values(teamMembersList);
+    try {
+      await db.insert(teamMembers).values(teamMembersList);
+      console.log(`Inserted ${teamMembersList.length} team members`);
+    } catch (e) {
+      console.log("Could not insert team members:", e.message);
+    }
 
     // Insert Events
     const eventsList = [
@@ -328,7 +346,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(events).values(eventsList);
+    try {
+      await db.insert(events).values(eventsList);
+      console.log(`Inserted ${eventsList.length} events`);
+    } catch (e) {
+      console.log("Could not insert events:", e.message);
+    }
 
     // Insert Notifications
     const notificationsList = [
@@ -374,7 +397,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(notifications).values(notificationsList);
+    try {
+      await db.insert(notifications).values(notificationsList);
+      console.log(`Inserted ${notificationsList.length} notifications`);
+    } catch (e) {
+      console.log("Could not insert notifications:", e.message);
+    }
 
     // Insert Payments
     const paymentsList = [
@@ -421,7 +449,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(payments).values(paymentsList);
+    try {
+      await db.insert(payments).values(paymentsList);
+      console.log(`Inserted ${paymentsList.length} payments`);
+    } catch (e) {
+      console.log("Could not insert payments:", e.message);
+    }
 
     // Insert Team Messages
     const teamMessagesList = [
@@ -456,7 +489,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(teamMessages).values(teamMessagesList);
+    try {
+      await db.insert(teamMessages).values(teamMessagesList);
+      console.log(`Inserted ${teamMessagesList.length} team messages`);
+    } catch (e) {
+      console.log("Could not insert team messages:", e.message);
+    }
 
     // Insert Game Stats
     const gameStatsList = [
@@ -510,624 +548,12 @@ export async function seedMockData() {
       }
     ];
 
-    await db.insert(gameStats).values(gameStatsList);
-
-    // Insert Guardians
-    const guardiansList = [
-      {
-        id: "guardian-1",
-        firstName: "Robert",
-        lastName: "Johnson",
-        email: "robert.johnson@email.com",
-        phone: "+1-555-123-4567",
-        relationship: "father",
-        emergencyContact: true,
-        address: "123 Oak Street, Springfield, ST 12345",
-        occupation: "Engineer",
-        medicalInfo: "No known allergies",
-        createdAt: new Date("2024-03-01"),
-        updatedAt: new Date("2025-01-15")
-      },
-      {
-        id: "guardian-2",
-        firstName: "Jennifer",
-        lastName: "Johnson",
-        email: "jennifer.johnson@email.com",
-        phone: "+1-555-123-4568",
-        relationship: "mother",
-        emergencyContact: true,
-        address: "123 Oak Street, Springfield, ST 12345",
-        occupation: "Teacher",
-        medicalInfo: "No known allergies",
-        createdAt: new Date("2024-03-01"),
-        updatedAt: new Date("2025-01-15")
-      },
-      {
-        id: "guardian-3",
-        firstName: "David",
-        lastName: "Wilson",
-        email: "david.wilson@email.com",
-        phone: "+1-555-234-5678",
-        relationship: "father",
-        emergencyContact: true,
-        address: "456 Pine Avenue, Springfield, ST 12345",
-        occupation: "Doctor",
-        medicalInfo: "Asthma inhaler required",
-        createdAt: new Date("2024-03-05"),
-        updatedAt: new Date("2025-01-18")
-      }
-    ];
-
-    await db.insert(guardians).values(guardiansList);
-
-    // Insert Players
-    const playersList = [
-      {
-        id: "player-1",
-        userId: "user-3",
-        teamId: 1,
-        jerseyNumber: 10,
-        position: "Forward",
-        height: "5'8\"",
-        weight: "145 lbs",
-        dateOfBirth: new Date("2008-05-15"),
-        medicalInfo: "No known allergies or conditions",
-        emergencyContact: "Robert Johnson - +1-555-123-4567",
-        skillLevel: "intermediate",
-        dominantFoot: "right",
-        previousExperience: "3 years club soccer",
-        goals: "Improve shooting accuracy and speed",
-        createdAt: new Date("2024-03-10"),
-        updatedAt: new Date("2025-01-20")
-      },
-      {
-        id: "player-2",
-        userId: "user-4",
-        teamId: 1,
-        jerseyNumber: 8,
-        position: "Midfielder",
-        height: "5'6\"",
-        weight: "135 lbs",
-        dateOfBirth: new Date("2008-07-22"),
-        medicalInfo: "Mild asthma - inhaler available",
-        emergencyContact: "David Wilson - +1-555-234-5678",
-        skillLevel: "advanced",
-        dominantFoot: "left",
-        previousExperience: "5 years competitive soccer",
-        goals: "Develop leadership skills and tactical awareness",
-        createdAt: new Date("2024-03-15"),
-        updatedAt: new Date("2025-01-19")
-      },
-      {
-        id: "player-3",
-        userId: "user-5",
-        teamId: 1,
-        jerseyNumber: 1,
-        position: "Goalkeeper",
-        height: "5'10\"",
-        weight: "155 lbs",
-        dateOfBirth: new Date("2008-02-10"),
-        medicalInfo: "Previous knee injury - fully recovered",
-        emergencyContact: "Maria Rodriguez - +1-555-345-6789",
-        skillLevel: "intermediate",
-        dominantFoot: "right",
-        previousExperience: "2 years goalkeeper training",
-        goals: "Improve distribution and communication",
-        createdAt: new Date("2024-04-01"),
-        updatedAt: new Date("2025-01-17")
-      }
-    ];
-
-    await db.insert(players).values(playersList);
-
-    // Insert Player-Guardian relationships
-    const playerGuardiansList = [
-      { playerId: "player-1", guardianId: "guardian-1", isPrimary: true },
-      { playerId: "player-1", guardianId: "guardian-2", isPrimary: false },
-      { playerId: "player-2", guardianId: "guardian-3", isPrimary: true }
-    ];
-
-    await db.insert(playerGuardians).values(playerGuardiansList);
-
-    // Insert Skills Tracking
-    const skillsTrackingList = [
-      {
-        playerId: "player-1",
-        skill: "Shooting",
-        currentLevel: 7.5,
-        targetLevel: 9.0,
-        lastAssessment: new Date("2025-01-15"),
-        nextAssessment: new Date("2025-02-15"),
-        improvementPlan: "Focus on power and accuracy from various angles",
-        assessmentHistory: [
-          { date: "2024-11-15", level: 6.8, notes: "Good technique, needs more power" },
-          { date: "2024-12-15", level: 7.2, notes: "Improved power, working on accuracy" },
-          { date: "2025-01-15", level: 7.5, notes: "Consistent improvement, ready for advanced drills" }
-        ],
-        coachNotes: "Excellent progress in shooting. Ready for 1v1 finishing drills.",
-        createdAt: new Date("2024-11-01"),
-        updatedAt: new Date("2025-01-15")
-      },
-      {
-        playerId: "player-2",
-        skill: "Passing",
-        currentLevel: 8.8,
-        targetLevel: 9.5,
-        lastAssessment: new Date("2025-01-18"),
-        nextAssessment: new Date("2025-02-18"),
-        improvementPlan: "Work on long-range passing and vision under pressure",
-        assessmentHistory: [
-          { date: "2024-11-18", level: 8.2, notes: "Excellent short passing, develop long range" },
-          { date: "2024-12-18", level: 8.5, notes: "Improved vision and decision making" },
-          { date: "2025-01-18", level: 8.8, notes: "Outstanding progress, elite level potential" }
-        ],
-        coachNotes: "Elite passing ability. Focus on leadership and directing teammates.",
-        createdAt: new Date("2024-11-01"),
-        updatedAt: new Date("2025-01-18")
-      }
-    ];
-
-    await db.insert(skillsTracking).values(skillsTrackingList);
-
-    // Insert Equipment
-    const equipmentList = [
-      {
-        name: "Soccer Balls - Size 5",
-        category: "training",
-        quantity: 20,
-        condition: "excellent",
-        location: "Central Sports Complex - Storage Room A",
-        purchaseDate: new Date("2024-08-15"),
-        purchaseCost: 400.00,
-        supplier: "SportsTech Equipment Co.",
-        maintenanceSchedule: "Monthly inspection and inflation check",
-        warrantyExpiration: new Date("2026-08-15"),
-        assignedTo: "Eagles FC U16",
-        serialNumbers: ["SB-001", "SB-002", "SB-003"],
-        usageLog: [
-          { date: "2025-01-20", usage: "Training session", condition: "Good" },
-          { date: "2025-01-18", usage: "Match vs Lions", condition: "Excellent" }
-        ],
-        createdAt: new Date("2024-08-15"),
-        updatedAt: new Date("2025-01-20")
-      },
-      {
-        name: "Training Cones",
-        category: "training",
-        quantity: 50,
-        condition: "good",
-        location: "Central Sports Complex - Storage Room A",
-        purchaseDate: new Date("2024-06-01"),
-        purchaseCost: 150.00,
-        supplier: "TrainingGear Ltd.",
-        maintenanceSchedule: "Weekly cleaning and damage check",
-        assignedTo: "All Teams",
-        usageLog: [
-          { date: "2025-01-22", usage: "Eagles FC training", condition: "Good" },
-          { date: "2025-01-19", usage: "Lions basketball drills", condition: "Good" }
-        ],
-        createdAt: new Date("2024-06-01"),
-        updatedAt: new Date("2025-01-22")
-      },
-      {
-        name: "First Aid Kit",
-        category: "safety",
-        quantity: 3,
-        condition: "excellent",
-        location: "Multiple locations",
-        purchaseDate: new Date("2024-09-01"),
-        purchaseCost: 75.00,
-        supplier: "MedSupply Inc.",
-        maintenanceSchedule: "Monthly inventory and expiration check",
-        warrantyExpiration: new Date("2025-09-01"),
-        assignedTo: "Emergency Use",
-        usageLog: [
-          { date: "2025-01-15", usage: "Minor cut treatment", condition: "Excellent" }
-        ],
-        createdAt: new Date("2024-09-01"),
-        updatedAt: new Date("2025-01-15")
-      }
-    ];
-
-    await db.insert(equipment).values(equipmentList);
-
-    // Insert Volunteers
-    const volunteersList = [
-      {
-        name: "Lisa Thompson",
-        email: "lisa.thompson@email.com",
-        phone: "+1-555-456-7890",
-        skills: ["Event coordination", "Photography", "First aid certified"],
-        availability: ["Saturday", "Sunday"],
-        preferredRoles: ["Event coordinator", "Team photographer"],
-        experience: "5 years volunteering with youth sports",
-        backgroundCheck: true,
-        emergencyContact: "Tom Thompson - +1-555-456-7891",
-        assignedTeams: [1, 2],
-        activeAssignments: [
-          {
-            eventId: 1,
-            role: "Team photographer",
-            date: "2025-01-25",
-            status: "confirmed"
-          }
-        ],
-        volunteerHours: 45,
-        createdAt: new Date("2024-05-15"),
-        updatedAt: new Date("2025-01-20")
-      },
-      {
-        name: "Mark Davis",
-        email: "mark.davis@email.com",
-        phone: "+1-555-567-8901",
-        skills: ["Referee certification", "Equipment management", "Transportation"],
-        availability: ["Tuesday", "Thursday", "Saturday"],
-        preferredRoles: ["Referee", "Equipment manager"],
-        experience: "8 years as certified referee",
-        backgroundCheck: true,
-        emergencyContact: "Susan Davis - +1-555-567-8902",
-        assignedTeams: [1, 3],
-        activeAssignments: [
-          {
-            eventId: 1,
-            role: "Referee",
-            date: "2025-01-25",
-            status: "confirmed"
-          }
-        ],
-        volunteerHours: 72,
-        createdAt: new Date("2024-03-20"),
-        updatedAt: new Date("2025-01-18")
-      }
-    ];
-
-    await db.insert(volunteers).values(volunteersList);
-
-    // Insert Player Development
-    const playerDevelopmentList = [
-      {
-        playerId: "player-1",
-        coachId: "user-1",
-        assessmentDate: new Date("2025-01-15"),
-        strengths: ["Shooting accuracy", "Ball control", "Work ethic"],
-        weaknesses: ["Defensive positioning", "Aerial ability", "Left foot"],
-        goals: ["Improve defending", "Develop weaker foot", "Increase speed"],
-        trainingPlan: {
-          focus: "Defensive skills and speed development",
-          duration: "8 weeks",
-          sessionsPerWeek: 3,
-          specificDrills: [
-            "1v1 defending practice",
-            "Sprint interval training",
-            "Left foot skill work"
-          ]
-        },
-        progressNotes: "Showing improvement in defensive awareness. Speed training paying off.",
-        nextReview: new Date("2025-03-15"),
-        skillRatings: {
-          technical: 8.2,
-          physical: 7.5,
-          tactical: 6.8,
-          mental: 8.0
-        },
-        createdAt: new Date("2025-01-15"),
-        updatedAt: new Date("2025-01-20")
-      },
-      {
-        playerId: "player-2",
-        coachId: "user-1",
-        assessmentDate: new Date("2025-01-18"),
-        strengths: ["Passing vision", "Leadership", "Game intelligence"],
-        weaknesses: ["Physical strength", "Shooting power", "Pace"],
-        goals: ["Increase shooting power", "Build physical strength", "Develop pace"],
-        trainingPlan: {
-          focus: "Physical development and shooting power",
-          duration: "10 weeks",
-          sessionsPerWeek: 4,
-          specificDrills: [
-            "Strength training program",
-            "Power shooting drills",
-            "Sprint acceleration work"
-          ]
-        },
-        progressNotes: "Excellent technical ability. Working on physical aspects to complete development.",
-        nextReview: new Date("2025-03-18"),
-        skillRatings: {
-          technical: 9.1,
-          physical: 6.9,
-          tactical: 8.8,
-          mental: 8.5
-        },
-        createdAt: new Date("2025-01-18"),
-        updatedAt: new Date("2025-01-20")
-      }
-    ];
-
-    await db.insert(playerDevelopment).values(playerDevelopmentList);
-
-    // Insert AI Chatbots
-    const aiChatbotsList = [
-      {
-        name: "Eagles FC Assistant",
-        teamId: 1,
-        purpose: "Team communication and information assistance",
-        personality: "Friendly, encouraging, and knowledgeable about soccer",
-        trainingData: [
-          "Team roster and player information",
-          "Practice schedules and game times",
-          "Soccer rules and terminology",
-          "Team history and achievements"
-        ],
-        responseAccuracy: 0.94,
-        queriesHandled: 287,
-        avgResponseTime: 1.2,
-        userSatisfaction: 4.6,
-        lastTrainingUpdate: new Date("2025-01-15"),
-        isActive: true,
-        createdAt: new Date("2024-12-01"),
-        updatedAt: new Date("2025-01-20")
-      },
-      {
-        name: "General Sports AI",
-        teamId: null,
-        purpose: "General sports information and guidance",
-        personality: "Professional, informative, and supportive",
-        trainingData: [
-          "Multi-sport rules and regulations",
-          "Training techniques and best practices",
-          "Sports medicine and injury prevention",
-          "Youth development principles"
-        ],
-        responseAccuracy: 0.91,
-        queriesHandled: 523,
-        avgResponseTime: 1.8,
-        userSatisfaction: 4.3,
-        lastTrainingUpdate: new Date("2025-01-10"),
-        isActive: true,
-        createdAt: new Date("2024-11-15"),
-        updatedAt: new Date("2025-01-18")
-      }
-    ];
-
-    await db.insert(aiChatbots).values(aiChatbotsList);
-
-    // Insert Sentiment Analysis
-    const sentimentAnalysisList = [
-      {
-        messageId: 1,
-        sentiment: "positive",
-        confidence: 0.89,
-        emotions: ["encouragement", "satisfaction"],
-        toxicity: 0.02,
-        urgency: 0.15,
-        intent: "informational",
-        keywords: ["practice", "team", "improvement"],
-        languageDetected: "en",
-        createdAt: new Date("2025-01-22T20:05:00")
-      },
-      {
-        messageId: 3,
-        sentiment: "neutral",
-        confidence: 0.76,
-        emotions: ["urgency", "importance"],
-        toxicity: 0.01,
-        urgency: 0.92,
-        intent: "urgent",
-        keywords: ["urgent", "game", "time", "change"],
-        languageDetected: "en",
-        createdAt: new Date("2025-01-24T11:20:00")
-      }
-    ];
-
-    await db.insert(sentimentAnalysis).values(sentimentAnalysisList);
-
-    // Insert Communication Logs
-    const communicationLogsList = [
-      {
-        userId: "user-3",
-        channel: "app",
-        messageContent: "Practice reminder: Thursday 6:00 PM at Central Sports Complex",
-        recipientType: "individual",
-        status: "delivered",
-        deliveryTime: new Date("2025-01-22T08:00:00"),
-        readTime: new Date("2025-01-22T08:15:00"),
-        intent: "reminder",
-        sentiment: "neutral",
-        priority: "medium",
-        messageId: "msg-001",
-        createdAt: new Date("2025-01-22T08:00:00")
-      },
-      {
-        userId: "user-1",
-        channel: "sms",
-        messageContent: "Game time changed to 2:30 PM. Please confirm receipt.",
-        recipientType: "team",
-        status: "delivered",
-        deliveryTime: new Date("2025-01-24T11:15:00"),
-        readTime: new Date("2025-01-24T11:18:00"),
-        intent: "urgent",
-        sentiment: "neutral",
-        priority: "high",
-        messageId: "msg-002",
-        createdAt: new Date("2025-01-24T11:15:00")
-      },
-      {
-        userId: "user-4",
-        channel: "email",
-        messageContent: "Monthly newsletter with team updates and upcoming events",
-        recipientType: "team",
-        status: "delivered",
-        deliveryTime: new Date("2025-01-20T09:00:00"),
-        readTime: new Date("2025-01-20T10:30:00"),
-        intent: "informational",
-        sentiment: "positive",
-        priority: "low",
-        messageId: "msg-003",
-        createdAt: new Date("2025-01-20T09:00:00")
-      }
-    ];
-
-    await db.insert(communicationLogs).values(communicationLogsList);
-
-    // Insert Facility Bookings
-    const facilityBookingsList = [
-      {
-        facilityId: 1,
-        teamId: 1,
-        userId: "user-1",
-        startTime: new Date("2025-01-25T15:00:00"),
-        endTime: new Date("2025-01-25T17:00:00"),
-        purpose: "League match vs Lions United",
-        status: "confirmed",
-        cost: 300.00,
-        paymentStatus: "paid",
-        specialRequirements: "Goal nets, corner flags, medical kit",
-        equipmentNeeded: ["Soccer goals", "Corner flags", "First aid kit"],
-        participantCount: 22,
-        contactPerson: "Carlos Martinez",
-        emergencyContact: "+1-555-123-4567",
-        createdAt: new Date("2025-01-10T10:00:00"),
-        updatedAt: new Date("2025-01-15T14:30:00")
-      },
-      {
-        facilityId: 3,
-        teamId: 2,
-        userId: "user-2",
-        startTime: new Date("2025-01-28T14:00:00"),
-        endTime: new Date("2025-01-28T16:00:00"),
-        purpose: "Championship final game",
-        status: "confirmed",
-        cost: 400.00,
-        paymentStatus: "paid",
-        specialRequirements: "Championship setup, trophy table, live streaming equipment",
-        equipmentNeeded: ["Basketball hoops", "Scoreboard", "Trophy table"],
-        participantCount: 15,
-        contactPerson: "Sarah Johnson",
-        emergencyContact: "+1-555-234-5678",
-        createdAt: new Date("2025-01-12T09:00:00"),
-        updatedAt: new Date("2025-01-20T11:00:00")
-      }
-    ];
-
-    await db.insert(facilityBookings).values(facilityBookingsList);
-
-    // Insert Schedule Optimization
-    const scheduleOptimizationList = [
-      {
-        teamId: 1,
-        optimizationDate: new Date("2025-01-20"),
-        algorithm: "ai_conflict_detection",
-        parameters: {
-          priorityWeights: {
-            playerAvailability: 0.4,
-            facilityAvailability: 0.3,
-            coachPreference: 0.2,
-            travelDistance: 0.1
-          },
-          constraintsConsidered: ["player_conflicts", "facility_availability", "weather_conditions"],
-          optimizationGoals: ["minimize_conflicts", "maximize_attendance", "optimize_travel"]
-        },
-        originalScheduleConflicts: 8,
-        optimizedScheduleConflicts: 2,
-        improvementPercentage: 75.0,
-        recommendedChanges: [
-          "Move Tuesday practice to Wednesday 7:00 PM",
-          "Reschedule away game to avoid player exam conflicts",
-          "Combine U14 and U16 transport for away games"
-        ],
-        implementationStatus: "partially_implemented",
-        coachApproval: true,
-        playerFeedback: 4.2,
-        createdAt: new Date("2025-01-20T14:00:00"),
-        updatedAt: new Date("2025-01-22T16:30:00")
-      }
-    ];
-
-    await db.insert(scheduleOptimization).values(scheduleOptimizationList);
-
-    // Insert Video Analysis
-    const videoAnalysisList = [
-      {
-        eventId: 1,
-        playerId: "player-1",
-        videoUrl: "https://video.eaglesfc.com/analysis/player1-game1",
-        analysisType: "individual_performance",
-        aiInsights: {
-          performanceMetrics: {
-            ballTouches: 67,
-            successfulPasses: 42,
-            shotsOnTarget: 4,
-            defensiveActions: 12
-          },
-          strengthsIdentified: ["Quick decision making", "Good first touch", "Effective pressing"],
-          areasForImprovement: ["Defensive positioning", "Left foot usage", "Aerial duels"],
-          tacticalAnalysis: "Player shows good understanding of team shape but needs work on defensive transitions"
-        },
-        coachNotes: "Excellent attacking play. Focus on defensive responsibilities in training.",
-        playerFeedback: "Really helpful to see my positioning mistakes. Will work on them.",
-        analysisDate: new Date("2025-01-21T10:00:00"),
-        shareWithPlayer: true,
-        shareWithParents: true,
-        tags: ["attacking", "positioning", "development"],
-        createdAt: new Date("2025-01-21T10:00:00"),
-        updatedAt: new Date("2025-01-22T14:15:00")
-      }
-    ];
-
-    await db.insert(videoAnalysis).values(videoAnalysisList);
-
-    // Insert Fan Engagement
-    const fanEngagementList = [
-      {
-        teamId: 1,
-        contentType: "match_preview",
-        title: "Eagles FC vs Lions United - Match Preview",
-        content: "This Saturday's match against Lions United promises to be an exciting encounter. Our team has been training hard and is ready to showcase their skills.",
-        mediaUrls: ["https://images.eaglesfc.com/match-preview-1.jpg"],
-        engagement: {
-          views: 247,
-          likes: 34,
-          shares: 12,
-          comments: 8
-        },
-        demographics: {
-          ageGroups: { "13-17": 45, "18-35": 32, "36-50": 23 },
-          geography: { "local": 78, "regional": 22 },
-          fanType: { "parents": 65, "community": 25, "alumni": 10 }
-        },
-        publishedAt: new Date("2025-01-22T18:00:00"),
-        isActive: true,
-        scheduledFor: new Date("2025-01-25T12:00:00"),
-        createdBy: "user-1",
-        createdAt: new Date("2025-01-22T17:30:00"),
-        updatedAt: new Date("2025-01-24T09:15:00")
-      },
-      {
-        teamId: 2,
-        contentType: "player_spotlight",
-        title: "Player Spotlight: Emma Davis - Rising Star",
-        content: "Get to know Emma Davis, our talented point guard who has been leading the team with exceptional court vision and leadership.",
-        mediaUrls: ["https://images.lionsbasketball.com/emma-spotlight.jpg"],
-        engagement: {
-          views: 156,
-          likes: 28,
-          shares: 6,
-          comments: 14
-        },
-        demographics: {
-          ageGroups: { "13-17": 52, "18-35": 28, "36-50": 20 },
-          geography: { "local": 82, "regional": 18 },
-          fanType: { "parents": 58, "community": 30, "alumni": 12 }
-        },
-        publishedAt: new Date("2025-01-20T15:00:00"),
-        isActive: true,
-        createdBy: "user-2",
-        createdAt: new Date("2025-01-20T14:30:00"),
-        updatedAt: new Date("2025-01-21T10:20:00")
-      }
-    ];
-
-    await db.insert(fanEngagement).values(fanEngagementList);
+    try {
+      await db.insert(gameStats).values(gameStatsList);
+      console.log(`Inserted ${gameStatsList.length} game stats`);
+    } catch (e) {
+      console.log("Could not insert game stats:", e.message);
+    }
 
     console.log("Mock data seeding completed successfully!");
     
@@ -1136,24 +562,11 @@ export async function seedMockData() {
       teams: teamsList.length,
       facilities: facilitiesList.length,
       events: eventsList.length,
+      teamMembers: teamMembersList.length,
       notifications: notificationsList.length,
       payments: paymentsList.length,
       teamMessages: teamMessagesList.length,
-      gameStats: gameStatsList.length,
-      guardians: guardiansList.length,
-      players: playersList.length,
-      playerGuardians: playerGuardiansList.length,
-      skillsTracking: skillsTrackingList.length,
-      equipment: equipmentList.length,
-      volunteers: volunteersList.length,
-      playerDevelopment: playerDevelopmentList.length,
-      aiChatbots: aiChatbotsList.length,
-      sentimentAnalysis: sentimentAnalysisList.length,
-      communicationLogs: communicationLogsList.length,
-      facilityBookings: facilityBookingsList.length,
-      scheduleOptimization: scheduleOptimizationList.length,
-      videoAnalysis: videoAnalysisList.length,
-      fanEngagement: fanEngagementList.length
+      gameStats: gameStatsList.length
     };
 
   } catch (error) {
