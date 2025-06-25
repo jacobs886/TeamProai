@@ -3187,6 +3187,515 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Benchmarks API endpoints
+  app.get("/api/benchmarks/players", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, ageGroup, category } = req.query;
+      
+      const playerBenchmarks = [
+        {
+          playerId: "player-1",
+          playerName: "Alex Johnson",
+          position: "Forward",
+          sport: "Soccer",
+          ageGroup: "U16",
+          skillLevel: "intermediate",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          metrics: {
+            physical: {
+              sprintSpeed: { value: 7.2, percentile: 75, ageGroupAvg: 6.8, rank: 12 },
+              endurance: { value: 85, percentile: 68, ageGroupAvg: 82, rank: 18 },
+              agility: { value: 8.1, percentile: 82, ageGroupAvg: 7.5, rank: 8 },
+              strength: { value: 78, percentile: 71, ageGroupAvg: 75, rank: 15 }
+            },
+            technical: {
+              ballControl: { value: 8.5, percentile: 88, ageGroupAvg: 7.2, rank: 5 },
+              passing: { value: 7.8, percentile: 72, ageGroupAvg: 7.4, rank: 14 },
+              shooting: { value: 8.9, percentile: 92, ageGroupAvg: 7.1, rank: 3 },
+              defending: { value: 6.2, percentile: 45, ageGroupAvg: 6.8, rank: 28 }
+            },
+            tactical: {
+              positioning: { value: 8.1, percentile: 85, ageGroupAvg: 7.3, rank: 7 },
+              decisionMaking: { value: 7.5, percentile: 69, ageGroupAvg: 7.2, rank: 16 },
+              gameAwareness: { value: 8.0, percentile: 81, ageGroupAvg: 7.1, rank: 9 },
+              teamwork: { value: 8.8, percentile: 94, ageGroupAvg: 7.5, rank: 2 }
+            },
+            mental: {
+              confidence: { value: 8.3, percentile: 87, ageGroupAvg: 7.4, rank: 6 },
+              focus: { value: 7.9, percentile: 76, ageGroupAvg: 7.3, rank: 11 },
+              resilience: { value: 8.5, percentile: 91, ageGroupAvg: 7.2, rank: 4 },
+              leadership: { value: 7.2, percentile: 62, ageGroupAvg: 6.9, rank: 19 }
+            }
+          },
+          overallRating: 8.1,
+          overallPercentile: 84,
+          strengths: ["Shooting accuracy", "Teamwork", "Ball control", "Resilience"],
+          improvements: ["Defending", "Endurance", "Leadership", "Passing range"],
+          lastUpdated: new Date("2025-01-20T10:30:00")
+        },
+        {
+          playerId: "player-2",
+          playerName: "Sarah Wilson",
+          position: "Midfielder",
+          sport: "Soccer",
+          ageGroup: "U16",
+          skillLevel: "advanced",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          metrics: {
+            physical: {
+              sprintSpeed: { value: 6.8, percentile: 82, ageGroupAvg: 6.2, rank: 8 },
+              endurance: { value: 92, percentile: 95, ageGroupAvg: 79, rank: 2 },
+              agility: { value: 8.5, percentile: 91, ageGroupAvg: 7.3, rank: 4 },
+              strength: { value: 71, percentile: 58, ageGroupAvg: 72, rank: 22 }
+            },
+            technical: {
+              ballControl: { value: 9.1, percentile: 96, ageGroupAvg: 7.2, rank: 1 },
+              passing: { value: 9.3, percentile: 98, ageGroupAvg: 7.4, rank: 1 },
+              shooting: { value: 7.2, percentile: 65, ageGroupAvg: 7.1, rank: 17 },
+              defending: { value: 8.1, percentile: 89, ageGroupAvg: 6.8, rank: 5 }
+            },
+            tactical: {
+              positioning: { value: 9.0, percentile: 97, ageGroupAvg: 7.3, rank: 2 },
+              decisionMaking: { value: 8.9, percentile: 95, ageGroupAvg: 7.2, rank: 3 },
+              gameAwareness: { value: 9.2, percentile: 98, ageGroupAvg: 7.1, rank: 1 },
+              teamwork: { value: 8.5, percentile: 88, ageGroupAvg: 7.5, rank: 6 }
+            },
+            mental: {
+              confidence: { value: 8.7, percentile: 92, ageGroupAvg: 7.4, rank: 4 },
+              focus: { value: 9.1, percentile: 97, ageGroupAvg: 7.3, rank: 2 },
+              resilience: { value: 8.2, percentile: 86, ageGroupAvg: 7.2, rank: 7 },
+              leadership: { value: 8.8, percentile: 94, ageGroupAvg: 6.9, rank: 3 }
+            }
+          },
+          overallRating: 8.8,
+          overallPercentile: 95,
+          strengths: ["Passing accuracy", "Game awareness", "Ball control", "Focus"],
+          improvements: ["Shooting power", "Physical strength", "Sprint speed"],
+          lastUpdated: new Date("2025-01-20T11:15:00")
+        },
+        {
+          playerId: "player-3",
+          playerName: "Mike Rodriguez",
+          position: "Goalkeeper",
+          sport: "Soccer",
+          ageGroup: "U16",
+          skillLevel: "intermediate",
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          metrics: {
+            physical: {
+              sprintSpeed: { value: 6.1, percentile: 45, ageGroupAvg: 6.8, rank: 28 },
+              endurance: { value: 88, percentile: 78, ageGroupAvg: 82, rank: 10 },
+              agility: { value: 8.8, percentile: 95, ageGroupAvg: 7.5, rank: 2 },
+              strength: { value: 82, percentile: 89, ageGroupAvg: 75, rank: 5 }
+            },
+            technical: {
+              ballControl: { value: 8.2, percentile: 85, ageGroupAvg: 7.2, rank: 7 },
+              passing: { value: 8.5, percentile: 91, ageGroupAvg: 7.4, rank: 4 },
+              shooting: { value: 5.8, percentile: 25, ageGroupAvg: 7.1, rank: 35 },
+              defending: { value: 9.2, percentile: 97, ageGroupAvg: 6.8, rank: 2 }
+            },
+            tactical: {
+              positioning: { value: 9.4, percentile: 99, ageGroupAvg: 7.3, rank: 1 },
+              decisionMaking: { value: 8.6, percentile: 90, ageGroupAvg: 7.2, rank: 5 },
+              gameAwareness: { value: 8.8, percentile: 93, ageGroupAvg: 7.1, rank: 3 },
+              teamwork: { value: 8.1, percentile: 82, ageGroupAvg: 7.5, rank: 9 }
+            },
+            mental: {
+              confidence: { value: 9.0, percentile: 96, ageGroupAvg: 7.4, rank: 3 },
+              focus: { value: 8.9, percentile: 94, ageGroupAvg: 7.3, rank: 3 },
+              resilience: { value: 9.1, percentile: 97, ageGroupAvg: 7.2, rank: 2 },
+              leadership: { value: 7.8, percentile: 75, ageGroupAvg: 6.9, rank: 12 }
+            }
+          },
+          overallRating: 8.4,
+          overallPercentile: 88,
+          strengths: ["Positioning", "Defending", "Resilience", "Focus"],
+          improvements: ["Shooting", "Sprint speed", "Leadership", "Offensive play"],
+          lastUpdated: new Date("2025-01-20T12:00:00")
+        }
+      ];
+      
+      res.json(playerBenchmarks);
+    } catch (error) {
+      console.error("Player benchmarks fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch player benchmarks" });
+    }
+  });
+
+  app.get("/api/benchmarks/teams", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, ageGroup } = req.query;
+      
+      const teamBenchmarks = [
+        {
+          teamId: "team-1",
+          teamName: "Eagles FC",
+          sport: "Soccer",
+          ageGroup: "U16",
+          league: "Regional Youth League",
+          coach: "Coach Martinez",
+          playerCount: 18,
+          teamMetrics: {
+            offense: { value: 8.2, percentile: 85, leagueAvg: 7.1, rank: 3 },
+            defense: { value: 8.8, percentile: 92, leagueAvg: 7.3, rank: 2 },
+            possession: { value: 7.9, percentile: 78, leagueAvg: 7.2, rank: 5 },
+            fitness: { value: 8.5, percentile: 89, leagueAvg: 7.4, rank: 2 },
+            discipline: { value: 8.1, percentile: 82, leagueAvg: 7.0, rank: 4 },
+            teamwork: { value: 9.0, percentile: 95, leagueAvg: 7.5, rank: 1 }
+          },
+          seasonRecord: {
+            wins: 12,
+            losses: 2,
+            draws: 3,
+            points: 39,
+            rank: 2,
+            totalTeams: 16
+          },
+          trends: {
+            performance: "improving",
+            momentum: 15,
+            formGuide: ["W", "W", "D", "W", "W"]
+          },
+          lastUpdated: new Date("2025-01-20T14:30:00")
+        },
+        {
+          teamId: "team-2",
+          teamName: "Lions FC",
+          sport: "Soccer",
+          ageGroup: "U16",
+          league: "Regional Youth League",
+          coach: "Coach Johnson",
+          playerCount: 16,
+          teamMetrics: {
+            offense: { value: 7.8, percentile: 72, leagueAvg: 7.1, rank: 6 },
+            defense: { value: 7.2, percentile: 58, leagueAvg: 7.3, rank: 9 },
+            possession: { value: 8.3, percentile: 88, leagueAvg: 7.2, rank: 3 },
+            fitness: { value: 7.6, percentile: 65, leagueAvg: 7.4, rank: 8 },
+            discipline: { value: 6.8, percentile: 45, leagueAvg: 7.0, rank: 12 },
+            teamwork: { value: 7.9, percentile: 74, leagueAvg: 7.5, rank: 6 }
+          },
+          seasonRecord: {
+            wins: 8,
+            losses: 5,
+            draws: 4,
+            points: 28,
+            rank: 6,
+            totalTeams: 16
+          },
+          trends: {
+            performance: "stable",
+            momentum: -2,
+            formGuide: ["L", "W", "D", "L", "W"]
+          },
+          lastUpdated: new Date("2025-01-20T14:30:00")
+        }
+      ];
+      
+      res.json(teamBenchmarks);
+    } catch (error) {
+      console.error("Team benchmarks fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch team benchmarks" });
+    }
+  });
+
+  app.get("/api/benchmarks/insights", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport } = req.query;
+      
+      const benchmarkInsights = [
+        {
+          id: "insight-1",
+          playerId: "player-1",
+          targetName: "Alex Johnson",
+          type: "improvement",
+          category: "technical",
+          insight: "Defending skills are 30 percentile points below peer average. Focus on 1v1 defending drills.",
+          confidence: 0.91,
+          priority: "high",
+          metricData: {
+            currentValue: 6.2,
+            targetValue: 7.5,
+            percentileGap: 30,
+            timeToTarget: 8
+          },
+          recommendations: [
+            "Add 2x weekly 1v1 defending sessions",
+            "Practice slide tackling technique",
+            "Improve positional awareness through video analysis"
+          ],
+          aiGenerated: true,
+          timestamp: new Date("2025-01-20T09:15:00"),
+          addressed: false
+        },
+        {
+          id: "insight-2",
+          playerId: "player-2",
+          targetName: "Sarah Wilson",
+          type: "strength",
+          category: "technical",
+          insight: "Passing accuracy ranks in 98th percentile - elite level performance for age group.",
+          confidence: 0.97,
+          priority: "low",
+          metricData: {
+            currentValue: 9.3,
+            targetValue: 9.5,
+            percentileGap: -48,
+            timeToTarget: 4
+          },
+          recommendations: [
+            "Maintain current training regimen",
+            "Mentor younger players in passing technique",
+            "Focus on long-range passing accuracy"
+          ],
+          aiGenerated: true,
+          timestamp: new Date("2025-01-20T10:22:00"),
+          addressed: false
+        },
+        {
+          id: "insight-3",
+          playerId: "player-3",
+          targetName: "Mike Rodriguez",
+          type: "prediction",
+          category: "physical",
+          insight: "Sprint speed improvement potential identified. Could reach 75th percentile with specific training.",
+          confidence: 0.83,
+          priority: "medium",
+          metricData: {
+            currentValue: 6.1,
+            targetValue: 7.0,
+            percentileGap: 30,
+            timeToTarget: 12
+          },
+          recommendations: [
+            "Add plyometric training sessions",
+            "Focus on acceleration drills",
+            "Incorporate hill running workouts"
+          ],
+          aiGenerated: true,
+          timestamp: new Date("2025-01-20T11:45:00"),
+          addressed: false
+        },
+        {
+          id: "insight-4",
+          teamId: "team-1",
+          targetName: "Eagles FC",
+          type: "comparison",
+          category: "team",
+          insight: "Team ranks #1 in teamwork but #5 in possession. Tactical adjustment could improve overall ranking.",
+          confidence: 0.88,
+          priority: "medium",
+          metricData: {
+            currentValue: 78,
+            targetValue: 85,
+            percentileGap: 15,
+            timeToTarget: 6
+          },
+          recommendations: [
+            "Implement possession-based training drills",
+            "Practice quick passing combinations",
+            "Focus on maintaining ball control under pressure"
+          ],
+          aiGenerated: true,
+          timestamp: new Date("2025-01-20T13:30:00"),
+          addressed: false
+        }
+      ];
+      
+      res.json(benchmarkInsights);
+    } catch (error) {
+      console.error("Benchmark insights fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch benchmark insights" });
+    }
+  });
+
+  app.get("/api/benchmarks/standards", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, ageGroup } = req.query;
+      
+      const ageGroupStandards = [
+        {
+          ageGroup: "U16",
+          sport: "Soccer",
+          totalPlayers: 2847,
+          standards: {
+            elite: {
+              sprintSpeed: 8.5,
+              endurance: 95,
+              ballControl: 9.2,
+              passing: 9.4,
+              shooting: 9.0,
+              defending: 8.8
+            },
+            excellent: {
+              sprintSpeed: 7.8,
+              endurance: 88,
+              ballControl: 8.5,
+              passing: 8.7,
+              shooting: 8.3,
+              defending: 8.1
+            },
+            good: {
+              sprintSpeed: 7.2,
+              endurance: 82,
+              ballControl: 7.8,
+              passing: 8.0,
+              shooting: 7.6,
+              defending: 7.4
+            },
+            average: {
+              sprintSpeed: 6.8,
+              endurance: 78,
+              ballControl: 7.2,
+              passing: 7.4,
+              shooting: 7.1,
+              defending: 6.8
+            },
+            needsWork: {
+              sprintSpeed: 6.0,
+              endurance: 70,
+              ballControl: 6.5,
+              passing: 6.8,
+              shooting: 6.4,
+              defending: 6.0
+            }
+          },
+          researchBased: true,
+          lastUpdated: new Date("2025-01-15T00:00:00")
+        }
+      ];
+      
+      res.json(ageGroupStandards);
+    } catch (error) {
+      console.error("Age group standards fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch age group standards" });
+    }
+  });
+
+  app.get("/api/benchmarks/analytics", isAuthenticated, async (req: any, res) => {
+    try {
+      const analytics = {
+        totalPlayers: 52,
+        totalTeams: 8,
+        avgPercentile: 74.2,
+        topPerformers: [
+          {
+            playerId: "player-2",
+            name: "Sarah Wilson",
+            metric: "Overall Performance",
+            percentile: 95,
+            improvement: 12
+          },
+          {
+            playerId: "player-3",
+            name: "Mike Rodriguez",
+            metric: "Goalkeeper Skills",
+            percentile: 88,
+            improvement: 8
+          },
+          {
+            playerId: "player-1",
+            name: "Alex Johnson",
+            metric: "Shooting Accuracy",
+            percentile: 84,
+            improvement: 15
+          }
+        ],
+        teamRankings: [
+          {
+            teamId: "team-1",
+            name: "Eagles FC",
+            rank: 2,
+            percentile: 88,
+            change: 1
+          },
+          {
+            teamId: "team-2",
+            name: "Lions FC",
+            rank: 6,
+            percentile: 65,
+            change: -2
+          }
+        ],
+        insights: [
+          {
+            category: "skill_development",
+            insight: "U16 players showing 18% faster skill development compared to national averages",
+            impact: "Accelerated player development across all metrics",
+            confidence: 0.89
+          },
+          {
+            category: "age_comparison",
+            insight: "Team performance benchmarks indicate above-average coaching effectiveness",
+            impact: "Teams consistently ranking in top 30% of age group",
+            confidence: 0.84
+          },
+          {
+            category: "improvement_tracking",
+            insight: "Players with targeted training plans show 25% better benchmark improvements",
+            impact: "Enhanced performance gains through personalized development",
+            confidence: 0.91
+          }
+        ],
+        trends: {
+          skillDevelopment: "improving",
+          teamPerformance: "stable",
+          competitiveness: "increasing"
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Benchmark analytics fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch benchmark analytics" });
+    }
+  });
+
+  app.post("/api/benchmarks/recalculate", isAuthenticated, async (req: any, res) => {
+    try {
+      const { sport, ageGroup } = req.body;
+      
+      // Simulate benchmark recalculation
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      const result = {
+        sport,
+        ageGroup,
+        playersUpdated: 18,
+        teamsUpdated: 3,
+        newBenchmarks: 147,
+        accuracy: 0.94,
+        lastUpdated: new Date()
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Benchmark recalculation error:", error);
+      res.status(500).json({ message: "Failed to recalculate benchmarks" });
+    }
+  });
+
+  app.post("/api/benchmarks/address-insight/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Simulate addressing insight
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      res.json({
+        message: "Benchmark insight addressed successfully",
+        insightId: id,
+        addressedBy: "Coach Martinez",
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Address insight error:", error);
+      res.status(500).json({ message: "Failed to address insight" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

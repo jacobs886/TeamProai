@@ -104,7 +104,7 @@ export default function HamburgerNav() {
         { title: "Advanced Stats", icon: BarChart3, href: "/analytics", description: "200+ sport metrics", isNew: true },
         { title: "AI Insights", icon: Brain, href: "/ai/insights", description: "Performance analysis", isPremium: true },
         { title: "Player Development", icon: TrendingUp, href: "/player-development", description: "AI-driven personalized training plans", isPremium: true },
-        { title: "Benchmarks", icon: Target, href: "/benchmarks", description: "Age-appropriate comparison" },
+        { title: "Benchmarks", icon: Target, href: "/benchmarks", description: "Age-appropriate performance comparisons", isPremium: true },
       ]
     },
     {
