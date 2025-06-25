@@ -110,6 +110,24 @@ export interface IStorage {
   updateVideoAnalysis(videoId: string, data: any): Promise<void>;
   updateDrillRecommendations(videoId: string, data: any): Promise<void>;
   exportPlayerAnalysisData(playerId: string, options: any): Promise<any>;
+  
+  // Highlight Clips operations
+  getHighlightClips(): Promise<any[]>;
+  getHighlightClip(id: string): Promise<any>;
+  getPlayerProfiles(): Promise<any[]>;
+  getPlayerHighlights(playerId: string): Promise<any[]>;
+  generateHighlightClips(options: any): Promise<any[]>;
+  toggleClipLike(clipId: string, userId: string): Promise<any>;
+  addClipComment(clipId: string, userId: string, comment: string): Promise<any>;
+  shareClip(clipId: string, userId: string, platform: string): Promise<any>;
+  getHighlightStats(): Promise<any>;
+  getHighlightAnalytics(options: any): Promise<any>;
+  updateHighlightClip(clipId: string, updates: any): Promise<any>;
+  deleteHighlightClip(clipId: string, userId: string): Promise<void>;
+  generateEventHighlights(eventId: string, options: any): Promise<any[]>;
+  getTrendingClips(options: any): Promise<any[]>;
+  exportPlayerHighlightReel(playerId: string, options: any): Promise<any>;
+  updateClipEngagement(clipId: string, data: any): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -873,6 +891,372 @@ export class DatabaseStorage implements IStorage {
       generatedAt: new Date().toISOString(),
       totalAnalyses: playerAnalyses.length
     };
+  }
+
+  // Highlight Clips implementation
+  private highlightClips: any[] = [];
+  private playerProfiles: any[] = [
+    {
+      id: "player-1",
+      name: "Alex Johnson",
+      jerseyNumber: 10,
+      position: "Forward",
+      profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+      highlightCount: 12,
+      totalViews: 5420,
+      avgRating: 4.7,
+      sport: "Soccer",
+      ageGroup: "U16"
+    },
+    {
+      id: "player-2",
+      name: "Maria Garcia",
+      jerseyNumber: 1,
+      position: "Goalkeeper",
+      profileImageUrl: "https://images.unsplash.com/photo-1494790108755-2616b332c8bd?w=150",
+      highlightCount: 8,
+      totalViews: 3210,
+      avgRating: 4.5,
+      sport: "Soccer",
+      ageGroup: "U16"
+    },
+    {
+      id: "player-3",
+      name: "Jordan Smith",
+      jerseyNumber: 23,
+      position: "Guard",
+      profileImageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
+      highlightCount: 15,
+      totalViews: 7890,
+      avgRating: 4.8,
+      sport: "Basketball",
+      ageGroup: "U14"
+    }
+  ];
+  private highlightStats = {
+    totalClips: 0,
+    totalViews: 0,
+    avgConfidence: 0.91,
+    engagementRate: 0.87
+  };
+
+  async getHighlightClips(): Promise<any[]> {
+    return this.highlightClips;
+  }
+
+  async getHighlightClip(id: string): Promise<any> {
+    return this.highlightClips.find(c => c.id === id);
+  }
+
+  async getPlayerProfiles(): Promise<any[]> {
+    return this.playerProfiles;
+  }
+
+  async getPlayerHighlights(playerId: string): Promise<any[]> {
+    return this.highlightClips.filter(c => c.playerId === playerId);
+  }
+
+  async generateHighlightClips(options: any): Promise<any[]> {
+    const { playerId, eventId, momentTypes, sport, ageGroup } = options;
+    const newClips = [];
+
+    // Simulate AI-generated clips for different moment types
+    for (const momentType of momentTypes) {
+      const clip = {
+        id: `clip-${this.highlightClips.length + newClips.length + 1}`,
+        playerId,
+        playerName: this.playerProfiles.find(p => p.id === playerId)?.name || "Unknown Player",
+        eventId,
+        eventTitle: `${sport} Match - ${ageGroup}`,
+        title: this.generateClipTitle(momentType, sport),
+        description: this.generateClipDescription(momentType, sport),
+        sport,
+        ageGroup,
+        thumbnailUrl: this.getRandomThumbnail(),
+        videoUrl: `https://demo.video.url/highlight${Date.now()}.mp4`,
+        duration: Math.floor(Math.random() * 20) + 8, // 8-28 seconds
+        timestamp: `${Math.floor(Math.random() * 90)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+        createdAt: new Date().toISOString(),
+        momentType,
+        aiConfidence: 0.85 + Math.random() * 0.15, // 85-100%
+        metrics: this.generateMetricsForMoment(momentType, sport),
+        tags: this.generateTagsForMoment(momentType),
+        engagement: {
+          views: Math.floor(Math.random() * 1000) + 100,
+          likes: Math.floor(Math.random() * 100) + 10,
+          shares: Math.floor(Math.random() * 30) + 3,
+          comments: Math.floor(Math.random() * 20) + 2
+        },
+        drillRecommendations: this.getDrillsForMoment(momentType),
+        translations: {
+          es: this.translateClipTitle(this.generateClipTitle(momentType, sport), 'es'),
+          fr: this.translateClipTitle(this.generateClipTitle(momentType, sport), 'fr')
+        }
+      };
+      
+      newClips.push(clip);
+    }
+
+    this.highlightClips.push(...newClips);
+    this.highlightStats.totalClips += newClips.length;
+    
+    return newClips;
+  }
+
+  async toggleClipLike(clipId: string, userId: string): Promise<any> {
+    const clip = this.highlightClips.find(c => c.id === clipId);
+    if (clip) {
+      clip.engagement.likes += 1;
+      return clip;
+    }
+    throw new Error("Clip not found");
+  }
+
+  async addClipComment(clipId: string, userId: string, comment: string): Promise<any> {
+    const clip = this.highlightClips.find(c => c.id === clipId);
+    if (clip) {
+      clip.engagement.comments += 1;
+      const newComment = {
+        id: `comment-${Date.now()}`,
+        clipId,
+        userId,
+        comment,
+        createdAt: new Date().toISOString()
+      };
+      return newComment;
+    }
+    throw new Error("Clip not found");
+  }
+
+  async shareClip(clipId: string, userId: string, platform: string): Promise<any> {
+    const clip = this.highlightClips.find(c => c.id === clipId);
+    if (clip) {
+      clip.engagement.shares += 1;
+      return {
+        url: `https://teampro.ai/highlights/${clipId}?platform=${platform}`,
+        platform
+      };
+    }
+    throw new Error("Clip not found");
+  }
+
+  async getHighlightStats(): Promise<any> {
+    return {
+      ...this.highlightStats,
+      totalClips: this.highlightClips.length,
+      totalViews: this.highlightClips.reduce((sum, c) => sum + c.engagement.views, 0),
+      recentClips: this.highlightClips.slice(-5),
+      topPlayers: this.playerProfiles.slice(0, 3)
+    };
+  }
+
+  async getHighlightAnalytics(options: any): Promise<any> {
+    const { timeRange, playerId } = options;
+    let clips = this.highlightClips;
+    
+    if (playerId) {
+      clips = clips.filter(c => c.playerId === playerId);
+    }
+
+    return {
+      totalClips: clips.length,
+      totalViews: clips.reduce((sum, c) => sum + c.engagement.views, 0),
+      avgEngagement: clips.reduce((sum, c) => sum + c.engagement.likes, 0) / clips.length || 0,
+      topMoments: this.getTopMomentTypes(clips),
+      viewsOverTime: this.generateViewsOverTime(clips, timeRange)
+    };
+  }
+
+  async updateHighlightClip(clipId: string, updates: any): Promise<any> {
+    const clipIndex = this.highlightClips.findIndex(c => c.id === clipId);
+    if (clipIndex !== -1) {
+      this.highlightClips[clipIndex] = { ...this.highlightClips[clipIndex], ...updates };
+      return this.highlightClips[clipIndex];
+    }
+    throw new Error("Clip not found");
+  }
+
+  async deleteHighlightClip(clipId: string, userId: string): Promise<void> {
+    const clipIndex = this.highlightClips.findIndex(c => c.id === clipId);
+    if (clipIndex !== -1) {
+      this.highlightClips.splice(clipIndex, 1);
+      this.highlightStats.totalClips--;
+    } else {
+      throw new Error("Clip not found");
+    }
+  }
+
+  async generateEventHighlights(eventId: string, options: any): Promise<any[]> {
+    const { sport, ageGroup } = options;
+    const allClips = [];
+
+    // Generate highlights for all players in the event
+    for (const player of this.playerProfiles) {
+      if (player.sport === sport && player.ageGroup === ageGroup) {
+        const clips = await this.generateHighlightClips({
+          playerId: player.id,
+          eventId,
+          momentTypes: ['goal', 'save', 'assist'],
+          sport,
+          ageGroup
+        });
+        allClips.push(...clips);
+      }
+    }
+
+    return allClips;
+  }
+
+  async getTrendingClips(options: any): Promise<any[]> {
+    const { timeRange, sport, limit } = options;
+    let clips = [...this.highlightClips];
+
+    if (sport) {
+      clips = clips.filter(c => c.sport.toLowerCase() === sport.toLowerCase());
+    }
+
+    // Sort by engagement score (views + likes * 2 + shares * 3)
+    clips.sort((a, b) => {
+      const scoreA = a.engagement.views + (a.engagement.likes * 2) + (a.engagement.shares * 3);
+      const scoreB = b.engagement.views + (b.engagement.likes * 2) + (b.engagement.shares * 3);
+      return scoreB - scoreA;
+    });
+
+    return clips.slice(0, limit);
+  }
+
+  async exportPlayerHighlightReel(playerId: string, options: any): Promise<any> {
+    const playerClips = this.highlightClips.filter(c => c.playerId === playerId);
+    
+    return {
+      id: `export-${Date.now()}`,
+      playerId,
+      format: options.format,
+      quality: options.quality,
+      downloadUrl: `https://exports.teampro.ai/highlights/${playerId}.${options.format}`,
+      estimatedTime: `${Math.ceil(playerClips.length * 0.5)} minutes`,
+      totalClips: playerClips.length
+    };
+  }
+
+  async updateClipEngagement(clipId: string, data: any): Promise<void> {
+    const clip = this.highlightClips.find(c => c.id === clipId);
+    if (clip) {
+      Object.assign(clip.engagement, data);
+    }
+  }
+
+  // Helper methods for highlight generation
+  private generateClipTitle(momentType: string, sport: string): string {
+    const titles: any = {
+      goal: [`Amazing Goal`, `Perfect Strike`, `Brilliant Finish`, `Spectacular Goal`],
+      save: [`Incredible Save`, `Brilliant Stop`, `Amazing Reflexes`, `Perfect Save`],
+      assist: [`Perfect Assist`, `Brilliant Pass`, `Amazing Vision`, `Great Setup`],
+      tackle: [`Defensive Masterclass`, `Perfect Tackle`, `Great Defending`, `Solid Defense`],
+      shot: [`Powerful Shot`, `Great Attempt`, `Nice Strike`, `Good Effort`]
+    };
+    
+    const momentTitles = titles[momentType] || [`Great ${momentType}`, `Nice ${momentType}`];
+    return momentTitles[Math.floor(Math.random() * momentTitles.length)];
+  }
+
+  private generateClipDescription(momentType: string, sport: string): string {
+    const descriptions: any = {
+      goal: "Spectacular finish with perfect technique and placement",
+      save: "Lightning-fast reflexes to deny a certain goal",
+      assist: "Incredible vision and precision leads to easy score",
+      tackle: "Perfectly timed challenge wins possession cleanly",
+      shot: "Powerful strike tests goalkeeper's abilities"
+    };
+    
+    return descriptions[momentType] || `Great ${momentType} showcasing excellent technique`;
+  }
+
+  private generateMetricsForMoment(momentType: string, sport: string): any[] {
+    const baseMetrics: any = {
+      goal: [
+        { name: "Shot Power", value: `${85 + Math.floor(Math.random() * 15)} km/h`, benchmark: "Excellent", timestamp: "1:23" },
+        { name: "Shot Accuracy", value: "Top Corner", benchmark: "Perfect", timestamp: "1:23" }
+      ],
+      save: [
+        { name: "Reaction Time", value: `${0.15 + Math.random() * 0.1}s`, benchmark: "Elite", timestamp: "2:45" },
+        { name: "Dive Distance", value: `${1.8 + Math.random() * 0.5}m`, benchmark: "Excellent", timestamp: "2:45" }
+      ],
+      assist: [
+        { name: "Pass Accuracy", value: `${90 + Math.floor(Math.random() * 10)}%`, benchmark: "Excellent", timestamp: "1:15" },
+        { name: "Vision Rating", value: `${85 + Math.floor(Math.random() * 15)}%`, benchmark: "Outstanding", timestamp: "1:15" }
+      ]
+    };
+    
+    return baseMetrics[momentType] || [
+      { name: "Performance", value: `${80 + Math.floor(Math.random() * 20)}%`, benchmark: "Good", timestamp: "1:00" }
+    ];
+  }
+
+  private generateTagsForMoment(momentType: string): string[] {
+    const tags: any = {
+      goal: ["goal", "finish", "strike"],
+      save: ["save", "reflexes", "goalkeeping"],
+      assist: ["assist", "pass", "vision"],
+      tackle: ["tackle", "defense", "possession"],
+      shot: ["shot", "attempt", "power"]
+    };
+    
+    return tags[momentType] || [momentType];
+  }
+
+  private getDrillsForMoment(momentType: string): any[] {
+    return this.drillLibrary.filter(drill => 
+      drill.technique.toLowerCase().includes(momentType) || 
+      momentType === 'goal' && drill.technique.includes('Shooting')
+    ).slice(0, 2);
+  }
+
+  private translateClipTitle(title: string, language: string): string {
+    const translations: any = {
+      'es': {
+        'Amazing Goal': 'Gol Increíble',
+        'Incredible Save': 'Parada Increíble',
+        'Perfect Assist': 'Asistencia Perfecta'
+      },
+      'fr': {
+        'Amazing Goal': 'But Incroyable',
+        'Incredible Save': 'Arrêt Incroyable',
+        'Perfect Assist': 'Passe Parfaite'
+      }
+    };
+    
+    return translations[language]?.[title] || title;
+  }
+
+  private getRandomThumbnail(): string {
+    const thumbnails = [
+      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400",
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
+      "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400",
+      "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400"
+    ];
+    return thumbnails[Math.floor(Math.random() * thumbnails.length)];
+  }
+
+  private getTopMomentTypes(clips: any[]): any[] {
+    const momentCounts: any = {};
+    clips.forEach(clip => {
+      momentCounts[clip.momentType] = (momentCounts[clip.momentType] || 0) + 1;
+    });
+    
+    return Object.entries(momentCounts)
+      .map(([type, count]) => ({ type, count }))
+      .sort((a: any, b: any) => b.count - a.count);
+  }
+
+  private generateViewsOverTime(clips: any[], timeRange: string): any[] {
+    // Simulate views over time data
+    const days = timeRange === '30d' ? 30 : 7;
+    return Array.from({ length: days }, (_, i) => ({
+      date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      views: Math.floor(Math.random() * 500) + 100
+    }));
   }
 }
 

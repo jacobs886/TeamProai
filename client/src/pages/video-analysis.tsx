@@ -469,10 +469,6 @@ export default function VideoAnalysis() {
             <option value="es">Español</option>
             <option value="fr">Français</option>
           </select>
-          <Button onClick={() => setShowUploadForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Upload Video
-          </Button>
         </div>
       </div>
 

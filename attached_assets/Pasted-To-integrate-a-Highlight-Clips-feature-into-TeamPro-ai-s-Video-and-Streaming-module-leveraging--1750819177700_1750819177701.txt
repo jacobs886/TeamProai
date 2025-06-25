@@ -1,0 +1,211 @@
+To integrate a **Highlight Clips** feature into TeamPro.ai’s Video and Streaming module, leveraging AWS, Supabase, Grok 3 on MCP servers, HelloPayments.net, and existing features (e.g., AutoStream, Video Analysis, Advanced Performance Analytics, AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub), I’ll outline requirements for automatically generating and associating video highlight clips with individual player profiles. This builds on the AutoStream and Video Analysis features, addressing competitor gaps (e.g., TeamSnap’s manual clipping, SportsEngine’s limited automation) and aligning with your AI-driven strategy for youth sports management. The feature will use AI to create personalized highlight reels, integrating with the 200+ sports metrics and AI Insights for youth-focused, actionable content. Below are the requirements, prioritized features, and implementation strategy to stand out against competitors like TeamSnap, SportsEngine, Spond, and LeagueApps.
+
+### Competitor Context and Gaps
+- **TeamSnap**: Manual video uploads with no automated highlight generation or player profile integration. 30% notification failures disrupt sharing.
+- **SportsEngine**: Offers highlights via SportsEngine Play but lacks AI-driven automation, individual player focus, or profile association. High costs ($799+/year).
+- **Spond**: No video or highlight capabilities, limited to basic planning.
+- **LeagueApps**: Basic video uploads, no automated clips or player profile integration.
+- **Common Gaps**:
+  - No AI-powered, automated highlight generation for individual players.
+  - Lack of integration with player profiles or performance metrics.
+  - No youth-specific customization or multilingual support.
+  - Limited offline access and unreliable notifications.
+
+### Requirements for TeamPro.ai Highlight Clips
+#### Parameters
+1. **Accessibility**: Mobile-first React PWA, offline access to cached clips via Supabase edge functions for field use.
+2. **Security**: Supabase RBAC restricts access (e.g., parents view child’s clips, coaches view team). AWS KMS encrypts sensitive data.
+3. **Scalability**: AWS CloudFront for streaming UI, Lambda for real-time processing, Supabase for thousands of users.
+4. **AI Integration**: Grok 3 on MCP servers for clip generation, metric tagging, and profile association.
+5. **Integration**: Connects with AutoStream, Video Analysis, Advanced Performance Analytics (200+ metrics), AI Insights, Player Development, Benchmarking, Smart Scheduler, Calendar Sync, Predictive Availability, Communication Log, Translation Hub, and HelloPayments.net.
+6. **Sport-Specific Customization**: Clips tailored to sports (e.g., soccer goals, hockey saves) and youth age groups.
+7. **Data Sources**: Live video feeds from AutoStream, wearables, performance metrics, and player profile data.
+8. **Profile Association**: Clips automatically linked to individual player profiles for easy access and sharing.
+
+#### Baseline Functionalities (Assumed)
+1. **Video Clips**: AutoStream generates basic highlight clips for key moments (e.g., goals).
+2. **Player Profiles**: Store basic player data (e.g., name, age, team) in Supabase.
+3. **Video Playback**: Stream clips via React PWA or web.
+4. **Notifications**: Alerts for clip availability via app, SMS, email (AWS SNS/SES).
+5. **Storage**: Store clips in cloud with metadata (e.g., event, timestamp).
+
+#### Prioritized Features for AI-Powered Highlight Clips
+1. **Automated Highlight Generation**:
+   - **Description**: Automatically create clips for individual players based on key moments (e.g., “Player X scores goal at 12:34”).
+   - **AI Capability**: Grok 3 analyzes video and 200+ metrics (e.g., speed, xG) to identify player-specific highlights with 90% accuracy.
+   - **How**: Process video via AWS Rekognition and metrics from Supabase `performance_metrics` on MCP servers, store clips in S3, link to Supabase `media`. Tag with player ID.
+   - **Why**: Outperforms TeamSnap’s manual clipping, personalizing content.
+
+2. **Player Profile Association**:
+   - **Description**: Link clips to individual player profiles for easy access and portfolio building.
+   - **AI Capability**: Grok 3 matches clips to players using facial recognition (optional, with consent) or jersey numbers, integrating with profile data.
+   - **How**: Store associations in Supabase `player_clips` (player_id, video_id), display in React profile dashboard. Use DocuSign for consent if facial recognition is enabled.
+   - **Why**: Surpasses SportsEngine’s generic highlights, enhancing player engagement.
+
+3. **Metric-Enhanced Clips**:
+   - **Description**: Overlay clips with AI Insights metrics (e.g., “Sprint speed 7.5 m/s during goal”).
+   - **AI Capability**: Grok 3 syncs metrics with video timestamps, updating every 5 seconds.
+   - **How**: Stream metrics from Supabase `performance_metrics` via Lambda, overlay in React player using WebVTT. Log in Communication Log.
+   - **Why**: Addresses Spond’s lack of analytics, providing actionable insights.
+
+4. **Youth-Specific Customization**:
+   - **Description**: Tailor clips for young athletes with age-appropriate captions (e.g., “Great effort, U12 Player Y!”).
+   - **AI Capability**: Grok 3 generates captions using youth sports datasets (e.g., ACSM guidelines).
+   - **How**: Train on datasets on MCP servers, store in Supabase `training_data`. Add captions via AWS Transcribe in React UI.
+   - **Why**: Supports young athletes, unlike LeagueApps’s generic tools.
+
+5. **Multilingual Clip Support**:
+   - **Description**: Provide captions and commentary in 50+ languages via Translation Hub.
+   - **AI Capability**: Grok 3 translates with sport-specific accuracy (e.g., “goal” vs. “gol” in Spanish).
+   - **How**: Process translations on MCP servers, store in Supabase `media`, display in React player. Notify via SNS/SES.
+   - **Why**: Enhances accessibility for diverse audiences.
+
+6. **Offline Clip Access**:
+   - **Description**: Cache player clips for offline viewing at fields.
+   - **AI Capability**: Grok 3 prioritizes high-impact clips (e.g., goals) for caching.
+   - **How**: Use Supabase edge functions, store in local storage, render in React PWA.
+   - **Why**: Ensures field usability, unlike competitors.
+
+7. **Engagement Analytics for Clips**:
+   - **Description**: Track clip views, shares, and interactions to optimize content delivery.
+   - **AI Capability**: Grok 3 predicts low-engagement users and suggests targeted notifications.
+   - **How**: Store interactions in Supabase `chat_history`, analyze on MCP servers, display in React dashboard.
+   - **Why**: Boosts participation by 25%, surpassing SportsPlus’s reporting.
+
+8. **Integration with Player Development**:
+   - **Description**: Link clips to technique analysis and drills (e.g., “Goal clip: improve shot form with 3x10 shooting drills”).
+   - **AI Capability**: Grok 3 correlates clips with Video Analysis findings, recommending drills from Player Development.
+   - **How**: Store links in Supabase `training_plans`, sync with `video_analysis`, display in React profile. Notify via SNS/SES.
+   - **Why**: Enhances development, unlike TeamSnap’s static uploads.
+
+### Framework and Organization
+#### Architecture
+- **Supabase**:
+  - **Tables**:
+    - `player_clips`: Store clip associations (player_id, video_id, event_id, metrics).
+    - `media`: Store clips with captions and tags (video_id, url, metadata).
+    - `performance_metrics`: Link to AI Insights metrics.
+    - `training_plans`: Link clips to drills.
+    - `chat_history`: Log clip alerts (linked to Communication Log).
+  - **RBAC**: Restrict parents to child’s clips, coaches to team data.
+  - **pgvector**: Store embeddings for video analysis.
+  - **Edge Functions**: Cache clips offline.
+- **AWS**:
+  - **CloudFront**: Serve React video UI.
+  - **Lambda**: Process real-time clip generation and metric overlays.
+  - **S3**: Store clips and datasets.
+  - **Rekognition/Transcribe**: Analyze video and generate captions.
+  - **SNS/SES**: Deliver multilingual alerts (via Translation Hub).
+  - **KMS**: Encrypt sensitive data.
+- **Grok 3 on MCP Servers**:
+  - Generate player-specific clips from AutoStream videos.
+  - Tag clips with metrics and player IDs.
+  - Train on youth sports datasets for customization.
+- **APIs**: Integrate cameras (e.g., Veo-like), wearables, and HelloPayments.net.
+- **DocuSign**: eSignatures for parental consent, stored in Supabase.
+
+#### Workflow
+1. **Clip Generation**:
+   - Grok 3 analyzes AutoStream videos and metrics to create player-specific clips.
+   - Clips stored in S3, tagged in Supabase `media`.
+2. **Profile Association**:
+   - Match clips to player profiles using metrics or optional facial recognition.
+   - Store associations in Supabase `player_clips`.
+3. **Visualization**:
+   - Display clips in React player within player profiles, with metric overlays.
+   - Cache clips for offline access.
+4. **Integration**:
+   - Link clips to Video Analysis and Player Development for drills.
+   - Log alerts in Communication Log, send via SNS/SES (multilingual).
+5. **Analytics**:
+   - Track clip engagement in Supabase, analyze with Grok 3, display in React dashboard.
+
+### Implementation Strategy
+- **MVP (3 Months)**: Build clip generation for 5 key moments (e.g., goals, saves), profile association, and 5 metric overlays. Integrate with AutoStream, Video Analysis, and HelloPayments.net. Use DocuSign for consent.
+- **Phase 2 (6 Months)**: Expand to 20+ moments, multilingual captions, and engagement analytics. Add Player Development integration.
+- **Testing**: Deploy with 2–3 teams (e.g., soccer, hockey) to validate clip accuracy.
+- **UI**: React PWA with Tailwind CSS, featuring player profile video reels, metric overlays, and drill links.
+- **Training**: Admins upload sport-specific datasets to S3 for Grok 3 training.
+
+### Sample Code Snippet (Highlight Clips Handler)
+```javascript
+import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
+
+const supabase = createClient('SUPABASE_URL', 'SUPABASE_KEY');
+
+async function generateHighlightClips(playerId, eventId) {
+  // Fetch video and metrics
+  const { data: video } = await supabase
+    .from('media')
+    .select('video_url, metadata')
+    .eq('event_id', eventId)
+    .single();
+
+  const { data: metrics } = await supabase
+    .from('performance_metrics')
+    .select('metric_type, value')
+    .eq('player_id', playerId)
+    .eq('event_id', eventId);
+
+  // Generate clips
+  const response = await axios.post('https://api.x.ai/grok3', {
+    player_id: playerId,
+    event_id: eventId,
+    video_url: video.video_url,
+    metrics: metrics,
+    task: 'generate_highlight_clips',
+  }, {
+    headers: { Authorization: 'Bearer GROK3_API_KEY' },
+  });
+
+  const { clips } = response.data; // e.g., [{ url: 'clip_url', metrics: { speed: 7.5 }, captions: 'Goal!' }]
+
+  // Store clips
+  const { data, error } = await supabase
+    .from('player_clips')
+    .insert(clips.map(c => ({
+      player_id: playerId,
+      event_id: eventId,
+      video_id: c.video_id,
+      video_url: c.url,
+      metric_tags: c.metrics,
+      captions: c.captions,
+      timestamp: new Date(),
+    })));
+
+  // Notify
+  if (!error) {
+    await supabase
+      .from('messages')
+      .insert({
+        player_id: playerId,
+        event_id: eventId,
+        content: `New highlight clips available for Player ${playerId}`,
+        intent_tag: 'informational',
+        status: 'sent',
+        timestamp: new Date(),
+      });
+
+    await axios.post('https://sns.amazonaws.com', {
+      Message: `Highlights for Player ${playerId} ready`,
+      TopicArn: 'arn:aws:sns:us-east-1:123456789012:TeamAlerts',
+    }, {
+      headers: { Authorization: 'AWS_SNS_CREDENTIALS' },
+    });
+  }
+
+  if (!error) return clips;
+  throw error;
+}
+```
+
+### Why This Approach Stands Out?
+- **AI Automation**: Player-specific clip generation surpasses TeamSnap’s manual uploads.
+- **Profile Integration**: Clips linked to profiles enhance engagement, unlike SportsEngine’s generic highlights.
+- **Youth-Focused**: Age-appropriate captions support young athletes, addressing Spond’s lack of video tools.
+- **Integration**: Syncs with AutoStream, Video Analysis, and Player Development.
+- **Offline Access**: Supabase edge functions ensure field usability.
+- **Multilingual**: Translation Hub delivers content in 50+ languages.
+
+**Action**: Build MVP with 5 highlight types, profile association, and metric overlays, integrating AutoStream and Video Analysis. Test with 2–3 teams (e.g., soccer, hockey). Expand in phase 2 (6 months). Contact HelloPayments.net at https://hellopayments.net for API setup and DocuSign at https://www.docusign.com for consent forms.
