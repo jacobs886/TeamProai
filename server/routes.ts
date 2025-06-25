@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { seedMockData } from "./mock-data";
+import { seedCoreData } from "./seed-core-data";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
@@ -3705,7 +3705,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log("Starting database seeding...");
-      const result = await seedMockData();
+      const result = await seedCoreData();
       
       res.json({
         message: "Database seeded successfully",
