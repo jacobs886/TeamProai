@@ -3705,6 +3705,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log("Starting database seeding...");
+      // First run core data seeding to establish base tables
+      await seedCoreData();
       const result = await seedCoreData();
       
       res.json({
