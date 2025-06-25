@@ -6,6 +6,7 @@ import { seedCoreData } from "./seed-core-data";
 import { registerAutoStreamRoutes } from "./routes-autostream";
 import { registerVideoAnalysisRoutes } from "./routes-video-analysis";
 import { registerHighlightRoutes } from "./routes-highlights";
+import { registerFanEngagementRoutes } from "./routes-fan-engagement";
 import { db } from "./db";
 import { users } from "@shared/schema";
 import { insertTeamSchema, insertEventSchema, insertFacilitySchema } from "@shared/schema";
@@ -24,6 +25,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register Highlight Clips routes
   registerHighlightRoutes(app);
+
+  // Register Fan Engagement routes
+  registerFanEngagementRoutes(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {

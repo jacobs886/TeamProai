@@ -128,6 +128,21 @@ export interface IStorage {
   getTrendingClips(options: any): Promise<any[]>;
   exportPlayerHighlightReel(playerId: string, options: any): Promise<any>;
   updateClipEngagement(clipId: string, data: any): Promise<void>;
+  
+  // Fan Engagement operations
+  getSocialHighlights(): Promise<any[]>;
+  getSocialHighlight(id: string): Promise<any>;
+  generateSocialHighlights(options: any): Promise<any[]>;
+  publishSocialHighlight(highlightId: string, options: any): Promise<any>;
+  getFanEngagementAnalytics(options: any): Promise<any>;
+  getSocialMediaPerformance(options: any): Promise<any>;
+  updateSocialEngagement(highlightId: string, platform: string, data: any): Promise<void>;
+  getTrendingContentSuggestions(options: any): Promise<any[]>;
+  optimizeContentForPlatform(highlightId: string, platform: string, settings: any): Promise<any>;
+  bulkGenerateSocialHighlights(options: any): Promise<any[]>;
+  getContentCalendarSuggestions(options: any): Promise<any>;
+  enhanceContentWithAI(highlightId: string, options: any): Promise<any>;
+  updatePublishStatus(highlightId: string, platform: string, status: string, data: any): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1257,6 +1272,642 @@ export class DatabaseStorage implements IStorage {
       date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       views: Math.floor(Math.random() * 500) + 100
     }));
+  }
+
+  // Fan Engagement implementation
+  private socialHighlights: any[] = [];
+  private fanEngagementAnalytics = {
+    totalHighlights: 0,
+    totalViews: 0,
+    totalEngagement: 0,
+    avgEngagementRate: 0.087,
+    topPlatforms: [
+      { platform: 'instagram', views: 3540, engagement: 320 },
+      { platform: 'twitter', views: 800, engagement: 80 }
+    ],
+    recentGrowth: {
+      viewsGrowth: 15.3,
+      engagementGrowth: 22.7,
+      followersGrowth: 8.9
+    },
+    aiAccuracy: 0.92
+  };
+
+  async getSocialHighlights(): Promise<any[]> {
+    return this.socialHighlights;
+  }
+
+  async getSocialHighlight(id: string): Promise<any> {
+    return this.socialHighlights.find(h => h.id === id);
+  }
+
+  async generateSocialHighlights(options: any): Promise<any[]> {
+    const {
+      playerId,
+      eventId,
+      teamId,
+      highlightTypes,
+      platforms,
+      language,
+      includeMetrics,
+      youthFriendly
+    } = options;
+
+    const newHighlights = [];
+    const sourceClips = playerId 
+      ? this.highlightClips.filter(c => c.playerId === playerId)
+      : this.highlightClips.slice(0, 3); // Limit for demo
+
+    for (const clip of sourceClips) {
+      const socialHighlight = {
+        id: `social-${this.socialHighlights.length + newHighlights.length + 1}`,
+        playerId: clip.playerId,
+        playerName: clip.playerName,
+        eventId: clip.eventId || eventId,
+        eventTitle: clip.eventTitle,
+        originalClipId: clip.id,
+        title: this.generateSocialTitle(clip, language, youthFriendly),
+        description: this.generateSocialDescription(clip, language),
+        sport: clip.sport,
+        ageGroup: clip.ageGroup,
+        platforms: this.generatePlatformVariations(clip, platforms, language, includeMetrics),
+        createdAt: new Date().toISOString(),
+        status: 'ready',
+        aiCuration: {
+          confidence: 0.85 + Math.random() * 0.15,
+          relevanceScore: 0.80 + Math.random() * 0.20,
+          engagementPrediction: 0.70 + Math.random() * 0.25,
+          highlightType: clip.momentType,
+          keyMoments: this.extractKeyMoments(clip)
+        },
+        engagement: {
+          totalViews: 0,
+          totalLikes: 0,
+          totalShares: 0,
+          totalComments: 0,
+          platformBreakdown: {}
+        },
+        metrics: includeMetrics ? clip.metrics : [],
+        tags: [...clip.tags, 'social-optimized', youthFriendly ? 'youth-friendly' : 'all-ages']
+      };
+
+      newHighlights.push(socialHighlight);
+    }
+
+    this.socialHighlights.push(...newHighlights);
+    this.fanEngagementAnalytics.totalHighlights += newHighlights.length;
+
+    return newHighlights;
+  }
+
+  async publishSocialHighlight(highlightId: string, options: any): Promise<any> {
+    const { platform, caption, hashtags, publishedBy } = options;
+    const highlight = this.socialHighlights.find(h => h.id === highlightId);
+    
+    if (!highlight) {
+      throw new Error("Social highlight not found");
+    }
+
+    const platformData = highlight.platforms.find(p => p.platform === platform);
+    if (!platformData) {
+      throw new Error(`Platform ${platform} not available for this highlight`);
+    }
+
+    // Simulate social media publishing
+    platformData.status = 'published';
+    highlight.status = 'published';
+
+    // Generate mock engagement
+    const mockEngagement = this.generateMockEngagement(platform);
+    highlight.engagement.totalViews += mockEngagement.views;
+    highlight.engagement.totalLikes += mockEngagement.likes;
+    highlight.engagement.totalShares += mockEngagement.shares;
+    highlight.engagement.totalComments += mockEngagement.comments;
+    
+    if (!highlight.engagement.platformBreakdown[platform]) {
+      highlight.engagement.platformBreakdown[platform] = {};
+    }
+    highlight.engagement.platformBreakdown[platform] = mockEngagement;
+
+    return {
+      highlightId,
+      platform,
+      postUrl: `https://${platform}.com/post/${Date.now()}`,
+      estimatedReach: this.calculateEstimatedReach(platform, highlight),
+      publishedAt: new Date().toISOString()
+    };
+  }
+
+  async getFanEngagementAnalytics(options: any): Promise<any> {
+    const { timeRange, playerId, platform } = options;
+    
+    let highlights = this.socialHighlights;
+    if (playerId) {
+      highlights = highlights.filter(h => h.playerId === playerId);
+    }
+    if (platform) {
+      highlights = highlights.filter(h => h.platforms.some(p => p.platform === platform));
+    }
+
+    return {
+      ...this.fanEngagementAnalytics,
+      totalHighlights: highlights.length,
+      totalViews: highlights.reduce((sum, h) => sum + h.engagement.totalViews, 0),
+      totalEngagement: highlights.reduce((sum, h) => 
+        sum + h.engagement.totalLikes + h.engagement.totalShares + h.engagement.totalComments, 0
+      ),
+      filteredResults: {
+        timeRange,
+        playerId,
+        platform,
+        highlightCount: highlights.length
+      },
+      engagementTrends: this.generateEngagementTrends(timeRange),
+      topPerformingContent: highlights
+        .sort((a, b) => b.engagement.totalViews - a.engagement.totalViews)
+        .slice(0, 5)
+    };
+  }
+
+  async getSocialMediaPerformance(options: any): Promise<any> {
+    const { platform, contentType, timeRange } = options;
+    
+    return {
+      platform,
+      contentType,
+      timeRange,
+      metrics: {
+        totalPosts: Math.floor(Math.random() * 50) + 20,
+        avgViews: Math.floor(Math.random() * 1000) + 500,
+        avgEngagementRate: (Math.random() * 0.1) + 0.05,
+        reach: Math.floor(Math.random() * 5000) + 2000,
+        impressions: Math.floor(Math.random() * 10000) + 5000
+      },
+      bestPerformingPosts: this.socialHighlights
+        .filter(h => h.platforms.some(p => p.platform === platform))
+        .slice(0, 3),
+      engagementByType: {
+        likes: Math.floor(Math.random() * 500) + 200,
+        shares: Math.floor(Math.random() * 100) + 50,
+        comments: Math.floor(Math.random() * 150) + 75
+      }
+    };
+  }
+
+  async updateSocialEngagement(highlightId: string, platform: string, data: any): Promise<void> {
+    const highlight = this.socialHighlights.find(h => h.id === highlightId);
+    if (highlight) {
+      if (!highlight.engagement.platformBreakdown[platform]) {
+        highlight.engagement.platformBreakdown[platform] = {};
+      }
+      Object.assign(highlight.engagement.platformBreakdown[platform], data);
+      
+      // Update totals
+      highlight.engagement.totalViews = Object.values(highlight.engagement.platformBreakdown)
+        .reduce((sum: number, p: any) => sum + (p.views || 0), 0);
+      highlight.engagement.totalLikes = Object.values(highlight.engagement.platformBreakdown)
+        .reduce((sum: number, p: any) => sum + (p.likes || 0), 0);
+      highlight.engagement.totalShares = Object.values(highlight.engagement.platformBreakdown)
+        .reduce((sum: number, p: any) => sum + (p.shares || 0), 0);
+      highlight.engagement.totalComments = Object.values(highlight.engagement.platformBreakdown)
+        .reduce((sum: number, p: any) => sum + (p.comments || 0), 0);
+    }
+  }
+
+  async getTrendingContentSuggestions(options: any): Promise<any[]> {
+    const { sport, ageGroup, platform, limit } = options;
+    
+    const trendingTopics = [
+      { topic: 'Amazing Goals', hashtags: ['#Goals', '#Amazing', '#YouthSoccer'], engagement: 95 },
+      { topic: 'Incredible Saves', hashtags: ['#Saves', '#Goalkeeper', '#Epic'], engagement: 87 },
+      { topic: 'Team Spirit', hashtags: ['#TeamWork', '#Youth', '#Sports'], engagement: 82 },
+      { topic: 'Skills Training', hashtags: ['#Skills', '#Training', '#Development'], engagement: 78 }
+    ];
+
+    return trendingTopics.slice(0, limit).map(topic => ({
+      ...topic,
+      sport,
+      ageGroup,
+      platform,
+      suggestedContent: this.generateContentSuggestions(topic, sport, ageGroup)
+    }));
+  }
+
+  async optimizeContentForPlatform(highlightId: string, platform: string, settings: any): Promise<any> {
+    const highlight = this.socialHighlights.find(h => h.id === highlightId);
+    if (!highlight) {
+      throw new Error("Highlight not found");
+    }
+
+    const platformOptimizations = {
+      instagram: {
+        dimensions: '1080x1080',
+        aspectRatio: '1:1',
+        maxDuration: 60,
+        captionLength: 125,
+        hashtagLimit: 30
+      },
+      twitter: {
+        dimensions: '1280x720',
+        aspectRatio: '16:9',
+        maxDuration: 140,
+        captionLength: 280,
+        hashtagLimit: 10
+      },
+      tiktok: {
+        dimensions: '1080x1920',
+        aspectRatio: '9:16',
+        maxDuration: 30,
+        captionLength: 100,
+        hashtagLimit: 20
+      }
+    };
+
+    const optimization = platformOptimizations[platform] || platformOptimizations.instagram;
+    
+    return {
+      highlightId,
+      platform,
+      optimizations: optimization,
+      format: 'MP4',
+      dimensions: optimization.dimensions,
+      duration: Math.min(highlight.platforms[0]?.duration || 15, optimization.maxDuration),
+      caption: this.optimizeCaption(highlight.title, optimization.captionLength),
+      hashtags: this.optimizeHashtags(highlight.tags, optimization.hashtagLimit),
+      fileSize: this.calculateOptimizedFileSize(optimization),
+      estimatedEngagement: this.predictEngagement(highlight, platform)
+    };
+  }
+
+  async bulkGenerateSocialHighlights(options: any): Promise<any[]> {
+    const { eventId, sport, ageGroup, platforms, language } = options;
+    const allHighlights = [];
+
+    // Get all clips from the event
+    const eventClips = this.highlightClips.filter(c => 
+      c.eventId === eventId || 
+      (c.sport === sport && c.ageGroup === ageGroup)
+    );
+
+    for (const clip of eventClips.slice(0, 5)) { // Limit for demo
+      const highlights = await this.generateSocialHighlights({
+        playerId: clip.playerId,
+        eventId,
+        highlightTypes: [clip.momentType],
+        platforms,
+        language,
+        includeMetrics: true,
+        youthFriendly: true
+      });
+      allHighlights.push(...highlights);
+    }
+
+    return allHighlights;
+  }
+
+  async getContentCalendarSuggestions(options: any): Promise<any> {
+    const { month, year, teamId } = options;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const calendar = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month - 1, day);
+      const suggestions = this.generateDailySuggestions(date, teamId);
+      
+      calendar.push({
+        date: date.toISOString().split('T')[0],
+        suggestions,
+        optimalPostTimes: this.getOptimalPostTimes(date.getDay()),
+        expectedEngagement: Math.random() * 0.1 + 0.05
+      });
+    }
+
+    return {
+      month,
+      year,
+      calendar,
+      monthlyThemes: this.getMonthlyThemes(month),
+      contentBalance: this.getContentBalance()
+    };
+  }
+
+  async enhanceContentWithAI(highlightId: string, options: any): Promise<any> {
+    const { enhancementType, preferences } = options;
+    const highlight = this.socialHighlights.find(h => h.id === highlightId);
+    
+    if (!highlight) {
+      throw new Error("Highlight not found");
+    }
+
+    const enhancements = {
+      captions: {
+        original: highlight.platforms[0]?.caption,
+        enhanced: this.enhanceCaption(highlight.platforms[0]?.caption, preferences),
+        confidence: 0.92
+      },
+      hashtags: {
+        original: highlight.platforms[0]?.hashtags,
+        enhanced: this.enhanceHashtags(highlight.tags, preferences),
+        confidence: 0.88
+      },
+      timing: {
+        optimal: this.getOptimalPostTimes(new Date().getDay()),
+        confidence: 0.85
+      }
+    };
+
+    return {
+      highlightId,
+      enhancementType,
+      enhancements,
+      confidence: 0.90,
+      improvements: [
+        'Enhanced caption engagement potential by 23%',
+        'Optimized hashtags for trending topics',
+        'Suggested optimal posting times for maximum reach'
+      ]
+    };
+  }
+
+  async updatePublishStatus(highlightId: string, platform: string, status: string, data: any): Promise<void> {
+    const highlight = this.socialHighlights.find(h => h.id === highlightId);
+    if (highlight) {
+      const platformData = highlight.platforms.find(p => p.platform === platform);
+      if (platformData) {
+        platformData.status = status;
+        if (status === 'published') {
+          highlight.status = 'published';
+        }
+      }
+    }
+  }
+
+  // Helper methods for fan engagement
+  private generateSocialTitle(clip: any, language: string, youthFriendly: boolean): string {
+    const baseTitle = clip.title;
+    const youthPrefix = youthFriendly ? this.getYouthFriendlyPrefix() : '';
+    const languageTitle = this.translateTitle(baseTitle, language);
+    
+    return `${youthPrefix}${languageTitle}`;
+  }
+
+  private generateSocialDescription(clip: any, language: string): string {
+    const baseDesc = clip.description;
+    return this.translateDescription(baseDesc, language);
+  }
+
+  private generatePlatformVariations(clip: any, platforms: string[], language: string, includeMetrics: boolean): any[] {
+    return platforms.map(platform => ({
+      platform,
+      status: 'ready',
+      videoUrl: `https://demo.social.url/${platform}.mp4`,
+      thumbnailUrl: clip.thumbnailUrl,
+      caption: this.generatePlatformCaption(clip, platform, language, includeMetrics),
+      hashtags: this.generatePlatformHashtags(clip, platform),
+      dimensions: this.getPlatformDimensions(platform),
+      duration: Math.min(clip.duration, this.getPlatformMaxDuration(platform)),
+      fileSize: this.calculateFileSize(platform, clip.duration),
+      optimizations: this.getPlatformOptimizations(platform)
+    }));
+  }
+
+  private extractKeyMoments(clip: any): string[] {
+    const momentMappings: any = {
+      goal: ['perfect strike', 'amazing finish', 'top corner'],
+      save: ['incredible reflexes', 'diving save', 'point blank'],
+      assist: ['perfect pass', 'amazing vision', 'great setup']
+    };
+    
+    return momentMappings[clip.momentType] || ['great play', 'excellent technique'];
+  }
+
+  private generateMockEngagement(platform: string): any {
+    const baseEngagement = {
+      instagram: { multiplier: 1.5, base: { views: 800, likes: 60, shares: 15, comments: 8 } },
+      twitter: { multiplier: 1.0, base: { views: 400, likes: 30, shares: 8, comments: 4 } },
+      tiktok: { multiplier: 2.0, base: { views: 1200, likes: 90, shares: 25, comments: 12 } }
+    };
+    
+    const config = baseEngagement[platform] || baseEngagement.instagram;
+    
+    return {
+      views: Math.floor(config.base.views * (0.8 + Math.random() * 0.4) * config.multiplier),
+      likes: Math.floor(config.base.likes * (0.8 + Math.random() * 0.4) * config.multiplier),
+      shares: Math.floor(config.base.shares * (0.8 + Math.random() * 0.4) * config.multiplier),
+      comments: Math.floor(config.base.comments * (0.8 + Math.random() * 0.4) * config.multiplier)
+    };
+  }
+
+  private calculateEstimatedReach(platform: string, highlight: any): number {
+    const baseReach = {
+      instagram: 2000,
+      twitter: 1000,
+      tiktok: 3000,
+      facebook: 1500
+    };
+    
+    const aiBoost = highlight.aiCuration.confidence;
+    return Math.floor((baseReach[platform] || 1500) * (1 + aiBoost));
+  }
+
+  private generateEngagementTrends(timeRange: string): any[] {
+    const days = timeRange === '30d' ? 30 : 7;
+    return Array.from({ length: days }, (_, i) => ({
+      date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      views: Math.floor(Math.random() * 1000) + 200,
+      engagement: Math.floor(Math.random() * 100) + 20
+    }));
+  }
+
+  private generateContentSuggestions(topic: any, sport: string, ageGroup: string): string[] {
+    return [
+      `Showcase ${ageGroup} ${sport} ${topic.topic.toLowerCase()}`,
+      `Behind-the-scenes training for ${topic.topic.toLowerCase()}`,
+      `Player spotlight featuring ${topic.topic.toLowerCase()}`
+    ];
+  }
+
+  private optimizeCaption(caption: string, maxLength: number): string {
+    if (caption.length <= maxLength) return caption;
+    return caption.substring(0, maxLength - 3) + '...';
+  }
+
+  private optimizeHashtags(tags: string[], limit: number): string[] {
+    const socialTags = tags.map(tag => `#${tag.replace(/\s+/g, '')}`);
+    return socialTags.slice(0, limit);
+  }
+
+  private calculateOptimizedFileSize(optimization: any): string {
+    const baseSize = 8; // MB
+    const compressionFactor = optimization.aspectRatio === '9:16' ? 1.2 : 1.0;
+    return `${(baseSize * compressionFactor).toFixed(1)} MB`;
+  }
+
+  private predictEngagement(highlight: any, platform: string): string {
+    const baseRate = 0.05;
+    const aiBoost = highlight.aiCuration.confidence * 0.03;
+    const platformBoost = platform === 'tiktok' ? 0.02 : 0;
+    
+    return `${Math.round((baseRate + aiBoost + platformBoost) * 100)}%`;
+  }
+
+  private generateDailySuggestions(date: Date, teamId: string): string[] {
+    const dayOfWeek = date.getDay();
+    const suggestions = [
+      'Player spotlight',
+      'Training highlights',
+      'Game day preview',
+      'Behind the scenes',
+      'Team achievement celebration'
+    ];
+    
+    return suggestions.slice(0, 2 + Math.floor(Math.random() * 2));
+  }
+
+  private getOptimalPostTimes(dayOfWeek: number): string[] {
+    const times = {
+      0: ['11:00', '15:00'], // Sunday
+      1: ['12:00', '18:00'], // Monday
+      2: ['09:00', '15:00'], // Tuesday
+      3: ['11:00', '16:00'], // Wednesday
+      4: ['10:00', '17:00'], // Thursday
+      5: ['14:00', '19:00'], // Friday
+      6: ['10:00', '16:00']  // Saturday
+    };
+    
+    return times[dayOfWeek] || times[1];
+  }
+
+  private getMonthlyThemes(month: number): string[] {
+    const themes = [
+      'New Year Goals', 'Team Building', 'Spring Training', 'Skill Development',
+      'Championship Prep', 'Summer Training', 'Team Spirit', 'Back to School',
+      'Fall Season', 'Team Achievements', 'Year Highlights', 'Holiday Spirit'
+    ];
+    
+    return [themes[month - 1]];
+  }
+
+  private getContentBalance(): any {
+    return {
+      highlights: 40,
+      training: 25,
+      team: 20,
+      educational: 15
+    };
+  }
+
+  private getYouthFriendlyPrefix(): string {
+    const prefixes = ['🌟 ', '⚡ ', '🚀 ', '💫 '];
+    return prefixes[Math.floor(Math.random() * prefixes.length)];
+  }
+
+  private translateTitle(title: string, language: string): string {
+    // Mock translation - in real implementation, use proper translation service
+    if (language === 'es') {
+      return title.replace('Amazing Goal', 'Gol Increíble').replace('Incredible Save', 'Parada Increíble');
+    }
+    return title;
+  }
+
+  private translateDescription(description: string, language: string): string {
+    // Mock translation - in real implementation, use proper translation service
+    return description;
+  }
+
+  private generatePlatformCaption(clip: any, platform: string, language: string, includeMetrics: boolean): string {
+    const baseCaption = clip.title;
+    const metrics = includeMetrics ? this.formatMetricsForCaption(clip.metrics) : '';
+    const emojis = this.getPlatformEmojis(platform, clip.momentType);
+    
+    return `${emojis} ${baseCaption}${metrics ? ` ${metrics}` : ''}`;
+  }
+
+  private generatePlatformHashtags(clip: any, platform: string): string[] {
+    const baseTags = [`#${clip.sport}`, `#${clip.ageGroup}`, '#TeamProAI'];
+    const momentTags = [`#${clip.momentType}`];
+    const platformTags = platform === 'tiktok' ? ['#FYP', '#Sports'] : ['#YouthSports'];
+    
+    return [...baseTags, ...momentTags, ...platformTags];
+  }
+
+  private getPlatformDimensions(platform: string): string {
+    const dimensions = {
+      instagram: '1080x1080',
+      twitter: '1280x720',
+      tiktok: '1080x1920',
+      facebook: '1280x720'
+    };
+    
+    return dimensions[platform] || '1080x1080';
+  }
+
+  private getPlatformMaxDuration(platform: string): number {
+    const durations = {
+      instagram: 60,
+      twitter: 140,
+      tiktok: 30,
+      facebook: 120
+    };
+    
+    return durations[platform] || 60;
+  }
+
+  private calculateFileSize(platform: string, duration: number): string {
+    const baseSizePerSecond = platform === 'tiktok' ? 0.8 : 0.6; // MB per second
+    return `${(duration * baseSizePerSecond).toFixed(1)} MB`;
+  }
+
+  private getPlatformOptimizations(platform: string): any {
+    return {
+      resolution: platform === 'twitter' ? '720p' : '1080p',
+      aspectRatio: this.getPlatformAspectRatio(platform),
+      compression: 'H.264',
+      captions: true,
+      watermark: true
+    };
+  }
+
+  private getPlatformAspectRatio(platform: string): string {
+    const ratios = {
+      instagram: '1:1',
+      twitter: '16:9',
+      tiktok: '9:16',
+      facebook: '16:9'
+    };
+    
+    return ratios[platform] || '1:1';
+  }
+
+  private formatMetricsForCaption(metrics: any[]): string {
+    if (!metrics.length) return '';
+    
+    const topMetric = metrics[0];
+    return `${topMetric.name}: ${topMetric.value}`;
+  }
+
+  private getPlatformEmojis(platform: string, momentType: string): string {
+    const momentEmojis = {
+      goal: '⚽🚀',
+      save: '🥅⚡',
+      assist: '🎯👏',
+      tackle: '🛡️💪',
+      shot: '💥🎯'
+    };
+    
+    return momentEmojis[momentType] || '🌟⚡';
+  }
+
+  private enhanceCaption(caption: string, preferences: any): string {
+    // AI enhancement logic
+    const enhanced = caption + ' 🔥 #FutureStars #YouthSports';
+    return enhanced;
+  }
+
+  private enhanceHashtags(tags: string[], preferences: any): string[] {
+    // AI enhancement logic
+    const enhanced = [...tags, 'trending', 'viral', 'sports'];
+    return enhanced.map(tag => `#${tag.replace(/\s+/g, '')}`);
   }
 }
 
