@@ -80,6 +80,19 @@ export interface IStorage {
   // Game statistics operations
   getGameStats(eventId: number): Promise<any[]>;
   createGameStats(eventId: number, playerId: string, sport: string, stats: any): Promise<any>;
+  
+  // AutoStream operations
+  getStreams(): Promise<any[]>;
+  getStream(id: number): Promise<any>;
+  createStream(stream: any): Promise<any>;
+  updateStream(id: number, updates: any): Promise<any>;
+  getHighlights(): Promise<any[]>;
+  createHighlight(highlight: any): Promise<any>;
+  getStreamingAnalytics(): Promise<any>;
+  updateStreamSettings(streamId: number, settings: any): Promise<any>;
+  getStreamEngagement(streamId: number): Promise<any>;
+  addHighlightToStream(streamId: number, highlight: any): Promise<void>;
+  updateStreamMetrics(streamId: number, metrics: any): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {

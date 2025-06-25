@@ -31,6 +31,7 @@ import AdvancedStats from "@/pages/advanced-stats";
 import PerformanceAnalysis from "@/pages/performance-analysis";
 import PlayerDevelopment from "@/pages/player-development";
 import Benchmarks from "@/pages/benchmarks";
+import AutoStream from "@/pages/autostream";
 import DatabaseManagement from "@/pages/admin/database-management";
 import Sidebar from "@/components/layout/sidebar";
 import MobileHeader from "@/components/layout/mobile-header";

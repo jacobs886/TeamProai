@@ -32,6 +32,7 @@ import {
   Star,
   MessageCircle,
   Database,
+  Video,
 } from "lucide-react";
 
 interface NavItem {
